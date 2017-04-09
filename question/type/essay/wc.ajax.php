@@ -15,19 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the essay question type.
+ * Essay question word count AJAX service.
  *
- * @package    qtype
- * @subpackage essay
- * @copyright  2005 Mark Nielsen
+ * @package    qtype_essay
+ * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+define('AJAX_SCRIPT', true);
 
-$plugin->component = 'qtype_essay';
-$plugin->version   = 2018051401;
+require_once(__DIR__ . '/../../../config.php');
 
-$plugin->requires  = 2018050800;
+require_login();
+require_sesskey();
 
-$plugin->maturity  = MATURITY_STABLE;
+$res = array();
+foreach ($_POST as $key => $value) {
+    if (!empty(preg_grep('/^q.*_answer$/', array($key)))) {
+        $res[$key] = array("words" => count_words($value), "characters" => count_letters($value));
+    }
+}
+echo json_encode($res);

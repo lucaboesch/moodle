@@ -26,14 +26,23 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * Generates the output for essay questions.
  *
+ * @throws
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essay_renderer extends qtype_renderer {
+    /**
+     * Generates the display of the formulation part of the question.
+     *
+     * @param question_attempt $qa
+     * @param question_display_options $options
+     * @return array|string
+     * @throws coding_exception
+     * @throws moodle_exception
+     */
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
 
@@ -73,8 +82,37 @@ class qtype_essay_renderer extends qtype_renderer {
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
+        if ($question->responselimitpolicy > 0) {
+            $ro = !empty($options->readonly);
+            $words = count_words($answer);
+            $chars = count_letters($answer);
+            $maxchars = $question->charlimit;
+            $maxwords = $question->wordlimit;
+            $content = $ro ? ($this->render_from_template('qtype_essay/wordcount', [
+                'words_ok' => $words <= $maxwords,
+                'chars_ok' => $chars <= $maxchars,
+                'maxwords' => $maxwords,
+                'maxchars' => $maxchars,
+                'chars' => $chars,
+                'words' => $words,
+            ])) : "";
+            $result .= html_writer::tag('div', $content, array('id' => $qa->get_qt_field_name('answer') . '_wordcount',
+                                                         'class' => 'wordcount'));
+        }
+
         $result .= html_writer::tag('div', $files, array('class' => 'attachments'));
         $result .= html_writer::end_tag('div');
+
+        if ($question->responselimitpolicy > 0) {
+            $params = array(
+                'wordlimit' => $question->wordlimit,
+                'charlimit' => $question->charlimit,
+                'editorname' => $qa->get_qt_field_name('answer'),
+                'readonly' => !empty($options->readonly),
+            );
+            $this->page->requires->strings_for_js(array('words', 'characters'), 'qtype_essay');
+            $this->page->requires->js_call_amd('qtype_essay/wordcount', 'init', [$params]);
+        }
 
         return $result;
     }
@@ -158,8 +196,9 @@ class qtype_essay_renderer extends qtype_renderer {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
+
     /**
-     * Render the students respone when the question is in read-only mode.
+     * Render the students response when the question is in read-only mode.
      * @param string $name the variable name this input edits.
      * @param question_attempt $qa the question attempt being display.
      * @param question_attempt_step $step the current step.
@@ -273,6 +312,7 @@ class qtype_essay_format_editor_renderer extends plugin_renderer_base {
         $output .= $this->filepicker_html($inputname, $draftitemid);
 
         $output .= html_writer::end_tag('div');
+
         return $output;
     }
 
@@ -333,6 +373,15 @@ class qtype_essay_format_editor_renderer extends plugin_renderer_base {
      */
     protected function filepicker_html($inputname, $draftitemid) {
         return '';
+    }
+
+    /**
+     * Prepare the word and character counter for read-only display.
+     * @param question_attempt $qa the question attempt being display.
+     * @return string the word and character counter.
+     */
+    protected function get_count_area_read_only(question_attempt $qa) {
+        return html_writer::tag('div', '', array('name' => $qa->get_qt_field_name('answer') . 'wordcount'));
     }
 }
 
@@ -462,9 +511,10 @@ class qtype_essay_format_plain_renderer extends plugin_renderer_base {
 
     public function response_area_input($name, $qa, $step, $lines, $context) {
         $inputname = $qa->get_qt_field_name($name);
+        $countarea = get_count_area_read_only($qa);
         return $this->textarea($step->get_qt_var($name), $lines, array('name' => $inputname)) .
                 html_writer::empty_tag('input', array('type' => 'hidden',
-                    'name' => $inputname . 'format', 'value' => FORMAT_PLAIN));
+                    'name' => $inputname . 'format', 'value' => FORMAT_PLAIN)) . $countarea;
     }
 }
 

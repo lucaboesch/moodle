@@ -52,6 +52,15 @@ class qtype_essay_question extends question_with_responses {
     public $responsetemplate;
     public $responsetemplateformat;
 
+    /** @var int What response limit exists for this question. */
+    public $responselimitpolicy;
+
+    /** @var int The word limit for this question. */
+    public $wordlimit;
+
+    /** @var int The character limit for this question. */
+    public $charlimit;
+
     /** @var array The string array of file types accepted upon file submission. */
     public $filetypeslist;
 
@@ -181,5 +190,14 @@ class qtype_essay_question extends question_with_responses {
             return parent::check_file_access($qa, $options, $component,
                     $filearea, $args, $forcedownload);
         }
+    }
+
+    /**
+     * Returns whether the question has a response limit.
+     *
+     * @return bool the value for response limit on.
+     */
+    public function has_response_limit() {
+        return !empty($this->responselimitpolicy);
     }
 }
