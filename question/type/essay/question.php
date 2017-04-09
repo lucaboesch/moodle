@@ -51,6 +51,9 @@ class qtype_essay_question extends question_with_responses {
     public $graderinfoformat;
     public $responsetemplate;
     public $responsetemplateformat;
+    public $responselimitpolicy;
+    public $wordlimit;
+    public $charlimit;
 
     /** @var array The string array of file types accepted upon file submission. */
     public $filetypeslist;
@@ -181,5 +184,9 @@ class qtype_essay_question extends question_with_responses {
             return parent::check_file_access($qa, $options, $component,
                     $filearea, $args, $forcedownload);
         }
+    }
+
+    public function has_response_limit() {
+        return !empty($this->responselimitpolicy);
     }
 }
