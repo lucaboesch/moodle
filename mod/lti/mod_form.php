@@ -139,7 +139,8 @@ class mod_lti_mod_form extends moodleform_mod {
                     $noncontentitemtypes[] = $id;
                 }
             }
-            $tooltypes->addOption($type->name, $id, $attributes);
+            $tooltypes->addOption(format_string($type->name, true, ['context' => context_course::instance($COURSE->id)]),
+                $id, $attributes);
         }
 
         // Add button that launches the content-item selection dialogue.

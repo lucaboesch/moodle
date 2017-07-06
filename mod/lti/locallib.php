@@ -646,7 +646,7 @@ function lti_build_content_item_selection_request($id, $course, moodle_url $retu
 
     // Check title. If empty, use the tool's name.
     if (empty($title)) {
-        $title = $tool->name;
+        $title = format_string($tool->name, true, ['context' => context_course::instance($course->id)]);
     }
 
     $typeconfig = lti_get_type_config($id);
@@ -768,8 +768,8 @@ function lti_build_content_item_selection_request($id, $course, moodle_url $retu
     $requestparams['auto_create'] = $autocreate === true ? 'true' : 'false';
     $requestparams['can_confirm'] = $canconfirm === true ? 'true' : 'false';
     $requestparams['content_item_return_url'] = $returnurl->out(false);
-    $requestparams['title'] = $title;
-    $requestparams['text'] = $text;
+    $requestparams['title'] = format_string($title, false, ['context' => context_course::instance($course->id)]);
+    $requestparams['text'] = format_string($text, false, ['context' => context_course::instance($course->id)]);
     $signedparams = lti_sign_parameters($requestparams, $toolurlout, 'POST', $key, $secret);
     $toolurlparams = $toolurl->params();
 
@@ -973,7 +973,7 @@ function lti_tool_configuration_from_content_item($typeid, $messagetype, $ltiver
 }
 
 function lti_get_tool_table($tools, $id) {
-    global $OUTPUT;
+    global $CFG, $OUTPUT, $USER, $COURSE;
     $html = '';
 
     $typename = get_string('typename', 'lti');
@@ -1049,10 +1049,11 @@ function lti_get_tool_table($tools, $id) {
             } else {
                 $deletehtml = '';
             }
+            $displayname = format_string($type->name, false, ['context' => context_course::instance($COURSE->id)]);
             $html .= "
             <tr>
                 <td>
-                    {$type->name}
+                    {$displayname}
                 </td>
                 <td>
                     {$ref}

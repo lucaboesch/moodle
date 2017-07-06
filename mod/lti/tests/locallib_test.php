@@ -385,10 +385,13 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertFalse(isset($params['lis_result_sourcedid']));
 
         // Custom parameters.
-        $title = 'My custom title';
-        $text = 'This is the tool description';
+        $title = '<span lang="en" class="multilang">My custom title</span><span lang="ru" class="multilang">Мое пользовательское название</span>';
+        $text = '<span lang="en" class="multilang">This is the tool description</span><span lang="ru" class="multilang">Это описание инструмента</span>';
         $mediatypes = ['image/*', 'video/*'];
         $targets = ['embed', 'iframe'];
+        // Enable multilang filter to on content and heading.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
         $result = lti_build_content_item_selection_request($typeid, $course, $returnurl, $title, $text, $mediatypes, $targets,
             true, true, true, true, true);
         $this->assertNotEmpty($result);
@@ -401,8 +404,8 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals('true', $params['accept_multiple']);
         $this->assertEquals('true', $params['accept_copy_advice']);
         $this->assertEquals('true', $params['auto_create']);
-        $this->assertEquals($title, $params['title']);
-        $this->assertEquals($text, $params['text']);
+        $this->assertEquals('My custom title', $params['title']);
+        $this->assertEquals('This is the tool description', $params['text']);
 
         // Invalid flag values.
         $result = lti_build_content_item_selection_request($typeid, $course, $returnurl, $title, $text, $mediatypes, $targets,
@@ -417,8 +420,8 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals('false', $params['accept_multiple']);
         $this->assertEquals('false', $params['accept_copy_advice']);
         $this->assertEquals('false', $params['auto_create']);
-        $this->assertEquals($title, $params['title']);
-        $this->assertEquals($text, $params['text']);
+        $this->assertEquals('My custom title', $params['title']);
+        $this->assertEquals('This is the tool description', $params['text']);
     }
 
     /**

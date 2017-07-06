@@ -302,7 +302,7 @@ class mod_lti_external extends external_api {
                 $module['id'] = $lti->id;
                 $module['coursemodule'] = $lti->coursemodule;
                 $module['course'] = $lti->course;
-                $module['name']  = external_format_string($lti->name, $context->id);
+                $module['name']  = external_format_string($lti->name, $context->id, false, ['filter' => true]);
 
                 $viewablefields = [];
                 if (has_capability('mod/lti:view', $context)) {
