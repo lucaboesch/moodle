@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_essay_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('editor', 'editorfilepicker', 'plain', 'monospaced', 'responsetemplate', 'noinline');
+        return array('editor', 'editorfilepicker', 'plain', 'monospaced', 'responsetemplate', 'plainresponsetemplate', 'noinline');
     }
 
     /**
@@ -196,6 +196,18 @@ class qtype_essay_test_helper extends question_test_helper {
         $q = $this->initialise_essay_question();
         $q->responsetemplate = 'Once upon a time';
         $q->responsetemplateformat = FORMAT_HTML;
+        return $q;
+    }
+
+    /**
+     * Makes an essay question using plain text input having a response template.
+     * @return qtype_essay_question
+     */
+    public function make_essay_question_plainresponsetemplate() {
+        $q = $this->initialise_essay_question();
+        $q->responsetemplate = 'Two lines of text\nTwo lines of text';
+        $q->responsetemplateformat = FORMAT_PLAIN;
+        $q->responseformat = 'plain';
         return $q;
     }
 

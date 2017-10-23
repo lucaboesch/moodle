@@ -93,6 +93,40 @@ class qtype_essay_question extends question_with_responses {
         return null;
     }
 
+    /**
+     * Returns the string to be put in the response textarea.
+     * It deals with the FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN and FORMAT_MARKDOWN formats.
+     * @return array the response-format-specific response template answer.
+     */
+    public function get_template_response() {
+        // The responsetemplateformat and responseformat match.
+        if (($this->answerformat == 'plain') && ($this->responsetemplateformat == FORMAT_PLAIN) OR
+            ($this->answerformat == 'editor') && ($this->responsetemplateformat == FORMAT_MOODLE) OR
+            ($this->answerformat == 'editor') && ($this->responsetemplateformat == FORMAT_MARKDOWN) OR
+            ($this->answerformat == 'editor') && ($this->responsetemplateformat == FORMAT_HTML) OR
+            ($this->answerformat == 'editorfilepicker') && ($this->responsetemplateformat == FORMAT_HTML)
+        ) {
+            return array('answer' => $this->responsetemplate);
+        } else { // The responsetemplateformat and responseformat do not match. A conversion has to be done.
+            if (($this->answerformat == 'plain') && ($this->responsetemplateformat == FORMAT_HTML)) {
+                // Convert FORMAT_HTML.
+                return array('answer' => $this->html_to_text($this->responsetemplate));
+            } else if (($this->answerformat == 'plain') && ($this->responsetemplateformat == FORMAT_MARKDOWN)) {
+                // Convert FORMAT_MARKDOWN.
+                return array('answer' => clean_text(markdown_to_html($this->responsetemplate)));
+            } else if (($this->answerformat == 'plain') && ($this->responsetemplateformat == FORMAT_MOODLE)) {
+                // Convert FORMAT_MOODLE or anything else.
+                return array('answer' => html_to_text($this->responsetemplate, null, false, true));
+            } else if (($this->answerformat == 'monospaced') && ($this->responsetemplateformat == FORMAT_PLAIN)) {
+                // Convert FORMAT_MOODLE or anything else.
+                return array('answer' => html_to_text($this->responsetemplate, null, false, true));
+            } else {
+                // Everything not covered yet.
+                return array('answer' => $this->responsetemplate);
+            }
+        }
+    }
+
     public function is_complete_response(array $response) {
         // Determine if the given response has online text and attachments.
         $hasinlinetext = array_key_exists('answer', $response) && ($response['answer'] !== '');

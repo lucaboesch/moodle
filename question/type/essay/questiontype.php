@@ -51,6 +51,9 @@ class qtype_essay extends question_type {
         parent::get_question_options($question);
     }
 
+    /**
+     * @param object $formdata
+     */
     public function save_question_options($formdata) {
         global $DB;
         $context = $formdata->context;
@@ -75,8 +78,13 @@ class qtype_essay extends question_type {
         $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
                 $context, 'qtype_essay', 'graderinfo', $formdata->id);
         $options->graderinfoformat = $formdata->graderinfo['format'];
-        $options->responsetemplate = $formdata->responsetemplate['text'];
-        $options->responsetemplateformat = $formdata->responsetemplate['format'];
+        if (($formdata->responseformat == 'plain') OR ($formdata->responseformat == 'monospaced')) {
+            $options->responsetemplate = html_to_text($formdata->responsetemplate['text']);
+            $options->responsetemplateformat = FORMAT_PLAIN;
+        } else {
+            $options->responsetemplate = $formdata->responsetemplate['text'];
+            $options->responsetemplateformat = $formdata->responsetemplate['format'];
+        }
         $DB->update_record('qtype_essay_options', $options);
     }
 
