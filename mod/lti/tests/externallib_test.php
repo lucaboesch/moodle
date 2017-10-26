@@ -342,6 +342,16 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
      * Test get tool types
      */
     public function test_mod_lti_get_tool_types() {
+        $this->resetAfterTest();
+
+        // Enable multilang filter to on content and heading.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', 1);
+        $filtermanager = filter_manager::instance();
+        $filtermanager->reset_caches();
+
+        $context = context_system::instance();
+
         // Create a tool proxy.
         $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
 
@@ -349,8 +359,10 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
         $type = new stdClass();
         $data = new stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
-        $type->name = "Test tool";
-        $type->description = "Example description";
+        $type->name = "<span lang=\"en\" class=\"multilang\">Test tool</span><span lang=\"ru\" " .
+            "class=\"multilang\">заглавие RU</span>";
+        $type->description = "<span lang=\"en\" class=\"multilang\">Example description</span><span lang=\"ru\" " .
+            "class=\"multilang\">описание RU</span>";
         $type->toolproxyid = $proxy->id;
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
         $typeid = lti_add_type($type, $data);

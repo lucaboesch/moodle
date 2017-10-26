@@ -2977,7 +2977,9 @@ function get_tool_type_instance_ids($type) {
 }
 
 /**
- * Serialises this tool type
+ * Serialises this tool type.
+ * This function strips out HTML tags of LTI Tool name and description, but does pass
+ * name and description through activated Moodle filters.
  *
  * @param stdClass $type The tool type
  *
@@ -2987,10 +2989,11 @@ function serialise_tool_type(stdClass $type) {
     $capabilitygroups = get_tool_type_capability_groups($type);
     $instanceids = get_tool_type_instance_ids($type);
     // Clean the name. We don't want tags here.
-    $name = clean_param($type->name, PARAM_NOTAGS);
+    $name = format_string(clean_param($type->name, PARAM_TEXT), true, array('context' => context_course::instance($type->course)));
     if (!empty($type->description)) {
         // Clean the description. We don't want tags here.
-        $description = clean_param($type->description, PARAM_NOTAGS);
+        $description = format_string(clean_param($type->description, PARAM_TEXT), true,
+            array('context' => context_course::instance($type->course)));
     } else {
         $description = get_string('editdescription', 'mod_lti');
     }
