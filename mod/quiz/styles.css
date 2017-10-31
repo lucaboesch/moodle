@@ -12,14 +12,20 @@
     margin: 8px auto;
 }
 
-#page-mod-quiz-attempt .submitbtns,
+#page-mod-quiz-attempt .submitbtns {
+    text-align: right;
+    padding-top: 1.5em;
+}
+
 #page-mod-quiz-review .submitbtns {
-    clear: left;
     text-align: left;
     padding-top: 1.5em;
 }
 
-#page-mod-quiz-attempt .submitbtns .mod_quiz-next-nav,
+#page-mod-quiz-review .submitbtns .mod_quiz-prev-nav {
+    clear: left;
+}
+
 #page-mod-quiz-review .submitbtns .mod_quiz-next-nav {
     float: right;
 }
