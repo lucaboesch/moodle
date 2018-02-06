@@ -168,6 +168,7 @@ $CFG->cachedir             = $CFG->dataroot.'/cache';
 $CFG->localcachedir        = $CFG->dataroot.'/localcache';
 $CFG->admin                = $config->admin;
 $CFG->docroot              = 'https://docs.moodle.org';
+$CFG->doctonewwindow       = true;
 $CFG->langotherroot        = $CFG->dataroot.'/lang';
 $CFG->langlocalroot        = $CFG->dataroot.'/lang';
 $CFG->directorypermissions = isset($distro->directorypermissions) ? $distro->directorypermissions : 00777; // let distros set dir permissions
