@@ -484,7 +484,8 @@ class qtype_calculated_variable_substituter {
     /**
      * Replace any embedded variables (like {a}) or formulae (like {={a} + {b}})
      * in some text with the corresponding values.
-     * @param string $text the text to process.
+     * @param string $text the text to process. This string may contain multilang tags, so it needs to be passed
+     * through format_string on output.
      * @return string the text with values substituted.
      */
     public function replace_expressions_in_text($text, $length = null, $format = null) {
@@ -493,6 +494,6 @@ class qtype_calculated_variable_substituter {
                 function ($matches) use ($vs, $format, $length) {
                     return $vs->format_float($vs->calculate($matches[1]), $length, $format);
                 }, $text);
-        return $this->substitute_values_pretty($text);
+        return format_string($this->substitute_values_pretty($text), true, array('context' => context_system::instance()));
     }
 }
