@@ -64,7 +64,7 @@ class course_edit_form extends moodleform {
             $mform->setConstant('fullname', $course->fullname);
         }
 
-        $mform->addElement('text', 'shortname', get_string('shortnamecourse'), 'maxlength="100" size="20"');
+        $mform->addElement('text', 'shortname', get_string('shortnamecourse'), 'maxlength="100" size="30"');
         $mform->addHelpButton('shortname', 'shortnamecourse');
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
@@ -172,7 +172,7 @@ class course_edit_form extends moodleform {
             $mform->addHelpButton('relativedatesmodegroup', 'relativedatesmode');
         }
 
-        $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
+        $mform->addElement('text', 'idnumber', get_string('idnumbercourse'), 'maxlength="100" size="30"');
         $mform->addHelpButton('idnumber', 'idnumbercourse');
         $mform->setType('idnumber', PARAM_RAW);
         if (!empty($course->id) and !has_capability('moodle/course:changeidnumber', $coursecontext)) {

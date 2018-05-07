@@ -52,7 +52,7 @@ class group_form extends moodleform {
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
 
-        $mform->addElement('text','idnumber', get_string('idnumbergroup'), 'maxlength="100" size="10"');
+        $mform->addElement('text', 'idnumber', get_string('idnumbergroup'), 'maxlength="100" size="30"');
         $mform->addHelpButton('idnumber', 'idnumbergroup');
         $mform->setType('idnumber', PARAM_RAW);
         if (!has_capability('moodle/course:changeidnumber', $coursecontext)) {

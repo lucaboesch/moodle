@@ -54,7 +54,7 @@ class grouping_form extends moodleform {
         $mform->addRule('name', get_string('required'), 'required', null, 'server');
         $mform->setType('name', PARAM_TEXT);
 
-        $mform->addElement('text','idnumber', get_string('idnumbergrouping'), 'maxlength="100" size="10"');
+        $mform->addElement('text', 'idnumber', get_string('idnumbergrouping'), 'maxlength="100" size="30"');
         $mform->addHelpButton('idnumber', 'idnumbergrouping');
         $mform->setType('idnumber', PARAM_RAW);
         if (!has_capability('moodle/course:changeidnumber', $coursecontext)) {
