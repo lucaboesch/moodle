@@ -222,6 +222,24 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
     }
 
     /**
+     * Returns the file types accepted by the file manager.
+     *
+     * @return string|array either string '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     */
+    public function getacceptedtypes() {
+        return $this->_options['accepted_types'];
+    }
+
+    /**
+     * Sets the file types that are accepted by the file manager.
+     *
+     * @param mixed $types string|array either string '*' or array of lowercase extensions, i.e. array('.gif','.jpg')
+     */
+    public function setacceptedtypes($types) {
+        $this->_options['accepted_types'] = $types;
+    }
+
+    /**
      * Returns html for help button.
      *
      * @return string html for help button
