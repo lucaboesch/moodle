@@ -105,7 +105,7 @@ abstract class handler {
             $mform->addElement('header', 'policyagreement', get_string('policyagreement'), '');
             $mform->setExpanded('policyagreement');
             $mform->addElement('static', 'policylink', '', '<a href="' . $url .
-                '" onclick="this.target=\'_blank\'">' . get_string('policyagreementclick') . '</a>');
+            '" target="_blank">' . get_string('policyagreementclick') . '</a>');
             $mform->addElement('checkbox', 'policyagreed', get_string('policyaccept'));
             $mform->addRule('policyagreed', get_string('policyagree'), 'required', null, 'client');
         }
