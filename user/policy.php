@@ -85,7 +85,7 @@ if ($mimetype == 'document/unknown') {
 }
 
 // We can not use our popups here, because the url may be arbitrary, see MDL-9823.
-$clicktoopen = '<a href="'.$sitepolicy.'" onclick="this.target=\'_blank\'">'.$strpolicyagreementclick.'</a>';
+$clicktoopen = '<a href="' . $sitepolicy . '" target="_blank">' . $strpolicyagreementclick . '</a>';
 
 echo '<div class="noticebox">';
 echo resourcelib_embed_general($sitepolicy, $strpolicyagreement, $clicktoopen, $mimetype);
