@@ -240,31 +240,29 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     $systemcontext = context_system::instance();
 
     $authoring = new stdClass();
-    $authoring->name = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $author->id .
-        '&amp;course='.$note->courseid . '">' . fullname($author) . '</a>';
-    $authoring->date = userdate($note->lastmodified);
+    $authoring->name = html_writer::link(new moodle_url($CFG->wwwroot . '/user/view.php', array('id' => $author->id,
+        'course' => $note->courseid)), fullname($author));    $authoring->date = userdate($note->lastmodified);
 
-    echo '<div class="notepost '. $note->publishstate . 'notepost' .
-        ($note->usermodified == $USER->id ? ' ownnotepost' : '')  .
-        '" id="note-' . $note->id . '">';
+    echo html_writer::start_div('notepost ' . $note->publishstate . 'notepost' .
+        ($note->usermodified == $USER->id ? ' ownnotepost' : ''), array('id' => 'note-' . $note->id));
 
     // Print note head (e.g. author, user refering to, etc).
     if ($detail & NOTES_SHOW_HEAD) {
-        echo '<div class="header">';
-        echo '<div class="user">';
+        echo html_writer::start_div('header');
+        echo html_writer::start_div('user');
         echo $OUTPUT->user_picture($user, array('courseid' => $note->courseid));
-        echo fullname($user) . '</div>';
-        echo '<div class="info">' .
-            get_string('bynameondate', 'notes', $authoring) .
-            ' (' . get_string('created', 'notes') . ': ' . userdate($note->created) . ')</div>';
-        echo '</div>';
+        echo fullname($user);
+        echo html_writer::end_div();
+        echo html_writer::div(get_string('bynameondate', 'notes', $authoring) . ' (' .
+            get_string('created', 'notes') . ': ' . userdate($note->created) . ')', array('class' => 'info'));
+        echo html_writer::end_div();
     }
 
     // Print note content.
     if ($detail & NOTES_SHOW_BODY) {
-        echo '<div class="content">';
+        echo html_writer::start_div('content');
         echo format_text($note->content, $note->format, array('overflowdiv' => true));
-        echo '</div>';
+        echo html_writer::end_div();
     }
 
     // Print note options (e.g. delete, edit).
@@ -272,13 +270,23 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
         if (has_capability('moodle/notes:manage', $systemcontext) && $note->publishstate == NOTES_STATE_SITE ||
             has_capability('moodle/notes:manage', $context) &&
             ($note->publishstate == NOTES_STATE_PUBLIC || $note->usermodified == $USER->id)) {
-            echo '<div class="footer"><p>';
-            echo '<a href="' . $CFG->wwwroot . '/notes/edit.php?id=' . $note->id. '">' . get_string('edit') . '</a> | ';
-            echo '<a href="' . $CFG->wwwroot . '/notes/delete.php?id=' . $note->id. '">' . get_string('delete') . '</a>';
-            echo '</p></div>';
+            echo html_writer::start_div('footer') .
+            html_writer::tag('p',
+                html_writer::tag('a',  get_string('edit'), array('href' => $CFG->wwwroot . '/notes/edit.php?id=' . $note->id)) .
+                ' | ' .
+                html_writer::tag('a',  get_string('delete'), array('href' => $CFG->wwwroot . '/notes/delete.php?id=' . $note->id)));
+
+            echo html_writer::div(html_writer::tag('p',
+                html_writer::link(new moodle_url($CFG->wwwroot . '/notes/edit.php', array('id' => $note->id)), get_string('edit')) .
+                ' | ' .
+                html_writer::link(new moodle_url($CFG->wwwroot . '/notes/delete.php', array('id' => $note->id)),
+                get_string('delete')), array('class' => 'footer'))
+            );
+
+            echo html_writer::end_div();
         }
     }
-    echo '</div>';
+    echo html_writer::end_div();
 }
 
 /**
@@ -289,11 +297,11 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
  */
 function note_print_list($notes, $detail = NOTES_SHOW_FULL) {
 
-    echo '<div class="notelist">';
+    echo html_writer::start_div('notelist');
     foreach ($notes as $note) {
         note_print($note, $detail);
     }
-    echo '</div>';
+    echo html_writer::end_div();
 }
 
 /**
@@ -311,17 +319,21 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
     global $CFG;
 
     if ($header) {
-        echo '<h3 class="notestitle">' . $header . '</h3>';
-        echo '<div class="notesgroup">';
+        echo html_writer::tag('h3', $header, array('class' => 'notestitle'));
+        echo html_writer::start_div('notesgroup');
     }
     if ($addcourseid) {
+        $addnotestr = html_writer::start_tag('p');
+
         if ($userid) {
-            echo '<p><a href="' . $CFG->wwwroot . '/notes/edit.php?courseid=' . $addcourseid . '&amp;userid=' . $userid .
-                '&amp;publishstate=' . $state . '">' . get_string('addnewnote', 'notes') . '</a></p>';
+            $addnotestr .= html_writer::link(new moodle_url($CFG->wwwroot . '/notes/edit.php', array('userid' => $userid,
+                'courseid' => $addcourseid, 'publishstate' => $state)), get_string('addnewnote', 'notes'));
         } else {
-            echo '<p><a href="' . $CFG->wwwroot . '/user/index.php?id=' . $addcourseid. '">' .
-                get_string('addnewnoteselect', 'notes') . '</a></p>';
+            $addnotestr .= html_writer::link(new moodle_url($CFG->wwwroot . '/user/index.php', array('id' => $addcourseid)),
+                get_string('addnewnoteselect', 'notes'));
         }
+        $addnotestr .= html_writer::end_tag('p');
+        echo $addnotestr;
     }
     if ($viewnotes) {
         $notes = note_list($courseid, $userid, $state, $author);
@@ -329,10 +341,10 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
             note_print_list($notes);
         }
     } else {
-        echo '<p>' . get_string('notesnotvisible', 'notes') . '</p>';
+        echo html_writer::tag('p', get_string('notesnotvisible', 'notes'));
     }
     if ($header) {
-        echo '</div>';  // The notesgroup div.
+        echo html_writer::end_div();  // The notesgroup div.
     }
 }
 
