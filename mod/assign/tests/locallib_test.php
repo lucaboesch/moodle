@@ -1021,6 +1021,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertFalse($participant->submitted);
         $this->assertFalse($participant->requiregrading);
         $this->assertFalse($participant->grantedextension);
+        $this->assertFalse($participant->late);
     }
 
     public function test_get_participant_granted_extension() {
@@ -1040,6 +1041,37 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertTrue($participant->grantedextension);
     }
 
+    public function test_get_participant_late() {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+
+        $now = time();
+        $tomorrow = $now + DAYSECS;
+        $yesterday = $now - DAYSECS;
+
+        $this->setAdminUser();
+        $assign = $this->create_instance($course, [
+            'duedate' => $yesterday,
+            'cutoffdate' => $tomorrow,
+        ]);
+
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+
+        $instance = $assign->get_instance();
+
+        // Simulate a submission.
+        $this->add_submission($student, $assign);
+        $this->submit_for_grading($student, $assign);
+
+        $participant = $assign->get_participant($student->id);
+        $this->assertEquals($student->id, $participant->id);
+        $this->assertTrue($participant->submitted);
+        $this->assertTrue($participant->requiregrading);
+        $this->assertFalse($participant->grantedextension);
+        $this->assertTrue($participant->late);
+}
+
     public function test_get_participant_with_ungraded_submission() {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -1057,6 +1089,7 @@ class mod_assign_locallib_testcase extends advanced_testcase {
         $this->assertTrue($participant->submitted);
         $this->assertTrue($participant->requiregrading);
         $this->assertFalse($participant->grantedextension);
+        $this->assertFalse($participant->late);
     }
 
     public function test_get_participant_with_graded_submission() {

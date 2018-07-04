@@ -107,6 +107,7 @@ class grading_app implements templatable, renderable {
             $user->fullname = fullname($record);
             $user->requiregrading = $record->requiregrading;
             $user->grantedextension = $record->grantedextension;
+            $user->late = $record->late;
             $user->submitted = $record->submitted;
             if (!empty($record->groupid)) {
                 $user->groupid = $record->groupid;

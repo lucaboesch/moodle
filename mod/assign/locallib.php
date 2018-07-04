@@ -39,6 +39,7 @@ define('ASSIGN_FILTER_NOT_SUBMITTED', 'notsubmitted');
 define('ASSIGN_FILTER_SINGLE_USER', 'singleuser');
 define('ASSIGN_FILTER_REQUIRE_GRADING', 'requiregrading');
 define('ASSIGN_FILTER_GRANTED_EXTENSION', 'grantedextension');
+define('ASSIGN_FILTER_LATE', 'late');
 
 // Marker filter for grading page.
 define('ASSIGN_MARKER_FILTER_NO_MARKER', -1);
@@ -1935,7 +1936,7 @@ class assign {
      * Get the submission status/grading status for all submissions in this assignment for the
      * given paticipants.
      *
-     * These statuses match the available filters (requiregrading, submitted, notsubmitted, grantedextension).
+     * These statuses match the available filters (requiregrading, submitted, notsubmitted, grantedextension, late).
      * If this is a group assignment, group info is also returned.
      *
      * @param array $participants an associative array where the key is the participant id and
@@ -2042,7 +2043,7 @@ class assign {
      * @param int $currentgroup
      * @param boolean $tablesort Apply current user table sorting preferences.
      * @return array List of user records with extra fields 'submitted', 'notsubmitted', 'requiregrading', 'grantedextension',
-     *               'groupid', 'groupname'
+     *               'late', 'groupid', 'groupname'
      */
     public function list_participants_with_filter_status_and_group($currentgroup, $tablesort = false) {
         $participants = $this->list_participants($currentgroup, false, $tablesort);
@@ -9349,7 +9350,8 @@ class assign {
             ASSIGN_FILTER_SUBMITTED,
             ASSIGN_FILTER_NOT_SUBMITTED,
             ASSIGN_FILTER_REQUIRE_GRADING,
-            ASSIGN_FILTER_GRANTED_EXTENSION
+            ASSIGN_FILTER_GRANTED_EXTENSION,
+            ASSIGN_FILTER_GRANTED_LATE
         ];
 
         $current = get_user_preferences('assign_filter', '');

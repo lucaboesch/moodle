@@ -323,6 +323,10 @@ class assign_grading_table extends table_sql implements renderable {
             } else if ($filter == ASSIGN_FILTER_GRANTED_EXTENSION) {
                 $where .= ' AND uf.extensionduedate > 0 ';
 
+            } else if ($filter == ASSIGN_FILTER_LATE) {
+                $from .= ' LEFT JOIN {assign} a ON s.assignment = a.id';
+                $where .= ' AND (s.timemodified > (SELECT MAX(v) FROM (VALUES (uf.extensionduedate), (a.duedate)) AS value(v)))';
+
             } else if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
                 $userfilter = (int) array_pop(explode('=', $filter));
                 $where .= ' AND (u.id = :userid)';
