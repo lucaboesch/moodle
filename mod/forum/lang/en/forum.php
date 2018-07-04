@@ -248,6 +248,7 @@ $string['forum:rate'] = 'Rate posts';
 $string['forum:replynews'] = 'Reply to announcements';
 $string['forum:replypost'] = 'Reply to posts';
 $string['forums'] = 'Forums';
+$string['forumsearch'] = 'Forum search';
 $string['forum:splitdiscussions'] = 'Split discussions';
 $string['forum:startdiscussion'] = 'Start new discussions';
 $string['forumsubjecthidden'] = 'Subject (hidden)';
