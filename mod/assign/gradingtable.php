@@ -739,12 +739,11 @@ class assign_grading_table extends table_sql implements renderable {
         global $DB;
 
         if (empty($this->scale)) {
-            $dbparams = array('id' => -($this->assignment->get_instance()->grade));
-            $this->scale = $DB->get_record('scale', $dbparams);
+            $this->scale = new grade_scale(array('id' => -($this->assignment->get_instance()->grade), true));
         }
 
         if (!empty($this->scale->scale)) {
-            return implode("\n", explode(',', $this->scale->scale));
+            return implode("\n", explode(',', $this->scale->get_scale()));
         }
         return '';
     }

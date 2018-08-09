@@ -116,7 +116,8 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
     $data = array();
     foreach($scales as $scale) {
         $line = array();
-        $line[] = $scale->get_name() .'<div class="scale_options">'.str_replace(",", ", ", $scale->scale).'</div>';
+        $line[] = $scale->get_name() . '<div class="scale_options">' . str_replace(",", ", ",
+            $scale->get_scale()) . '</div>';
 
         $used = $scale->is_used();
         $line[] = $used ? get_string('yes') : get_string('no');
@@ -142,7 +143,8 @@ if ($scales = grade_scale::fetch_all_global()) {
     $data = array();
     foreach($scales as $scale) {
         $line = array();
-        $line[] = $scale->get_name().'<div class="scale_options">'.str_replace(",", ", ", $scale->scale).'</div>';
+        $line[] = $scale->get_name() . '<div class="scale_options">' . str_replace(",", ", ",
+            $scale->get_scale()) . '</div>';
 
         $used = $scale->is_used();
         $line[] = $used ? get_string('yes') : get_string('no');

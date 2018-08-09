@@ -283,11 +283,12 @@ class grade_scale extends grade_object {
      * @return string
      */
     public function get_nearest_item($grade) {
-        global $DB;
-        // Obtain nearest scale item from average
-        $scales_array = $DB->get_records('scale', array('id' => $this->id));
-        $scale = $scales_array[$this->id];
-        $scales = explode(",", $scale->scale);
+        if (empty($this->scale)) {
+            // Obtain nearest scale item from average.
+            $data = $this->fetch(array('id' => $this->id));
+            $this->set_properties($this, $data);
+        }
+        $scales = $this->get_items();
 
         // this could be a 0 when summed and rounded, e.g, 1, no grade, no grade, no grade
         if ($grade < 1) {
@@ -388,5 +389,30 @@ class grade_scale extends grade_object {
         $options->noclean = true;
         $description = file_rewrite_pluginfile_urls($this->description, 'pluginfile.php', $systemcontext->id, 'grade', 'scale', $this->id);
         return format_text($description, $this->descriptionformat, $options);
+    }
+
+    /**
+     * Return array of the scale items for displaying
+     *
+     * @return array
+     */
+    public function get_items() {
+        $scalevalues = array();
+        if (empty($this->scale_items)) {
+            $this->load_items();
+        }
+        foreach ($this->scale_items as $key => $val) {
+            $scalevalues[$key] = format_string($val, false);
+        }
+        return $scalevalues;
+    }
+
+    /**
+     * Return string representation of the scale items for displaying
+     *
+     * @return array
+     */
+    public function get_scale() {
+        return format_string($this->scale, false);
     }
 }

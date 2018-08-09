@@ -439,7 +439,6 @@ abstract class moodleform_mod extends moodleform {
                     $gradepassvalid = true;
                 }
             }
-
             // Grade to pass: ensure that the grade to pass is valid for points and scales.
             // If we are working with a scale, convert into a positive number for validation.
             if ($gradepassvalid && isset($data[$gradepassfieldname]) && (!empty($data[$gradefieldname]) || !empty($data[$scalefieldname]))) {
