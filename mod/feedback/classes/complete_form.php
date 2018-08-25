@@ -447,6 +447,22 @@ class mod_feedback_complete_form extends moodleform {
      */
     protected function enhance_name_for_edit($item, $element) {
         global $OUTPUT;
+        $name = $element->getLabel();
+
+        $name = html_writer::span('', 'itemdd', array('id' => 'feedback_item_box_' . $item->id)) .
+                html_writer::span($name, 'itemname') . $this->get_edit_menu($item, $element);
+
+        $element->setLabel(html_writer::span($name, 'itemtitle'));
+    }
+
+    /**
+     * Gets an editing menu
+     * @param stdClass $item
+     * @param HTML_QuickForm_element $element
+     * @return string
+     */
+    protected function get_edit_menu($item, $element) {
+        global $OUTPUT;
         $menu = new action_menu();
         $menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
         $menu->set_constraint('.feedback_form');
@@ -459,13 +475,7 @@ class mod_feedback_complete_form extends moodleform {
             $menu->add($action);
         }
         $editmenu = $OUTPUT->render($menu);
-
-        $name = $element->getLabel();
-
-        $name = html_writer::span('', 'itemdd', array('id' => 'feedback_item_box_' . $item->id)) .
-                html_writer::span($name, 'itemname') .
-                html_writer::span($editmenu, 'itemactions');
-        $element->setLabel(html_writer::span($name, 'itemtitle'));
+        return html_writer::span($editmenu, 'itemactions');
     }
 
     /**
