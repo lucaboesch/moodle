@@ -17675,7 +17675,10 @@ textarea[data-auto-rows] {
 .mform.full-width-labels .fitem.row {
   margin-left: 0;
   margin-right: 0; }
-  .mform.full-width-labels .fitem.row > .col-md-3,
+  .mform.full-width-labels .fitem.row > .col-md-3 {
+    float: none;
+    width: inherit;
+    padding-left: 0; }
   .mform.full-width-labels .fitem.row > .col-md-9 {
     flex: 0 0 100%;
     max-width: 100%;

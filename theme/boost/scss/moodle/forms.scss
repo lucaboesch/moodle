@@ -361,7 +361,11 @@ textarea[data-auto-rows] {
     .fitem.row {
         margin-left: 0;
         margin-right: 0;
-        & > .col-md-3,
+        & > .col-md-3 {
+            float: none;
+            width: inherit;
+            padding-left: 0;
+        }
         & > .col-md-9 {
             flex: 0 0 100%;
             max-width: 100%;
