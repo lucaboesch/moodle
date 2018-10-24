@@ -81,15 +81,20 @@ echo $OUTPUT->header();
 if (empty($CFG->googlemapkey3)) {
     $imgwidth  = 620;
     $imgheight = 310;
-    $dotwidth  = 18;
-    $dotheight = 30;
+    $lon = $info['longitude'];
+    $lat = $info['latitude'];
 
-    $dx = round((($info['longitude'] + 180) * ($imgwidth / 360)) - $imgwidth - $dotwidth/2);
-    $dy = round((($info['latitude'] + 90) * ($imgheight / 180)));
+    // Bounding box calculation to set the initial "zoom level" on the map.
 
-    echo '<div id="map" style="width:'.($imgwidth+$dotwidth).'px; height:'.$imgheight.'px;">';
-    echo '<img src="earth.jpeg" style="width:'.$imgwidth.'px; height:'.$imgheight.'px" alt="" />';
-    echo '<img src="marker.gif" style="width:'.$dotwidth.'px; height:'.$dotheight.'px; margin-left:'.$dx.'px; margin-bottom:'.$dy.'px;" alt="" />';
+    $bboxleft = $lon - 1.8270;
+    $bboxbottom = $lat - 1.0962;
+    $bboxright = $lon + 1.8270;
+    $bboxtop = $lat + 1.0962;
+
+    echo '<div id="map" style="width: ' . $imgwidth . 'px; height: ' . $imgheight . 'px">';
+    echo '<object data="https://www.openstreetmap.org/export/embed.html?bbox=' . $bboxleft . '%2C' . $bboxbottom .
+        '%2C' . $bboxright . '%2C' . $bboxtop . '&layer=mapnik&marker=' . $lat . '%2C' . $lon . '" width="100%" ' .
+        'height="100%"></object>';
     echo '</div>';
     echo '<div id="note">'.$info['note'].'</div>';
 
