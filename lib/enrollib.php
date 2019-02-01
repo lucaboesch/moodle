@@ -624,7 +624,7 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
             }
         }
         $sort = implode(',', $sorts);
-        $orderby = "ORDER BY $sort";
+        $orderby = "ORDER BY itemtype ASC, $sort";
     }
 
     $wheres = array("c.id <> :siteid");
@@ -637,9 +637,11 @@ function enrol_get_my_courses($fields = null, $sort = null, $limit = 0, $coursei
     }
 
     $coursefields = 'c.' .join(',c.', $fields);
-    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx') . ', fav.itemtype';
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)" .
+              "LEFT JOIN {favourite} fav ON (c.id = fav.itemid AND fav.userid = :userid)";
     $params['contextlevel'] = CONTEXT_COURSE;
+    $params['userid'] = $USER->id;
     $wheres = implode(" AND ", $wheres);
 
     $timeaccessselect = "";
