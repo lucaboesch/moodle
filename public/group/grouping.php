@@ -67,7 +67,7 @@ $context = context_course::instance($course->id);
 require_capability('moodle/course:managegroups', $context);
 
 $strgroupings = get_string('groupings', 'group');
-$PAGE->set_title($strgroupings);
+$PAGE->set_title(get_string('groupingscourse', 'group', $course->shortname));
 $PAGE->set_heading($course->fullname. ': '.$strgroupings);
 $PAGE->set_pagelayout('admin');
 navigation_node::override_active_url(new moodle_url('/group/index.php', array('id' => $course->id)));
