@@ -176,13 +176,14 @@ switch ($action) {
 $strgroups = get_string('groups');
 $strparticipants = get_string('participants');
 
-// Print header.
-$PAGE->set_title($strgroups);
+/// Print header
+$PAGE->set_title(get_string('groupscourse', 'group', $course->shortname));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
 
 echo $OUTPUT->render_participants_tertiary_nav($course);
+echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) . ' ' . get_string('groups') , 3);
 
 $groups = groups_get_all_groups($courseid);
 $selectedname = null;

@@ -275,7 +275,7 @@ navigation_node::override_active_url(new moodle_url('/group/index.php', array('i
 $PAGE->navbar->add(get_string('overview', 'group'));
 
 /// Print header
-$PAGE->set_title($strgroups);
+$PAGE->set_title(get_string('groupscourse', 'group', $course->shortname));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 
