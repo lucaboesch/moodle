@@ -50,7 +50,7 @@ $strgroups           = get_string('groups');
 $strparticipants     = get_string('participants');
 $strautocreategroups = get_string('autocreategroups', 'group');
 
-$PAGE->set_title($strgroups);
+$PAGE->set_title(get_string('groupscourse', 'group', $course->shortname));
 $PAGE->set_heading($course->fullname. ': '.$strgroups);
 $PAGE->set_pagelayout('admin');
 navigation_node::override_active_url(new moodle_url('/group/index.php', array('id' => $courseid)));
