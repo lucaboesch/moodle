@@ -1013,7 +1013,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
     } else {
         $PAGE->set_pagelayout('admin');
     }
-    $PAGE->set_title(get_string('grades') . ': ' . $stractive_type);
+    $PAGE->set_title($PAGE->course->shortname . ': ' . get_string('grades') . ': ' . $stractive_type);
     $PAGE->set_heading($title);
     if ($buttons instanceof single_button) {
         $buttons = $OUTPUT->render($buttons);
