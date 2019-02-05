@@ -160,11 +160,10 @@ switch ($action) {
 }
 
 // Print the page and form
-$strgroups = get_string('groups');
 $strparticipants = get_string('participants');
 
 /// Print header
-$PAGE->set_title($strgroups);
+$PAGE->set_title(get_string('groupscourse', 'group', $course->shortname));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 echo $OUTPUT->header();
@@ -173,7 +172,7 @@ echo $OUTPUT->header();
 $currenttab = 'groups';
 require('tabs.php');
 
-echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$strgroups, 3);
+echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) . ' ' . get_string('groups') , 3);
 
 $groups = groups_get_all_groups($courseid);
 $selectedname = null;
