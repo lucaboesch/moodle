@@ -858,6 +858,7 @@ $string['mustenablestats'] = 'Statistics have not yet been enabled on this site.
 $string['mycoursesperpage'] = 'Number of courses';
 $string['mydashboard'] = 'System default dashboard';
 $string['mymoodle'] = 'Dashboard';
+$string['mymoodlefullname'] = '{$a}: Dashboard';
 $string['mymoodleredirect'] = 'Force users to use My Moodle';
 $string['mypage'] = 'Default Dashboard page';
 $string['myprofile'] = 'Default profile page';
