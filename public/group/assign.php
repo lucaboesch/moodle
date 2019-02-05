@@ -137,7 +137,7 @@ $PAGE->navbar->add(get_string('groupings', 'group'),
 $PAGE->navbar->add($straddgroupstogroupings);
 
 /// Print header
-$PAGE->set_title("$course->shortname: $strgroups");
+$PAGE->set_title(get_string('groupscourse', 'group', $course->shortname));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
