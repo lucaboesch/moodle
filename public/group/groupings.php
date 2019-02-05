@@ -54,7 +54,7 @@ navigation_node::override_active_url(new moodle_url('/group/index.php', array('i
 $PAGE->navbar->add($strgroupings);
 
 /// Print header
-$PAGE->set_title($strgroupings);
+$PAGE->set_title(get_string('groupingscourse', 'group', $course->shortname));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 
