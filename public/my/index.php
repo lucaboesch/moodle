@@ -81,7 +81,8 @@ if (isguestuser()) {  // Force them to see system default, no editing allowed
     $userid = $USER->id;  // Owner of the page
     $context = context_user::instance($USER->id);
     $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
-    $pagetitle = $strmymoodle;
+    $header = fullname($USER);
+    $pagetitle = $strmymoodle = get_string('mymoodlefullname', 'admin', $header);
 }
 
 // Get the My Moodle page info.  Should always return something unless the database is broken.
