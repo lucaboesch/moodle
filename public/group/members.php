@@ -94,7 +94,7 @@ $PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$c
 $PAGE->navbar->add($stradduserstogroup);
 
 /// Print header
-$PAGE->set_title("$course->shortname: $strgroups");
+$PAGE->set_title(get_string('groupscourse', 'group', $course->shortname));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('adduserstogroup', 'group').": $groupname", 3);
