@@ -1620,11 +1620,15 @@ class flexible_table {
             return '';
         }
 
+        $string = html_writer::start_tag('span', array('class' => 'text-primary'));
+
         if ($order == SORT_ASC) {
-            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'));
+            $string .= $OUTPUT->pix_icon('t/downlong', get_string('asc'));
         } else {
-            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'));
+            $string .= $OUTPUT->pix_icon('t/uplong', get_string('desc'));
         }
+        $string .= html_writer::end_tag('span');
+        return $string;
     }
 
     /**
