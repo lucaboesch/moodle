@@ -1941,8 +1941,8 @@ class grade_report_grader extends grade_report {
 
         $strsortasc   = $this->get_lang_string('sortasc', 'grades');
         $strsortdesc  = $this->get_lang_string('sortdesc', 'grades');
-        $iconasc = $OUTPUT->pix_icon('t/sort_asc', $strsortasc, '', array('class' => 'iconsmall sorticon'));
-        $icondesc = $OUTPUT->pix_icon('t/sort_desc', $strsortdesc, '', array('class' => 'iconsmall sorticon'));
+        $iconasc = $OUTPUT->pix_icon('t/downlong', $strsortasc, '', array('class' => 'iconsmall sorticon'));
+        $icondesc = $OUTPUT->pix_icon('t/uplong', $strsortdesc, '', array('class' => 'iconsmall sorticon'));
 
         // Sourced from tablelib.php
         // Check the full name display for sortable fields.
@@ -1964,7 +1964,9 @@ class grade_report_grader extends grade_report {
                     new moodle_url($this->baseurl, array('sortitemid' => $name)), $this->get_lang_string($name)
                 );
                 if ($this->sortitemid == $name) {
+                    $arrows['studentname'] .= html_writer::start_tag('span', array('class' => 'text-primary'));
                     $arrows['studentname'] .= $this->sortorder == 'ASC' ? $iconasc : $icondesc;
+                    $arrows['studentname'] .= html_writer::end_tag('span');
                 }
                 $arrows['studentname'] .= ' / ';
             }
