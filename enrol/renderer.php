@@ -562,11 +562,17 @@ class course_enrolment_table extends html_table implements renderable {
         if ($this->sort == $field) {
             $direction = $this->sortdirection;
         }
+
+        $string = html_writer::start_tag('span', array('class' => 'text-primary'));
+
         if ($direction === 'ASC') {
-            return $output->pix_icon('t/sort_asc', get_string('sort'));
+            $string .= $output->pix_icon('t/downlong', get_string('sort'));
         } else {
-            return $output->pix_icon('t/sort_desc', get_string('sort'));
+            $string .= $output->pix_icon('t/uplong', get_string('sort'));
         }
+
+        $string .= html_writer::end_tag('span');
+        return $string;
     }
 
     /**
