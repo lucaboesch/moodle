@@ -44,6 +44,7 @@ These classes should no longer be used:
   display the users full name in a secure layout.
 * Secure layout in themes boost and classic have been modified to allow language selection as they now call the
   output.secure_layout_language_menu function.
+* New icons t/uplong, t/downlong to use for ordering in table headers.
 
 === 3.8 ===
 
