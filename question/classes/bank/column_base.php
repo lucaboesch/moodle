@@ -153,9 +153,9 @@ abstract class column_base {
     protected function get_sort_icon($reverse) {
         global $OUTPUT;
         if ($reverse) {
-            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'), '', array('class' => 'iconsort'));
+            return $OUTPUT->pix_icon('t/uplong', get_string('desc'), '', array('class' => 'iconsort'));
         } else {
-            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'), '', array('class' => 'iconsort'));
+            return $OUTPUT->pix_icon('t/downlong', get_string('asc'), '', array('class' => 'iconsort'));
         }
     }
 
