@@ -416,8 +416,8 @@ abstract class grade_report {
      */
     protected function get_sort_arrow($direction='move', $sortlink=null) {
         global $OUTPUT;
-        $pix = array('up' => 't/sort_desc', 'down' => 't/sort_asc', 'move' => 't/sort');
-        $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'asc');
+        $pix = array('up' => 't/downlong', 'down' => 't/uplong', 'move' => 't/updownlong');
+        $matrix = array('up' => 'desc', 'down' => 'asc', 'move' => 'desc');
         $strsort = $this->get_lang_string('sort' . $matrix[$direction]);
 
         $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);

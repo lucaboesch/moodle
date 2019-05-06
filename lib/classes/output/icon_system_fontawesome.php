@@ -442,6 +442,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/unlock' => 'fa-lock',
             'core:t/up' => 'fa-arrow-up',
             'core:t/uplong' => 'fa-long-arrow-up',
+            'core:t/updownlong' => 'fa-arrows-v',
             'core:t/user' => 'fa-user',
             'core:t/viewdetails' => 'fa-list',
         ];
