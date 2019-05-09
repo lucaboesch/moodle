@@ -54,7 +54,7 @@ class data_field_date extends data_field_base {
                 $gregoriandate['hour'],
                 $gregoriandate['minute'],
                 0,
-                0,
+                99,
                 false);
         } else if ($recordid) {
             $content = (int)$DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
@@ -119,7 +119,7 @@ class data_field_date extends data_field_base {
                 $gregoriandate['hour'],
                 $gregoriandate['minute'],
                 0,
-                0,
+                99,
                 false);
             $data['usedate'] = 1;
             return $data;
@@ -151,7 +151,7 @@ class data_field_date extends data_field_base {
                 $gregoriandate['hour'],
                 $gregoriandate['minute'],
                 0,
-                0,
+                99,
                 false);
 
             if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
