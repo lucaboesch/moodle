@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../../../../config.php');
+require(__DIR__ . '/../../../../../config.php');
 
 @error_reporting(E_ALL ^ E_NOTICE); // Hide notices even if Moodle is configured to show them.
 
