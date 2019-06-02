@@ -4,7 +4,7 @@ see https://github.com/tinymce/tinymce_spellchecker_php
 List of changes:
 * Add support for curl proxy when accessing Google spell service.
 * Workaround for error() function collisions.
-* Modified config file to use moodle $CFG.
+* Modified config file to use Moodle $CFG (in MDL-33041). Then, in MDL-47951, amended the path to Moodle config.php.
 * Moved static files to /tinymce/ subfolder.
 * MDL-25736 - French spellchecker fixes.
 * Fix htmlentities conversion in GoogleSpell.php
