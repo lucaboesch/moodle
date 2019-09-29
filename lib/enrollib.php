@@ -1490,6 +1490,10 @@ function get_enrolled_with_capabilities_join(context $context, $prefix = '', $ca
         $cannotmatchanyrows = $cannotmatchanyrows || $groupjoin->cannotmatchanyrows;
     }
 
+    if ($group == USERSWITHOUTGROUP) {
+        $wheres[] = $groupjoin->wheres;
+    }
+
     $joins = implode("\n", $joins);
     $wheres[] = "{$prefix}u.deleted = 0";
     $wheres = implode(" AND ", $wheres);

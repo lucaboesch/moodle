@@ -592,6 +592,10 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
 
     $groupsmenu += groups_sort_menu_options($allowedgroups, $usergroups);
 
+    if (!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) {
+        $groupsmenu[USERSWITHOUTGROUP] = get_string('participantsnotingroup');
+    }
+
     if ($groupmode == VISIBLEGROUPS) {
         $grouplabel = get_string('groupsvisible');
     } else {
@@ -790,6 +794,10 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
 
     $groupsmenu += groups_sort_menu_options($allowedgroups, $usergroups);
 
+    if (!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) {
+        $groupsmenu[USERSWITHOUTGROUP] = get_string('participantsnotingroup');
+    }
+
     if ($groupmode == VISIBLEGROUPS) {
         $grouplabel = get_string('groupsvisible');
     } else {
@@ -880,6 +888,7 @@ function groups_get_course_group($course, $update=false, $allowedgroups=null) {
  * @param bool $update change active group if group param submitted
  * @param array $allowedgroups list of groups user may access (INTERNAL, to be used only from groups_print_activity_menu())
  * @return mixed false if groups not used, int if groups used, 0 means all groups (access must be verified in SEPARATE mode)
+ *     USERSWITHOUTGROUP means participants not in a group.
  */
 function groups_get_activity_group($cm, $update=false, $allowedgroups=null) {
     global $USER, $SESSION;
@@ -897,6 +906,10 @@ function groups_get_activity_group($cm, $update=false, $allowedgroups=null) {
     if (!is_array($allowedgroups)) {
         if ($groupmode == VISIBLEGROUPS or $groupmode === 'aag') {
             $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
+        } else if ($changegroup == USERSWITHOUTGROUP) {
+            if ($groupmode == VISIBLEGROUPS or $groupmode === 'aag') {
+                $SESSION->activegroup[$cm->course][$groupmode][$cm->groupingid] = USERSWITHOUTGROUP;
+            }
         } else {
             $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
         }
