@@ -1554,6 +1554,7 @@ $string['parentcoursenotfound'] = 'Parent course not found!';
 $string['parentfolder'] = 'Parent folder';
 $string['participants'] = 'Participants';
 $string['participantslist'] = 'Participants list';
+$string['participantsnotingroup'] = 'Participants not in a group';
 $string['participationratio'] = 'Participation ratio';
 $string['participationreport'] = 'Participation report';
 $string['password'] = 'Password';
