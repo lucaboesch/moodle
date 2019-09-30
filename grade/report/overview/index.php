@@ -136,7 +136,7 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
             echo $renderer->graded_users_selector('overview', $course, $userid, $currentgroup, false);
         }
 
-        if ($currentgroup and !groups_is_member($currentgroup, $userid)) {
+        if ($currentgroup and !groups_is_member($currentgroup, $userid) and $currentgroup != USERSWITHOUTGROUP) {
             echo $OUTPUT->notification(get_string('groupusernotmember', 'error'));
         } else {
             if ($report->fill_table()) {
