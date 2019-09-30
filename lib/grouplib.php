@@ -775,6 +775,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
 
     $context = context_module::instance($cm->id);
     $aag = has_capability('moodle/site:accessallgroups', $context);
+    $student = !has_capability('moodle/course:viewhiddensections', $context);
 
     $usergroups = array();
     if ($groupmode == VISIBLEGROUPS or $aag) {
@@ -788,7 +789,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
     $activegroup = groups_get_activity_group($cm, true, $allowedgroups);
 
     $groupsmenu = array();
-    if ((!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) and !$hideallparticipants) {
+    if ((!$allowedgroups or $groupmode == VISIBLEGROUPS or $aag) and !$hideallparticipants and !$student) {
         $groupsmenu[0] = get_string('allparticipants');
     }
 

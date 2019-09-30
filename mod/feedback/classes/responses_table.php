@@ -170,7 +170,11 @@ class mod_feedback_responses_table extends table_sql {
         $params['courseid'] = $this->feedbackstructure->get_courseid();
 
         $group = (empty($group)) ? groups_get_activity_group($this->feedbackstructure->get_cm(), true) : $group;
-        if ($group) {
+        if ($group == USERSWITHOUTGROUP) {
+            $where .= ' AND c.userid IN (SELECT u.id FROM {user} u
+                                            LEFT JOIN {groups_members} gm ON u.id = gm.userid
+                                                WHERE gm.groupid IS NULL)';
+        } else {
             $where .= ' AND c.userid IN (SELECT g.userid FROM {groups_members} g WHERE g.groupid = :group)';
             $params['group'] = $group;
         }
