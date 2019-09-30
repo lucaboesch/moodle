@@ -309,9 +309,15 @@ function survey_get_responses($surveyid, $groupid, $groupingid) {
 
     $params = array('surveyid'=>$surveyid, 'groupid'=>$groupid, 'groupingid'=>$groupingid);
 
-    if ($groupid) {
-        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid = :groupid ";
+    $groupswhere = "";
 
+    if ($groupid) {
+        if ($groupid == USERSWITHOUTGROUP) {
+            $groupsjoin = "LEFT JOIN {groups_members} gm ON u.id = gm.userid";
+            $groupswhere = " AND gm.groupid IS NULL ";
+        } else {
+            $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid = :groupid ";
+        }
     } else if ($groupingid) {
         $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid
                        JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
@@ -326,6 +332,7 @@ function survey_get_responses($surveyid, $groupid, $groupingid) {
                                    JOIN {user} u ON a.userid = u.id
                             $groupsjoin
                                   WHERE a.survey = :surveyid
+                            $groupswhere
                                GROUP BY $userfields
                                ORDER BY time ASC", $params);
 }
@@ -372,9 +379,14 @@ function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.ans
     $params = array('surveyid'=>$surveyid, 'questionid'=>$questionid);
 
     if ($groupid) {
-        $groupfrom = ', {groups_members} gm';
-        $groupsql  = 'AND gm.groupid = :groupid AND u.id = gm.userid';
-        $params['groupid'] = $groupid;
+        if ($groupid == USERSWITHOUTGROUP) {
+            $groupfrom = ' LEFT JOIN {groups_members} gm ON u.id = gm.userid';
+            $groupsql = ' AND gm.groupid IS NULL';
+        } else {
+            $groupfrom = ', {groups_members} gm';
+            $groupsql = 'AND gm.groupid = :groupid AND u.id = gm.userid';
+            $params['groupid'] = $groupid;
+        }
     } else {
         $groupfrom = '';
         $groupsql  = '';

@@ -1688,7 +1688,7 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
                 $groupselect = "AND (d.groupid = ? OR d.groupid = -1)";
                 $params[] = $currentgroup;
             } else {
-                $groupselect = "AND d.groupid = -1";
+                $groupselect = "AND d.groupid = -1 OR d.groupid = " . USERSWITHOUTGROUP;
             }
         }
     } else {
@@ -2411,6 +2411,8 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
             } else {
                 echo $group->name;
             }
+        } else if ($post->groupid != USERSWITHOUTGROUP) {
+            echo get_string('all');
         }
         echo "</td>\n";
     }

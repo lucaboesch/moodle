@@ -63,10 +63,14 @@ $PAGE->set_popup_notification_allowed(false);
 // Check to see if groups are being used here.
 if ($groupmode = groups_get_activity_groupmode($cm)) { // Groups are being used.
     if ($groupid = groups_get_activity_group($cm)) {
-        if (!$group = groups_get_group($groupid)) {
-            print_error('invalidgroupid');
+        if ($groupid == USERSWITHOUTGROUP) {
+            $groupname = ': ' . get_string('participantsnotingroup');
+        } else {
+            if (!$group = groups_get_group($groupid)) {
+                print_error('invalidgroupid');
+            }
+            $groupname = ': ' . $group->name;
         }
-        $groupname = ': '.$group->name;
     } else {
         $groupname = ': '.get_string('allparticipants');
     }

@@ -208,6 +208,7 @@ class mod_forum_post_form extends moodleform {
                 if (forum_user_can_post_discussion($forum, -1, null, $cm, $modcontext)) {
                     // Note: We must reverse in this manner because array_unshift renumbers the array.
                     $groupinfo = array_reverse($groupinfo, true);
+                    $groupinfo[-3] = get_string('participantsnotingroup');
                     $groupinfo[-1] = get_string('allparticipants');
                     $groupinfo = array_reverse($groupinfo, true);
                     $groupcount++;
@@ -231,7 +232,10 @@ class mod_forum_post_form extends moodleform {
                     $mform->setDefault('groupinfo', $post->groupid);
                     $mform->setType('groupinfo', PARAM_INT);
                 } else {
-                    if (empty($post->groupid)) {
+                    if (empty($post->groupid) || $post->groupid == USERSWITHOUTGROUP) {
+                        if (empty($post->groupid)) {
+                            $post->groupid = USERSWITHOUTGROUP;
+                        }
                         $groupname = get_string('allparticipants');
                     } else {
                         $groupname = format_string($groupdata[$post->groupid]->name);

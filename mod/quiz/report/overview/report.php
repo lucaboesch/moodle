@@ -139,15 +139,18 @@ class quiz_overview_report extends quiz_attempts_report {
                             $quiz, $groupstudentsjoins);
                     if ($currentgroup) {
                         $a= new stdClass();
-                        $a->groupname = groups_get_group_name($currentgroup);
                         $a->coursestudents = get_string('participants');
                         $a->countregradeneeded = $regradesneeded;
-                        $regradealldrydolabel =
-                                get_string('regradealldrydogroup', 'quiz_overview', $a);
-                        $regradealldrylabel =
-                                get_string('regradealldrygroup', 'quiz_overview', $a);
-                        $regradealllabel =
-                                get_string('regradeallgroup', 'quiz_overview', $a);
+                        if ($currentgroup == USERSWITHOUTGROUP) {
+                            $regradealldrydolabel = get_string('regradealldrydoparticipantsnotingroup', 'quiz_overview', $a);
+                            $regradealldrylabel = get_string('regradealldryparticipantsnotingroup', 'quiz_overview', $a);
+                            $regradealllabel = get_string('regradeallparticipantsnotingroup', 'quiz_overview', $a);
+                        } else {
+                            $a->groupname = groups_get_group_name($currentgroup);
+                            $regradealldrydolabel = get_string('regradealldrydogroup', 'quiz_overview', $a);
+                            $regradealldrylabel = get_string('regradealldrygroup', 'quiz_overview', $a);
+                            $regradealllabel = get_string('regradeallgroup', 'quiz_overview', $a);
+                        }
                     } else {
                         $regradealldrydolabel =
                                 get_string('regradealldrydo', 'quiz_overview', $regradesneeded);
@@ -246,6 +249,13 @@ class quiz_overview_report extends quiz_attempts_report {
                 $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, new \core\dml\sql_join());
                 $chart = self::get_chart($labels, $data);
                 $graphname = get_string('overviewreportgraph', 'quiz_overview');
+
+                if ($currentgroup == USERSWITHOUTGROUP) {
+                    $graphname = get_string('overviewreportgraphparticipantsnotingroup', 'quiz_overview');
+                } else {
+                    $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', groups_get_group_name($currentgroup));
+                }
+
                 // Numerical range data should display in LTR even for RTL languages.
                 echo $output->chart($chart, $graphname, ['dir' => 'ltr']);
             }

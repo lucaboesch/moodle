@@ -2566,7 +2566,7 @@ class assign {
         if ($this->get_instance()->teamsubmission) {
 
             $groupsstr = '';
-            if ($currentgroup != 0) {
+            if ($currentgroup != 0 and $currentgroup != USERSWITHOUTGROUP) {
                 // If there is an active group we should only display the current group users groups.
                 $participants = $this->list_participants($currentgroup, true);
                 $groups = groups_get_all_groups($this->get_course()->id,

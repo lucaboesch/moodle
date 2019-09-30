@@ -316,6 +316,14 @@ class mod_feedback_structure {
                         FROM {feedback_completed} fbc
                         WHERE fbc.feedback = :feedback
                             AND fbc.courseid = :courseid";
+        } else if (intval($groupid) == USERSWITHOUTGROUP) {
+            $query = "SELECT COUNT(DISTINCT fbc.id)
+                        FROM {feedback_completed} fbc
+                        WHERE fbc.feedback = :feedback
+                            AND fbc.userid IN (SELECT u.id FROM {user} u
+                                LEFT JOIN {groups_members} gm
+                                    ON u.id = gm.userid
+                                    WHERE gm.userid IS NULL)";
         } else {
             $query = "SELECT COUNT(fbc.id) FROM {feedback_completed} fbc WHERE fbc.feedback = :feedback";
         }
