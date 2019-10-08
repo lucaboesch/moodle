@@ -626,8 +626,8 @@ class mod_quiz_mod_form extends moodleform_mod {
                 get_string('completionattemptsexhausted', 'quiz'),
                 array('group' => 'cattempts'));
         $mform->disabledIf('completionattemptsexhausted', 'completionpass', 'notchecked');
-        $mform->addGroup($group, 'completionpassgroup', get_string('completionpass', 'quiz'), ' &nbsp; ', false);
-        $mform->addHelpButton('completionpassgroup', 'completionpass', 'quiz');
+        $mform->addGroup($group, 'completionpassgroup', get_string('completiongraderequirement', 'quiz'), ' &nbsp; ', false);
+        $mform->addHelpButton('completionpassgroup', 'completiongraderequirement', 'quiz');
         $items[] = 'completionpassgroup';
         return $items;
     }
