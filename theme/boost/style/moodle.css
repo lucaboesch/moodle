@@ -15063,10 +15063,13 @@ a.ygtvspacer:hover {
   margin: 0; }
   #categoryquestions td,
   #categoryquestions th {
-    padding: 0 0.2em; }
+    padding: 0 0.2em;
+    border-top: none;
+    vertical-align: top; }
   #categoryquestions th {
     text-align: left;
-    font-weight: normal; }
+    font-weight: normal;
+    border-bottom: none; }
   #categoryquestions .checkbox {
     padding-left: 5px; }
   #categoryquestions .checkbox input[type="checkbox"] {

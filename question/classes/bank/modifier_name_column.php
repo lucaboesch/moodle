@@ -41,6 +41,10 @@ class modifier_name_column extends column_base {
         return get_string('lastmodifiedby', 'question');
     }
 
+    public function get_extra_classes() {
+//        return array('col-2');
+    }
+
     protected function display_content($question, $rowclasses) {
         if (!empty($question->modifierfirstname) && !empty($question->modifierlastname)) {
             $u = new \stdClass();

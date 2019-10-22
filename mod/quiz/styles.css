@@ -962,18 +962,18 @@ table.quizreviewsummary td.cell {
     background-color: #afa;
 }
 
-#categoryquestions .header {
+#categoryquestions th {
     text-align: center;
     padding: 0 2px;
     border: 0 none;
     vertical-align: top;
 }
 
-#categoryquestions .header.checkbox {
+#categoryquestions th.checkbox {
     vertical-align: bottom;
 }
 
-#categoryquestions .header.qtype {
+#categoryquestions th.qtype {
     white-space: nowrap;
 }
 
@@ -995,32 +995,24 @@ table.quizreviewsummary td.cell {
 
 table#categoryquestions {
     width: 100%;
-    table-layout: fixed;
-}
-
-#categoryquestions .iconcol {
-    width: 15px;
-    text-align: center;
-    padding: 0;
+/*    table-layout: fixed; */
 }
 
 #categoryquestions .checkbox {
     width: 19px;
     text-align: center;
     padding: 0;
-}
-
-#categoryquestions .editmenu {
-    width: 5em;
+    flex-shrink: 0;
+    flex: 0 0 19px;
+    max-width: 19px;
 }
 
 #categoryquestions .qtype {
     text-align: center;
-}
-
-#categoryquestions .qtype {
+    flex-shrink: 0;
     width: 28px;
-    padding: 0;
+    flex: 0 0 28px;
+    max-width: 28px;
 }
 
 #categoryquestions .questiontext {
@@ -1041,6 +1033,10 @@ table#categoryquestions {
 
 #categoryquestions .questiontext p {
     margin: 0;
+}
+
+#categoryquestions .iconcol {
+    white-space: nowrap;
 }
 
 #page-mod-quiz-edit table#categoryquestions td,

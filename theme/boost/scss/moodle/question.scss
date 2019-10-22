@@ -147,11 +147,14 @@
     td,
     th {
         padding: 0 0.2em;
+        border-top: none;
+        vertical-align: top;
     }
 
     th {
         text-align: left;
         font-weight: normal;
+        border-bottom: none;
     }
 
     .checkbox {

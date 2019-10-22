@@ -43,6 +43,10 @@ class question_name_column extends column_base {
         return get_string('question');
     }
 
+    public function get_extra_classes() {
+//        return array('col-6');
+    }
+
     protected function label_for($question) {
         if (is_null($this->checkboxespresent)) {
             $this->checkboxespresent = $this->qbank->has_column('core_question\bank\checkbox_column');

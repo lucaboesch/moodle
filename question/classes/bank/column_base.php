@@ -72,7 +72,8 @@ abstract class column_base {
      * Output the column header cell.
      */
     public function display_header() {
-        echo '<th class="header ' . $this->get_classes() . '" scope="col">';
+//        echo '<th class="header ' . $this->get_classes() . '" scope="col">';
+        echo '<th class="' . $this->get_classes() . '">';
         $sortable = $this->is_sortable();
         $name = get_class($this);
         $title = $this->get_title();
@@ -181,7 +182,6 @@ abstract class column_base {
         $attr = array('class' => $this->get_classes());
         if ($this->isheading) {
             $tag = 'th';
-            $attr['scope'] = 'row';
         }
         echo \html_writer::start_tag($tag, $attr);
     }

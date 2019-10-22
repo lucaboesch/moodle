@@ -930,7 +930,7 @@ class view {
     }
 
     protected function start_table() {
-        echo '<table id="categoryquestions">' . "\n";
+        echo '<table id="categoryquestions" class="table">' . "\n";
         echo "<thead>\n";
         $this->print_table_headers();
         echo "</thead>\n";
@@ -965,7 +965,7 @@ class view {
     protected function print_table_row($question, $rowcount) {
         $rowclasses = implode(' ', $this->get_row_classes($question, $rowcount));
         if ($rowclasses) {
-            echo '<tr class="' . $rowclasses . '">' . "\n";
+            echo '<tr>' . "\n";
         } else {
             echo "<tr>\n";
         }

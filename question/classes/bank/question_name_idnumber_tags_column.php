@@ -37,6 +37,10 @@ class question_name_idnumber_tags_column extends question_name_column {
         return 'qnameidnumbertags';
     }
 
+/*    public function get_extra_classes() {
+        return array('d-inline-flex overflow-hidden flex-shrink-1 text-truncate');
+    }*/
+
     protected function display_content($question, $rowclasses) {
         global $OUTPUT;
 
