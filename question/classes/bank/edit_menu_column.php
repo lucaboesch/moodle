@@ -69,6 +69,10 @@ class edit_menu_column extends column_base {
         return get_string('actions');
     }
 
+    public function get_extra_classes() {
+        return array('col-1');
+    }
+
     public function get_name() {
         return 'editmenu';
     }

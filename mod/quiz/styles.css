@@ -993,34 +993,40 @@ table.quizreviewsummary td.cell {
     font-size: 0.8em;
 }
 
-table#categoryquestions {
-    width: 100%;
-    table-layout: fixed;
+table#categoryquestions td,
+table#categoryquestions th {
+    display: block;
 }
 
-#categoryquestions .iconcol {
-    width: 15px;
-    text-align: center;
-    padding: 0;
+table#categoryquestions thead,
+table#categoryquestions tbody {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+table#categoryquestions tr {
+    width: 100%;
 }
 
 #categoryquestions .checkbox {
     width: 19px;
     text-align: center;
     padding: 0;
+    flex-shrink: 0;
+    flex: 0 0 19px;
+    max-width: 19px;
 }
 
 #categoryquestions .editmenu {
-    width: 5em;
+    padding: 0 3em 0 0.2em;
 }
 
 #categoryquestions .qtype {
     text-align: center;
-}
-
-#categoryquestions .qtype {
+    flex-shrink: 0;
     width: 28px;
-    padding: 0;
+    flex: 0 0 28px;
+    max-width: 28px;
 }
 
 #categoryquestions .questiontext {

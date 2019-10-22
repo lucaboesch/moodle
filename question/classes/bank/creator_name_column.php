@@ -41,6 +41,10 @@ class creator_name_column extends column_base {
         return get_string('createdby', 'question');
     }
 
+    public function get_extra_classes() {
+        return array('col-2');
+    }
+
     protected function display_content($question, $rowclasses) {
         if (!empty($question->creatorfirstname) && !empty($question->creatorlastname)) {
             $u = new \stdClass();
