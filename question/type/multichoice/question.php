@@ -43,6 +43,11 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
     public $answers;
 
     public $shuffleanswers;
+    /**
+     * Whether the last option should be preserved when shuffling.
+     * @var int
+     */
+    public $shuffleallbutlast = 0;
     public $answernumbering;
     /**
      * @var int standard instruction to be displayed if enabled.
@@ -62,7 +67,16 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
     public function start_attempt(question_attempt_step $step, $variant) {
         $this->order = array_keys($this->answers);
         if ($this->shuffleanswers) {
-            shuffle($this->order);
+            if ($this->shuffleallbutlast) {
+                // Strip the last option from the array.
+                $removed = array_pop($this->order);
+                // Shuffle the rest.
+                shuffle($this->order);
+                // Re-attach the last option to the array.
+                array_push($this->order, $removed);
+            } else {
+                shuffle($this->order);
+            }
         }
         $step->set_qt_var('_order', implode(',', $this->order));
     }

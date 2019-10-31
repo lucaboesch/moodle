@@ -72,6 +72,7 @@ class qtype_multichoice_test_helper extends question_test_helper {
                 test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK;
         $qdata->options->partiallycorrectfeedbackformat = FORMAT_HTML;
         $qdata->options->shownumcorrect = 1;
+        $qdata->options->shuffleallbutlast = 0;
         $qdata->options->incorrectfeedback =
                 test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $qdata->options->incorrectfeedbackformat = FORMAT_HTML;
@@ -154,6 +155,7 @@ class qtype_multichoice_test_helper extends question_test_helper {
         $qdata->partiallycorrectfeedback = array('text' => test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK,
                                                           'format' => FORMAT_HTML);
         $qdata->shownumcorrect = 1;
+        $qdata->shuffleallbutlast = 0;
         $qdata->incorrectfeedback = array('text' => test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK,
                                                    'format' => FORMAT_HTML);
         $qdata->fraction = array('0.5', '0.0', '0.5', '0.0', '0.0');
@@ -255,6 +257,7 @@ class qtype_multichoice_test_helper extends question_test_helper {
             test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK;
         $qdata->options->partiallycorrectfeedbackformat = FORMAT_HTML;
         $qdata->options->shownumcorrect = 1;
+        $qdata->options->shuffleallbutlast = 0;
         $qdata->options->incorrectfeedback =
             test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $qdata->options->incorrectfeedbackformat = FORMAT_HTML;
@@ -337,6 +340,7 @@ class qtype_multichoice_test_helper extends question_test_helper {
         $qdata->partiallycorrectfeedback = array('text' => test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK,
                                                  'format' => FORMAT_HTML);
         $qdata->shownumcorrect = 1;
+        $qdata->shuffleallbutlast = 0;
         $qdata->incorrectfeedback = array('text' => test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK,
                                           'format' => FORMAT_HTML);
         $qdata->fraction = array('1.0', '0.0', '0.0', '0.0', '0.0');

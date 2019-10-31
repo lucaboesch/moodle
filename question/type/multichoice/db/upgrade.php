@@ -45,8 +45,8 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
 
     // Add a new checkbox for the question author to decide
     // Whether standard instruction ('Select one:' or 'Select one or more:') is displayed.
-    $newversion = 2020041600;
-    if ($oldversion < $newversion) {
+
+    if ($oldversion < 2020041600) {
 
         // Define field showstandardinstruction to be added to qtype_multichoice_options.
         $table = new xmldb_table('qtype_multichoice_options');
@@ -59,10 +59,26 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
         }
 
         // Multichoice savepoint reached.
-        upgrade_plugin_savepoint(true, $newversion, 'qtype', 'multichoice');
+        upgrade_plugin_savepoint(true, 2020041600, 'qtype', 'multichoice');
     }
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2021052600) {
+
+        // Add "shuffleallbutlast" column to the question type options to save the option to preserve the last answer on its place.
+        $table = new xmldb_table('qtype_multichoice_options');
+        $field = new xmldb_field('shuffleallbutlast', XMLDB_TYPE_INTEGER, '1',
+            null, null, null, '0', 'shuffleanswers');
+
+        // Conditionally launch add field shuffleallbutlast.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Multichoice savepoint reached.
+        upgrade_plugin_savepoint(true, 2021052600, 'qtype', 'multichoice');
+    }
 
     return true;
 }
