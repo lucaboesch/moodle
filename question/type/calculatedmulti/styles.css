@@ -13,6 +13,31 @@
     display: none;
 }
 
+/* Editing form. */
+body#page-question-type-calculatedmulti div[id^=fitem_id_][id*=answer_] {
+    background: #eee;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-bottom: 0;
+}
+
+body#page-question-type-calculatedmulti div[id^=fitem_id_][id*=answer_] .fitemtitle {
+    font-weight: bold;
+}
+
+body#page-question-type-calculatedmulti div[id^=fitem_id_][id*=fraction_] {
+    background: #eee;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px solid #bbb;
+    border-top: 0;
+    border-bottom: 0;
+}
 
 .que.calculatedmulti .answer div.r0,
 .que.calculatedmulti .answer div.r1 {

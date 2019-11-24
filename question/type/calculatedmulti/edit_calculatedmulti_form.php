@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the editing form for calculated multiple-choice questions.
+ * Defines the editing form for the calculated multiple-choice question type.
  *
  * @package    qtype
  * @subpackage calculatedmulti
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Calculated multiple-choice question editing form.
+ * Calculated multiple-choice question editing form definition.
  *
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -68,21 +68,16 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
     public function get_per_answer_fields($mform, $label, $gradeoptions,
             &$repeatedoptions, &$answersoption) {
         $repeated = array();
-        $answeroptions = array();
-        $answeroptions[] = $mform->createElement('text', 'answer',
-                $label, array('size' => 50));
-        $answeroptions[] = $mform->createElement('select', 'fraction',
-                get_string('grade'), $gradeoptions);
-        $repeated[] = $mform->createElement('group', 'answeroptions',
-                 $label, $answeroptions, null, false);
+        $repeated[] = $mform->createElement('editor', 'answer',
+            $label, array('rows' => 1), $this->editoroptions);
+        $repeated[] = $mform->createElement('select', 'fraction',
+            get_string('grade'), $gradeoptions);
 
-        // Added answeroptions help button in definition_inner() after called to add_per_answer_fields.
+        // Added answer help button in definition_inner() after called to add_per_answer_fields.
 
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';
-
-        $mform->setType('answer', PARAM_NOTAGS);
 
         $repeated[] = $mform->createElement('hidden', 'tolerance');
         $repeated[] = $mform->createElement('hidden', 'tolerancetype', 1);
@@ -157,9 +152,8 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
 
         $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
                 question_bank::fraction_options_full(), max(5, QUESTION_NUMANS_START));
-        $mform->addHelpButton('answeroptions[0]', 'answeroptions', 'qtype_calculatedmulti');
+        $mform->addHelpButton('answer[0]', 'answeroptions', 'qtype_calculatedmulti');
 
-        $repeated = array();
         $nounits = optional_param('nounits', 1, PARAM_INT);
         $mform->addElement('hidden', 'nounits', $nounits);
         $mform->setType('nounits', PARAM_INT);
@@ -192,7 +186,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
 
     public function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
-        $question = $this->data_preprocessing_answers($question, false);
+        $question = $this->data_preprocessing_answers($question, true);
         $question = $this->data_preprocessing_combined_feedback($question, true);
         $question = $this->data_preprocessing_hints($question, true, true);
 
@@ -256,6 +250,36 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $errors = $this->validate_text($errors, 'incorrectfeedback', $data['incorrectfeedback']['text']);
 
         $answers = $data['answer'];
+        //Comes as
+        //
+        //[
+        //    "{={A} + {B}}",
+        //    "{={A} * {B}}",
+        //    "{=pow({A},{B})}"
+        //]
+        //
+        //without editor
+        //but as
+        //
+        //[
+        //  {
+        //      "text": "s<sup>{={A} + {B}}</sup>",
+        //    "format": "1",
+        //    "itemid": "132800218"
+        //  },
+        //  {
+        //      "text": "s<sup>{={A} * {B}}</sup>",
+        //    "format": "1",
+        //    "itemid": "639057480"
+        //  },
+        //  {
+        //      "text": "s<sup>{=pow({A},{B})}</sup>",
+        //    "format": "1",
+        //    "itemid": "461509053"
+        //  }
+        //]
+        //
+        //with an editor.
         $answercount = 0;
         $maxgrade = false;
         $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']['text']);
@@ -265,7 +289,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         }
         if (count($mandatorydatasets) == 0) {
             foreach ($answers as $key => $answer) {
-                $errors['answeroptions['.$key.']'] =
+                $errors['answer['.$key.']'] =
                         get_string('atleastonewildcard', 'qtype_calculated');
             }
         }
@@ -279,11 +303,11 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
                 continue;
             }
             if (empty($trimmedanswer)) {
-                $errors['answeroptions['.$key.']'] = get_string('errgradesetanswerblank', 'qtype_multichoice');
+                $errors['answer['.$key.']'] = get_string('errgradesetanswerblank', 'qtype_multichoice');
             }
             if ($trimmedanswer != '' || $answercount == 0) {
                 // Verifying for errors in {=...} in answer text.
-                $errors = $this->validate_text($errors, 'answeroptions[' . $key . ']', $answer);
+                $errors = $this->validate_text($errors, 'answer[' . $key . ']', $answer);
                 $errors = $this->validate_text($errors, 'feedback[' . $key . ']',
                         $data['feedback'][$key]['text']);
             }
@@ -310,23 +334,23 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
             }
         }
         if ($answercount == 0) {
-            $errors['answeroptions[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
-            $errors['answeroptions[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
+            $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
+            $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
         } else if ($answercount == 1) {
-            $errors['answeroptions[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
+            $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
 
         }
         // Perform sanity checks on fractional grades.
         if ($data['single']== 1 ) {
             if ($maxfraction != 1) {
-                $errors['answeroptions[0]'] = get_string('errfractionsnomax', 'qtype_multichoice',
+                $errors['answer[0]'] = get_string('errfractionsnomax', 'qtype_multichoice',
                         $maxfraction * 100);
             }
         } else {
             $totalfraction = round($totalfraction, 2);
             if ($totalfraction != 1) {
                 $totalfraction = $totalfraction * 100;
-                $errors['answeroptions[0]'] =
+                $errors['answer[0]'] =
                         get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
             }
         }
