@@ -1127,6 +1127,11 @@ if ($formdata = $mform2->is_cancelled()) {
                 try {
                     if (groups_add_member($gid, $user->id)) {
                         $upt->track('enrolments', get_string('addedtogroup', '', s($gname)));
+                        if (isset($doupdate) AND $doupdate == false) {
+                            // We want only users that were not already updated.
+                            $upt->track('groups', $struserupdated);
+                            $usersupdated++;
+                        }
                     }  else {
                         $upt->track('enrolments', get_string('addedtogroupnot', '', s($gname)), 'error');
                     }

@@ -188,3 +188,32 @@ Feature: Upload users
     And I should see "12 January 2020" in the "Enrolment ends" "table_row"
     And I click on "Close" "button"
     And I log out
+
+  @javascript
+  Scenario: Upload users adding them to groups
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Maths | math102 | 0 |
+    And the following "groups" exist:
+      | name | course | idnumber |
+      | Section 1 | math102 | S1 |
+      | Section 3 | math102 | S3 |
+    And the following "users" exist:
+      | username | firstname | lastname | email | password |
+      | jonest | Tom | Jones | jonest@example.com | verysecret |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | jonest | math102 | student |
+    And the following "group members" exist:
+      | user | group |
+      | jonest | S1 |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_groups.csv" file to "File" filemanager
+    And I press "Upload users"
+    And I set the field "Upload type" to "Update existing users only"
+    And I set the field "Existing user details" to "Override with file"
+    And I set the field "Allow renames" to "Yes"
+    And I press "Upload users"
+    Then I should see "Users updated: 1"
+    And I log out

@@ -58,11 +58,11 @@ class uu_progress_tracker {
     private $_row;
 
     /**
-     * The columns shown on the table.
+     * The columns shown on the table, except for 'groups', which is just for tracking.
      * @var array
      */
     public $columns = array('status', 'line', 'id', 'username', 'firstname', 'lastname', 'email',
-                            'password', 'auth', 'enrolments', 'suspended', 'theme', 'deleted');
+                            'password', 'auth', 'enrolments', 'suspended', 'theme', 'groups', 'deleted');
 
     /**
      * Print table header.
