@@ -2048,6 +2048,7 @@ function mod_quiz_get_fontawesome_icon_map() {
 function mod_quiz_core_calendar_provide_event_action(calendar_event $event,
                                                      \core_calendar\action_factory $factory,
                                                      int $userid = 0) {
+    // TODO also check unfinished attempts, total number of attempts like in view.php.
     global $CFG, $USER;
 
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
