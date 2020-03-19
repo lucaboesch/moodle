@@ -55,7 +55,7 @@ class renderer_textemail extends \mod_forum\output\email\renderer_textemail {
     public function format_message_text($cm, $post) {
         $context = \context_module::instance($cm->id);
         $message = file_rewrite_pluginfile_urls(
-            $post->message,
+            $this->format_string($post->message, false, array('context' => $context)),
             'pluginfile.php',
             $context->id,
             'mod_forum',
