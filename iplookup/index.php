@@ -19,13 +19,14 @@
  *
  * This script is not compatible with IPv6.
  *
- * @package    core_iplookup
+ * @package    iplookup
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../config.php');
 require_once('lib.php');
+require_once('locallib.php');
 
 require_login(0, false);
 if (isguestuser()) {
@@ -77,33 +78,27 @@ $title = implode(' - ', $info['title']);
 $PAGE->set_title(get_string('iplookup', 'admin').': '.$title);
 $PAGE->set_heading($title);
 echo $OUTPUT->header();
+$mapproviders = array ( 'worldmap', 'openstreetmap', 'google' );
+$mapprovider_id = get_config('iplookup','mapprovider');
+$mapprovider = $mapproviders[$mapprovider_id];
+$lon = $info['longitude'];
+$lat = $info['latitude'];
 
-if (empty($CFG->googlemapkey3)) {
-    $imgwidth  = 620;
-    $imgheight = 310;
-    $dotwidth  = 18;
-    $dotheight = 30;
-
-    $dx = round((($info['longitude'] + 180) * ($imgwidth / 360)) - $imgwidth - $dotwidth/2);
-    $dy = round((($info['latitude'] + 90) * ($imgheight / 180)));
-
-    echo '<div id="map" style="width:'.($imgwidth+$dotwidth).'px; height:'.$imgheight.'px;">';
-    echo '<img src="earth.jpeg" style="width:'.$imgwidth.'px; height:'.$imgheight.'px" alt="" />';
-    echo '<img src="marker.gif" style="width:'.$dotwidth.'px; height:'.$dotheight.'px; margin-left:'.$dx.'px; margin-bottom:'.$dy.'px;" alt="" />';
-    echo '</div>';
-    echo '<div id="note">'.$info['note'].'</div>';
-
-} else {
-    if (is_https()) {
-        $PAGE->requires->js(new moodle_url('https://maps.googleapis.com/maps/api/js', array('key'=>$CFG->googlemapkey3, 'sensor'=>'false')));
-    } else {
-        $PAGE->requires->js(new moodle_url('http://maps.googleapis.com/maps/api/js', array('key'=>$CFG->googlemapkey3, 'sensor'=>'false')));
+if ($mapprovider == "openstreetmap" ){
+	openstreetmap($lat, $lon);
+}elseif ($mapprovider == "worldmap" ){
+	worldmap($lat, $lon);
+}elseif ($mapprovider == "google" ){
+    if (empty($CFG->googlemapkey3)) {
+	openstreetmap($lat, $lon);
+    }else{
+	googlemap($lat, $lon);
     }
-    $module = array('name'=>'core_iplookup', 'fullpath'=>'/iplookup/module.js');
-    $PAGE->requires->js_init_call('M.core_iplookup.init3', array($info['latitude'], $info['longitude'], $ip), true, $module);
-
-    echo '<div id="map" style="width: 650px; height: 360px"></div>';
-    echo '<div id="note">'.$info['note'].'</div>';
 }
 
+echo '<div id="details">'. get_string('coordinates', 'admin') .': '. $info['latitude'] . ', ' . $info['longitude'] .'</div>';
+echo '<div id="note">'.$info['note'].'</div>';
+echo '<div id="debug">' . get_string('mapprovider','admin') . ': '. $mapprovider .'</div>';
+
 echo $OUTPUT->footer();
+
