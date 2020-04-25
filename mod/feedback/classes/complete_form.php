@@ -203,6 +203,29 @@ class mod_feedback_complete_form extends moodleform {
     }
 
     /**
+     * Returns the action menu for the given item
+     * @param stdClass $item
+     * @param HTML_QuickForm_element $element
+     * @return string
+     */
+    public function get_item_actionmenu($item, $element) {
+        global $OUTPUT;
+        $menu = new action_menu();
+        $menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
+        $menu->set_constraint('.feedback_form');
+        $menu->set_alignment(action_menu::TL, action_menu::BR);
+        $menu->set_menu_trigger(get_string('edit'));
+        $menu->prioritise = true;
+
+        $itemobj = feedback_get_item_class($item->typ);
+        $actions = $itemobj->edit_actions($item, $this->get_feedback(), $this->get_cm());
+        foreach ($actions as $action) {
+            $menu->add($action);
+        }
+        return $OUTPUT->render($menu);
+    }
+
+    /**
      * Can be used by the items to get the course id for which feedback is taken
      *
      * This function returns 0 for feedbacks that are located inside the courses.
@@ -446,26 +469,11 @@ class mod_feedback_complete_form extends moodleform {
      * @param HTML_QuickForm_element $element
      */
     protected function enhance_name_for_edit($item, $element) {
-        global $OUTPUT;
-        $menu = new action_menu();
-        $menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
-        $menu->set_constraint('.feedback_form');
-        $menu->set_alignment(action_menu::TR, action_menu::BR);
-        $menu->set_menu_trigger(get_string('edit'));
-        $menu->prioritise = true;
-
-        $itemobj = feedback_get_item_class($item->typ);
-        $actions = $itemobj->edit_actions($item, $this->get_feedback(), $this->get_cm());
-        foreach ($actions as $action) {
-            $menu->add($action);
-        }
-        $editmenu = $OUTPUT->render($menu);
-
         $name = $element->getLabel();
 
         $name = html_writer::span('', 'itemdd', array('id' => 'feedback_item_box_' . $item->id)) .
                 html_writer::span($name, 'itemname') .
-                html_writer::span($editmenu, 'itemactions');
+                html_writer::span($this->get_item_actionmenu($item, $element), 'itemactions');
         $element->setLabel(html_writer::span($name, 'itemtitle'));
     }
 
