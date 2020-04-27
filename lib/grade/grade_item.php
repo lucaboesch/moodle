@@ -1264,7 +1264,7 @@ class grade_item extends grade_object {
      * Returns the final values for this grade item (as imported by module or other source).
      *
      * @param int $userid Optional: to retrieve a single user's final grade
-     * @return array|grade_grade An array of all grade_grade instances for this grade_item, or a single grade_grade instance.
+     * @return array An array of objects.
      */
     public function get_final($userid=NULL) {
         global $DB;
