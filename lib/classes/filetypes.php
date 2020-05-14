@@ -232,6 +232,7 @@ abstract class core_filetypes {
             'ps' => array('type' => 'application/postscript', 'icon' => 'pdf'),
             'psd' => array('type' => 'image/vnd.adobe.photoshop', 'icon' => 'psd'),
             'pub' => array('type' => 'application/x-mspublisher', 'icon' => 'publisher', 'groups' => array('presentation')),
+            'py' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
 
             'qt' => array('type' => 'video/quicktime', 'icon' => 'video',
                     'groups' => array('video', 'web_video'), 'string' => 'video'),
