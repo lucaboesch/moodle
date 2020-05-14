@@ -230,6 +230,7 @@ abstract class core_filetypes {
                     'groups' => array('presentation')),
             'ps' => array('type' => 'application/postscript', 'icon' => 'pdf'),
             'pub' => array('type' => 'application/x-mspublisher', 'icon' => 'publisher', 'groups' => array('presentation')),
+            'py' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
 
             'qt' => array('type' => 'video/quicktime', 'icon' => 'quicktime',
                     'groups' => array('video', 'web_video'), 'string' => 'video'),
