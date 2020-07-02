@@ -76,6 +76,9 @@ $input-border-color: $gray-500 !default;
 $dropdown-link-hover-color: $white;
 $dropdown-link-hover-bg: $primary;
 
+// Text wrapping in buttons
+$btn-white-space: nowrap !default;
+
 // stylelint-disable
 $theme-colors: () !default;
 $theme-colors: map-merge((
