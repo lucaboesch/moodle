@@ -1,18 +1,34 @@
-<table width="100%" cellpadding="5">
-    <tr>
-        <td class="c0"><label for="name"><?php echo get_string('fieldname', 'data'); ?></label></td>
-        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value="<?php p($this->field->name); ?>" /></td>
-    </tr>
-    <tr>
-        <td class="c0"><label for="description"><?php echo get_string('fielddescription', 'data'); ?></label></td>
-        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value="<?php p($this->field->description);?>" /></td>
-    </tr>
-    <tr>
-        <td class="c0"><label for="required"><?php echo get_string('requiredfield', 'data'); ?></label></td>
-        <td class="c1"><input class="requiredfield" type="checkbox" name="required" id="required" <?php p($this->field->required?"checked=\"checked\"":""); ?>/></td>
-    </tr>
-    <tr>
-        <td class="c0" valign="top"><label for="param1"><?php echo get_string('fieldoptions', 'data'); ?></label></td>
-        <td class="c1"><textarea class="optionstextarea" name="param1" id="param1" cols="80" rows="10"><?php if($this->field->param1) {p($this->field->param1);} ?></textarea></td>
-    </tr>
-</table>
+<fieldset>
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="name"><?php echo get_string('fieldname', 'data'); ?></label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="fieldname form-control" type="text" name="name" id="name" value="<?php p($this->field->name); ?>" />
+        </div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="description"><?php echo get_string('fielddescription', 'data'); ?></label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="fielddescription form-control" type="text" name="description" id="description" value="<?php p($this->field->description);?>" />
+        </div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="required"><?php echo get_string('requiredfield', 'data'); ?></label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="requiredfield form-check-input" type="checkbox" name="required" id="required" <?php p($this->field->required?"checked=\"checked\"":""); ?>/>
+        </div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="param1"><?php echo get_string('fieldoptions', 'data'); ?></label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <textarea class="optionstextarea form-control" name="param1" id="param1" cols="80" rows="10"><?php if($this->field->param1) {p($this->field->param1);} ?></textarea>
+        </div>
+    </div>
+</fieldset>

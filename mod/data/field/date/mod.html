@@ -1,10 +1,19 @@
-<table width="100%" cellpadding="5">
-    <tr>
-        <td class="c0"><label for="name"><?php echo get_string('fieldname', 'data'); ?></label></td>
-        <td class="c1"><input class="fieldname" type="text" name="name" id="name" value="<?php p($this->field->name); ?>" /></td>
-    </tr>
-    <tr>
-        <td class="c0"><label for="description"><?php echo get_string('fielddescription', 'data'); ?></label></td>
-        <td class="c1"><input class="fielddescription" type="text" name="description" id="description" value="<?php p($this->field->description);?>" /></td>
-    </tr>
-</table>
+<fieldset>
+    <div class="form-group row fitem">
+        <div class="col-md-3">
+            <label for="name" class="mb-0"><?php echo get_string('fieldname', 'data'); ?></label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="fieldname form-control" type="text" name="name" id="name" value="<?php p($this->field->name); ?>"/>
+        </div>
+    </div>
+    <div class="form-group row fitem">
+        <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
+            <label for="description" class="mb-0"><?php echo get_string('fielddescription', 'data'); ?></label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <input class="fielddescription form-control" type="text" name="description" id="description"
+                   value="<?php p($this->field->description);?>"/>
+        </div>
+    </div>
+</fieldset>

@@ -353,10 +353,13 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
 
-        echo '<div class="mdl-align">';
+        echo '<div class="form-group row fitem femptylabel"><div class="col-md-3"></div>' .
+            '<div class="col-md-9 form-inline align-items-start felement">';
+        echo '<fieldset>';
         echo '<input type="submit" class="btn btn-primary" value="'.$savebutton.'" />'."\n";
         echo '<input type="submit" class="btn btn-secondary" name="cancel" value="'.get_string('cancel').'" />'."\n";
-        echo '</div>';
+        echo '</fieldset>';
+        echo '</div></div>';
 
         echo '</form>';
 
