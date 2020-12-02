@@ -351,13 +351,97 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         echo $OUTPUT->heading($this->name(), 3);
 
-        require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
 
-        echo '<div class="mdl-align">';
+        $data = [
+            'name' => $this->field->name,
+            'description' => $this->field->description
+        ];
+
+        if (isset($this->field->required)) {
+            $data["required"] = $this->field->required;
+        }
+
+        if (isset($this->field->param1)) {
+            $data["param1"] = $this->field->param1;
+            if (isset($this->linkoutservices)) {
+                $serviceschosen = explode(',', htmlspecialchars($this->field->param1));
+                foreach ($this->linkoutservices as $servicename => $serviceurl) {
+                    $servicename = htmlspecialchars($servicename);
+                    $data['latlonglinkservices'][] = [
+                        'name' => $servicename,
+                        'selected' => in_array($servicename, $serviceschosen)
+                    ];
+                    unset($this->serviceschosen[$servicename]);
+                }
+                $data['latlonglinkservicessize'] = count($this->linkoutservices);
+            }
+        }
+
+        if (isset($this->field->param2)) {
+            $data["param2"] = $this->field->param2;
+
+            $data["otherfields"][] = [
+                'value' => -1,
+                'name' => get_string('entry', 'data') . " #",
+                'selected' => $this->field->param2 == -1
+            ];
+            $data['otherfields'][] = [
+                'value' => -2,
+                'name' => get_string('latitude', 'data') . "/" . get_string('longitude', 'data'),
+                'selected' => $this->field->param2 == -2
+            ];
+
+            // Fetch all "suitable" other fields that exist for this database.
+            $textfields = $DB->get_records('data_fields', array('dataid' => $this->data->id, 'type' => 'text'));
+            if (count($textfields) > 0) {
+                $data['otherfieldsoptgroups']['label'] = get_string('latlongotherfields', 'data') . ":";
+                foreach ($textfields as $textfield) {
+                    $data['otherfieldsoptgroups']['options'][] = [
+                        'value' => $textfield->id,
+                        'name' => $textfield->name,
+                        'selected' => $this->field->param2 == $textfield->id
+                    ];
+                }
+            }
+        }
+
+        if (isset($this->field->param3)) {
+            $data["param3"] = $this->field->param3;
+            $course = $DB->get_record('course', array('id' => $this->data->course));
+            $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes, 0, $this->field->param3);
+            foreach ($choices as $value => $name) {
+                $data['options'][] = [
+                    'value' => $value,
+                    'name' => $name,
+                    'selected' => in_array($value, $data)
+                ];
+                unset($this->choices[$value]);
+            }
+        }
+
+        if (isset($this->field->param4)) {
+            $data["param4"] = $this->field->param4;
+        }
+
+        if (isset($this->field->param5)) {
+            $data["param5"] = $this->field->param5;
+        }
+
+        if (isset($this->field->id)) {
+            $data["dataid"] = $this->data->id;
+            $data["fieldid"] = $this->field->id;
+        }
+
+        echo $OUTPUT->render_from_template('mod_data/fields/' . $this->type, $data);
+
+        echo '<div class="form-group row fitem femptylabel"><div class="col-md-3"></div>' .
+            '<div class="col-md-9 form-inline align-items-start felement">';
+        echo '<fieldset>';
         echo '<input type="submit" class="btn btn-primary" value="'.$savebutton.'" />'."\n";
         echo '<input type="submit" class="btn btn-secondary" name="cancel" value="'.get_string('cancel').'" />'."\n";
+        echo '</fieldset>';
         echo '</div>';
-
+        echo '</div>';
         echo '</form>';
 
         echo $OUTPUT->box_end();
