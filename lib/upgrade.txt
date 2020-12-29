@@ -56,6 +56,8 @@ information provided here is intended especially for developers.
   - completion_completion::mark_complete()
   which is needed to store id of completion record on successful update which is later beeing used by
   completion_info::internal_set_data() to reaggregate completions that have been marked for instant course completion.
+* The signature of the get_name() function for grade_category and grade_item has been extended. The new parameter allows the to get
+  the name without escaped characters.
 
 === 3.11 ===
 * PHPUnit has been upgraded to 9.5 (see MDL-71036 for details).
