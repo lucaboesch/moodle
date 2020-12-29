@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
 * The signature of the question_category_options() has been extended. The new parameter allows the to get the categories name
   in the returned array without escaped characters.
 * A new index has been added on mdl_user_preferences.name. This upgrade step might take some time on big sites.
+* The signature of the get_name() function for grade_category and grade_item has been extended. The new parameter allows the to get
+  the name without escaped characters.
 
 === 3.10.3 ===
 * The behat transformation 'string time to timestamp' no longer supports datetime format. If provided, the format must
