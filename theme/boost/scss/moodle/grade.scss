@@ -52,6 +52,15 @@
     }
 }
 
+.path-grade-report-user .user-grade .column-grade {
+    &.gradepass {
+        color: $success;
+    }
+    &.gradefail {
+        color: $danger;
+    }
+}
+
 // Rubrics
 #page-grade-grading-manage {
     #activemethodselector {
