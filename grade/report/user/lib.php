@@ -577,7 +577,13 @@ class grade_report_user extends grade_report {
                                                                                 true);
                         }
                     } else {
-                        $data['grade']['class'] = $class;
+                        $gradestatusclass = '';
+                        $ispassinggrade = $grade_grade->is_passed($grade_grade->grade_item);
+                        if (!is_null($ispassinggrade)) {
+                            $gradestatusclass = $ispassinggrade ? 'gradepass' : 'gradefail';
+                        }
+
+                        $data['grade']['class'] = "{$class} {$gradestatusclass}";
                         $data['grade']['content'] = grade_format_gradevalue($gradeval,
                                                                             $grade_grade->grade_item,
                                                                             true);

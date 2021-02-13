@@ -58,3 +58,11 @@
 .path-grade-report-user .user-grade .baggb {
     font-weight: bold;
 }
+
+.path-grade-report-user td.column-grade.gradepass {
+    color: #298721;
+}
+
+.path-grade-report-user td.column-grade.gradefail {
+    color: #890d0d;
+}
