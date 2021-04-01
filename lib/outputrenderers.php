@@ -3978,7 +3978,8 @@ EOD;
             'data-droptarget' => '1'
         );
         if ($this->page->blocks->region_has_content($displayregion, $this)) {
-            $content = $this->blocks_for_region($displayregion, $fakeblocksonly);
+            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'sr-only']) .
+                $this->blocks_for_region($displayregion, $fakeblocksonly);
         } else {
             $content = '';
         }
