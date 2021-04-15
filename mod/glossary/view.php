@@ -477,10 +477,10 @@ if ($allentries) {
     }
 
     foreach ($allentries as $entry) {
-
+        file_put_contents('/Users/luca/Desktop/log0.txt', json_encode($allentries));
         // Setting the pivot for the current entry
         if ($printpivot) {
-            $pivot = $entry->{$pivotkey};
+            $pivot = format_string($entry->{$pivotkey}, false, ["context" => $context]);
             $upperpivot = core_text::strtoupper($pivot);
             $pivottoshow = core_text::strtoupper(format_string($pivot, true, $fmtoptions));
 

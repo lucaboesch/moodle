@@ -19,22 +19,28 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
     And the following "activities" exist:
       | activity | name               | intro                     | displayformat  | course | idnumber |
       | glossary | Test glossary name | Test glossary description | fullwithauthor | C1     | g1       |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Test glossary name"
-    And I add a glossary entries category named "The ones I like"
-    And I add a glossary entries category named "All for you"
+    And I add a glossary entries category named "<span lang=\"en\" class=\"multilang\">The ones I like</span><span lang=\"fr\" class=\"multilang\">Ceux qui me plaisent</span>"
+    And I add a glossary entries category named "<span lang=\"en\" class=\"multilang\">All for you</span><span lang=\"fr\" class=\"multilang\">Tout pour toi</span>"
     And I add a glossary entry with the following data:
-      | Concept | Eggplant |
-      | Definition | Sour eggplants |
+      | Concept | <span lang="en" class="multilang">Eggplant</span><span lang="fr" class="multilang">Aubergine</span> |
+      | Definition | <span lang="en" class="multilang">Sour eggplants</span><span lang="fr" class="multilang">Aubergines aigres</span> |
       | Categories | All for you |
+    And I add a glossary entry with the following data:
+      | Concept | 7up |
+      | Definition | <span lang="en" class="multilang">7up is a softdrink</span><span lang="fr" class="multilang">7up est une boisson</span> |
+      | Categories | The ones I like |
     And I log out
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I follow "Test glossary name"
     And I add a glossary entry with the following data:
-      | Concept | Cucumber |
-      | Definition | Sweet cucumber |
+      | Concept | <span lang="en" class="multilang">Cucumber</span><span lang="fr" class="multilang">Concombre</span> |
+      | Definition | <span lang="en" class="multilang">Sweet cucumber</span><span lang="fr" class="multilang">Doux concombre</span> |
       | Categories | The ones I like |
     And I log out
     And I log in as "teacher1"
@@ -47,9 +53,20 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
     And I press "Search"
     Then I should see "Sweet cucumber"
     And I should see "Search: cucumber"
+    And I set the field "hook" to "aubergine"
+    And I press "Search"
+    And I should see "Sour eggplants"
+    And I should see "Search: aubergine"
+    And I should see "E" in the ".glossarycategoryheader" "css_element"
     And I click on "E" "link" in the ".entrybox" "css_element"
     And I should see "Sour eggplants"
     And I should not see "Sweet cucumber"
+    And I should not see "No entries found in this section"
+    And I click on "Special" "link" in the ".entrybox" "css_element"
+    And I should see "7up"
+    And I should not see "Sweet cucumber"
+    And I should not see "Sour eggplants"
+    And I should not see "No entries found in this section"
     And I click on "X" "link" in the ".entrybox" "css_element"
     And I should not see "Sweet cucumber"
     And I should see "No entries found in this section"
