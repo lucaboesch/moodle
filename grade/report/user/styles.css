@@ -59,10 +59,10 @@
     font-weight: bold;
 }
 
-.path-grade-report-user td.column-grade.gradepass {
+.path-grade-report-user .user-grade .column-grade.gradepass {
     color: #298721;
 }
 
-.path-grade-report-user td.column-grade.gradefail {
+.path-grade-report-user .user-grade .column-grade.gradefail {
     color: #890d0d;
 }
