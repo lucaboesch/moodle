@@ -13503,7 +13503,6 @@ body:not(.editing) .sitetopic ul.section {
 
 @media (min-width: 576px) {
   .section .label .mod-indent-outer {
-    padding-left: 24px;
     display: block; } }
 
 .section .filler {
