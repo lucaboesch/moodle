@@ -119,7 +119,6 @@ body:not(.editing)  .sitetopic ul.section {
         }
         @include media-breakpoint-up(sm) {
             .mod-indent-outer {
-                padding-left: 24px;
                 display: block;
             }
         }
