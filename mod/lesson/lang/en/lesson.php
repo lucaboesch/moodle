@@ -243,7 +243,6 @@ $string['fractionsnomax'] = 'One of the answers should be 100%, so that it is<br
 $string['full'] = 'Expanded';
 $string['general'] = 'General';
 $string['gotoendoflesson'] = 'Go to the end of the lesson';
-$string['grade'] = 'Grade';
 $string['gradebetterthan'] = 'Grade better than (&#37;)';
 $string['gradebetterthanerror'] = 'Earn a grade better than {$a} percent';
 $string['graded'] = 'Graded';
@@ -609,3 +608,6 @@ $string['additionalattemptsremaining'] = 'Completed, You can re-attempt this les
 $string['lessoncloseson'] = 'Lesson closes on {$a}';
 $string['lessonname'] = 'Lesson: {$a}';
 $string['xattempts'] = '{$a} attempts';
+
+// Deprecated since Moodle 4.0.
+$string['grade'] = 'Grade';
