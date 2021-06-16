@@ -2,3 +2,4 @@ numattemptsmade,mod_quiz
 reviewofattempt,mod_quiz
 reviewofpreview,mod_quiz
 settingsoverrides,mod_quiz
+grade,mod_quiz

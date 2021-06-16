@@ -267,7 +267,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
     protected function add_grade_columns($quiz, $usercanseegrades, &$columns, &$headers, $includefeedback = true) {
         if ($usercanseegrades) {
             $columns[] = 'sumgrades';
-            $headers[] = get_string('grade', 'quiz') . '/' .
+            $headers[] = get_string('gradenoun') . '/' .
                     quiz_format_grade($quiz, $quiz->grade);
         }
 

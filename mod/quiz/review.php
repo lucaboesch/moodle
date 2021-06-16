@@ -193,7 +193,7 @@ if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades
 
     } else if (is_null($grade)) {
         $summarydata['grade'] = array(
-            'title'   => get_string('grade', 'quiz'),
+            'title'   => get_string('gradenoun'),
             'content' => quiz_format_grade($quiz, $grade),
         );
 
@@ -221,7 +221,7 @@ if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades
             $formattedgrade = get_string('outof', 'quiz', $a);
         }
         $summarydata['grade'] = array(
-            'title'   => get_string('grade', 'quiz'),
+            'title'   => get_string('gradenoun'),
             'content' => $formattedgrade,
         );
     }
