@@ -249,7 +249,6 @@ $string['forstudents'] = 'For students';
 $string['full'] = 'Full';
 $string['fullmode'] = 'Change to full view';
 $string['generalsettings'] = 'General settings';
-$string['grade'] = 'Grade';
 $string['grade_help'] = 'The grade to award the student for their work.';
 $string['gradeadministration'] = 'Grade administration';
 $string['gradealreadyupdated'] = '{$a} grades have not been imported because the grades in the import file are older than in the grader report. To proceed with the grade import anyway, use the force import option.';
@@ -876,4 +875,7 @@ $string['writinggradebookinfo'] = 'Writing gradebook settings';
 $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
+
+// Deprecated since Moodle 4.0.
+$string['grade'] = 'Grade';
 
