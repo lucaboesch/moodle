@@ -333,7 +333,7 @@ class grade_report_user extends grade_report {
 
         if ($this->showgrade) {
             $this->tablecolumns[] = 'grade';
-            $this->tableheaders[] = $this->get_lang_string('grade', 'grades');
+            $this->tableheaders[] = $this->get_lang_string('gradenoun');
         }
 
         if ($this->showrange) {

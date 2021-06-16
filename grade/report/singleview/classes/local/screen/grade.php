@@ -166,7 +166,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
             '', // For filter icon.
             get_string('fullnameuser', 'core'),
             get_string('range', 'grades'),
-            get_string('grade', 'grades'),
+            get_string('gradenoun'),
             get_string('feedback', 'grades'),
             $this->make_toggle_links('override'),
             $this->make_toggle_links('exclude')
