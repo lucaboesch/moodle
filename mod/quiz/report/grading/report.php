@@ -367,7 +367,7 @@ class quiz_grading_report extends quiz_default_report {
 
             $row[] = format_string($counts->name);
 
-            $row[] = $this->format_count_for_table($counts, 'needsgrading', 'grade');
+            $row[] = $this->format_count_for_table($counts, 'needsgrading', 'gradeverb');
 
             $row[] = $this->format_count_for_table($counts, 'manuallygraded', 'updategrade');
 
