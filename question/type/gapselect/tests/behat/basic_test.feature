@@ -1,4 +1,4 @@
-@qtype @qtype_gapselect @_switch_window
+@qtype @qtype_gapselect @_switch_window @javascript
 Feature: Test all the basic functionality of this question type
   In order to evaluate students responses, As a teacher I need to
   create and preview gapselect (Select missing words) questions.
@@ -13,13 +13,18 @@ Feature: Test all the basic functionality of this question type
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
   @javascript
   Scenario: Create, edit then preview a gapselect question.
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
-
     # Create a new question.
-    And I add a "Select missing words" question filling the form with:
+    When I add a "Select missing words" question filling the form with:
       | Question name             | Select missing words 001      |
       | Question text             | The [[1]] [[2]] on the [[3]]. |
       | General feedback          | The cat sat on the mat.       |
@@ -130,6 +135,7 @@ Feature: Test all the basic functionality of this question type
       | Schema | Course name | Course 2 |
     And I should see "Course 2"
     And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
     And I should see "Select missing words 001"
 
     # Edit the copy and verify the form field contents.
@@ -152,3 +158,18 @@ Feature: Test all the basic functionality of this question type
       | Question name | Edited question name |
     And I press "id_submitbutton"
     And I should see "Edited question name"
+
+    # Now export question.
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
+    And I click on "jump" "select"
+    And I click on "Export" "option"
+    And I set the field "id_format_xml" to "1"
+    And I press "Export questions to file"
+    And following "click here" should download between "1650" and "2000" bytes
+    # If the download step is the last in the scenario then we can sometimes run
+    # into the situation where the download page causes a http redirect but behat
+    # has already conducted its reset (generating an error). By putting a logout
+    # step we avoid behat doing the reset until we are off that page.
+    And I log out

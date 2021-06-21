@@ -2,6 +2,7 @@ This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
 === 4.1 ===
+
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use
   course_activitychooser() instead.
 * A critical accessibility issue is been found (MDL-74800) at the output class
@@ -9,6 +10,11 @@ information provided here is intended especially for developers.
   rendered anymore using inplace_editable but using a regular named_templatable interface.
   Some format plugins that override the deprecated renderer method course_section_cm_name can be affected.
   Check the current course_section_cm_name code to see how to render it properly.
+* The include question bank setting when backup and restore a course has been removed from:
+  - General defaults section.
+  - Import defaults section.
+  - Automated defaults section.
+  The mod_qbank activity will manage the questions banks from Moodle 4.1.
 
 === 4.0 ===
 * All activity icons have been replaced with black monochrome icons. The background

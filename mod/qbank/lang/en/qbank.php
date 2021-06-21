@@ -30,7 +30,7 @@ $string['course_summary'] = 'This course has been created as part of the upgrade
 The question bank in this course category has been migrated to a question bank activity in this course.
 All the questions that were previously located in this course categories question bank have been migrated to the question bank activity in this course.';
 $string['coursenamebydefault'] = '{$a->context} Question bank: {$a->shortdescription}';
-$string['module_summary'] = 'This activity has been created as part of the upgrade to Moodle 4.0.
+$string['module_summary'] = 'This activity has been created as part of the upgrade to Moodle 4.1.
 The question bank has been migrated to this question bank activity.
 All the questions that were previously located in this course have been migrated to this question bank activity.';
 $string['modulename'] = 'Question bank';

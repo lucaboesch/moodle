@@ -1,4 +1,4 @@
-@qtype @qtype_ddimageortext @_switch_window
+@qtype @qtype_ddimageortext
 Feature: Preview a drag-drop onto image question
   As a teacher
   In order to check my drag-drop onto image questions will work for students
@@ -14,17 +14,23 @@ Feature: Preview a drag-drop onto image question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype         | name            | template |
       | Test questions   | ddimageortext | Drag onto image | xsection |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_bug_phantomjs
   Scenario: Preview a question using the mouse.
-    When I am on the "Drag onto image" "core_question > preview" page logged in as teacher
-    And I wait "2" seconds
+    When I choose "Preview" action for "Drag onto image" in the question bank
     # Odd, but the <br>s go to nothing, not a space.
     And I drag "mountainbelt" to place "1" in the drag and drop onto image question
     And I drag "continentalshelf" to place "2" in the drag and drop onto image question
@@ -40,7 +46,7 @@ Feature: Preview a drag-drop onto image question
 
   @javascript
   Scenario: Preview a question using the keyboard.
-    When I am on the "Drag onto image" "core_question > preview" page logged in as teacher
+    When I choose "Preview" action for "Drag onto image" in the question bank
     # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
     And I type "       " on place "1" in the drag and drop onto image question
     And I type "       " on place "2" in the drag and drop onto image question

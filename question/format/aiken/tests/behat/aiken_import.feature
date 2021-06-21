@@ -14,6 +14,12 @@ Feature: Test importing questions from Aiken format.
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
 
   @javascript @_file_upload
   Scenario: import some Aiken questions

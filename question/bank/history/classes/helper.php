@@ -31,15 +31,17 @@ class helper {
      *
      * @param int $entryid id of the question entry
      * @param string $returnrul url of the page to return to
-     * @param int $courseid id of the course
+     * @param \context_module $context module context
      * @return \moodle_url
      */
-    public static function question_history_url(int $entryid, string $returnrul, int $courseid): \moodle_url {
+    public static function question_history_url(int $entryid, string $returnrul, \context_module $context): \moodle_url {
         $params = [
             'entryid' => $entryid,
             'returnurl' => $returnrul,
-            'courseid' => $courseid
         ];
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            $params['cmid'] = $context->instanceid;
+        }
 
         return new \moodle_url('/question/bank/history/history.php', $params);
     }

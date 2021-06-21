@@ -60,7 +60,8 @@ class qbank_view extends external_api {
         ]);
         $argument [] = json_encode([
             'filtercondition' => $params['filtercondition'],
-            'extraparams' => $params['extraparams']
+            'extraparams' => $params['extraparams'],
+            'contextid' => $contextid,
         ]);
         $context = \context::instance_by_id($contextid);
         self::validate_context($context);

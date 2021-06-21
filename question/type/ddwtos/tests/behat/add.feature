@@ -14,10 +14,16 @@ Feature: Test creating a drag and drop into text question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
   @javascript
   Scenario: Create a drag and drop into text question
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Drag and drop into text" question filling the form with:
       | Question name                  | Drag and drop into text 001   |
       | Question text                  | The [[1]] [[2]] on the [[3]]. |
@@ -41,7 +47,6 @@ Feature: Test creating a drag and drop into text question
       | Penalty for each incorrect try | 20% |
 
   Scenario: Cannot create a drag and drop into text question when making the unsolvable questions
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Drag and drop into text" question filling the form with:
       | Question name                  | Drag and drop into text 001   |
       | Question text                  | The [[1]] [[2]] on the [[1]]. |

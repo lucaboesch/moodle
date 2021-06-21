@@ -14,16 +14,23 @@ Feature: Test editing a drag and drop markers questions
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype    | name         | template |
       | Test questions   | ddmarker | Drag markers | mkmap    |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
   @javascript
   Scenario: Edit a drag and drop markers question
-    When I am on the "Drag markers" "core_question > edit" page logged in as teacher
+    When I choose "Edit question" action for "Drag markers" in the question bank
     And I set the following fields to these values:
       | Question name | Edited question name |
     And I press "id_submitbutton"

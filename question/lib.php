@@ -122,7 +122,10 @@ function core_question_output_fragment_question_data($args) {
     } else {
         $extraparams = [];
     }
-    $thiscontext = \context_course::instance($params['courseid']);
+    $nodeparent = $PAGE->settingsnav->find('questionbank', \navigation_node::TYPE_CONTAINER);
+    $thispageurl = new \moodle_url($nodeparent->action->get_path());
+    $thiscontext = \context::instance_by_id($param->contextid);
+    $thispageurl->param('cmid', $thiscontext->instanceid);
     $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
     $contexts->require_one_edit_tab_cap($params['tabname']);
     $course = get_course($params['courseid']);

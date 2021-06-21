@@ -133,8 +133,7 @@ class qbank_preview_helper_test extends \advanced_testcase {
         $params = [
             'id' => $this->questiondata->id,
             'behaviour' => $this->options->behaviour,
-            'maxmark' => $this->options->maxmark,
-            'courseid' => $this->context->instanceid
+            'maxmark' => $this->options->maxmark
         ];
         // Extra params for options.
         $params['correctness']     = $this->options->correctness;

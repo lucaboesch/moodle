@@ -14,17 +14,24 @@ Feature: Preview a Multiple choice question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name             | template    |
       | Test questions   | multichoice | Multi-choice-001 | two_of_four |
       | Test questions   | multichoice | Multi-choice-002 | one_of_four |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
 
-  @javascript @_switch_window
-  Scenario: Preview a Multiple choice question and submit a partially correct response.
-    When I am on the "Multi-choice-001" "core_question > preview" page logged in as teacher
+  @javascript
+  Scenario: Preview a Multiple choice question and submit a partially correct response
+    When I choose "Preview" action for "Multi-choice-001" in the question bank
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
@@ -36,9 +43,9 @@ Feature: Preview a Multiple choice question
     And I should see "Mark 0.50 out of 1.00"
     And I should see "Parts, but only parts, of your response are correct."
 
-  @javascript @_switch_window
+  @javascript
   Scenario: Preview a Multiple choice question and submit a correct response.
-    When I am on the "Multi-choice-001" "core_question > preview" page logged in as teacher
+    When I choose "Preview" action for "Multi-choice-001" in the question bank
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
@@ -52,9 +59,9 @@ Feature: Preview a Multiple choice question
     And I should see "The odd numbers are One and Three."
     And I should see "The correct answers are: One, Three"
 
-  @javascript @_switch_window
-  Scenario: Preview a Multiple choice question and submit a correct response.
-    When I am on the "Multi-choice-002" "core_question > preview" page logged in as teacher
+  @javascript
+  Scenario: Preview a Multiple choice question and submit a correct response
+    When I choose "Preview" action for "Multi-choice-002" in the question bank
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
@@ -65,9 +72,9 @@ Feature: Preview a Multiple choice question
     And I should see "Well done!"
     And I should see "The correct answer is: One"
 
-  @javascript @_switch_window
+  @javascript
   Scenario: Preview a multiple choice question (single response) and clear a previous selected option.
-    When I am on the "Multi-choice-002" "core_question > preview" page logged in as teacher
+    When I choose "Preview" action for "Multi-choice-002" in the question bank
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"

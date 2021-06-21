@@ -53,8 +53,8 @@ class history_action_column extends menu_action_column_base {
         }
 
         if (question_has_capability_on($question, 'use')) {
-            $url = helper::question_history_url($question->questionbankentryid, $this->qbank->returnurl,
-                                                                    $this->qbank->course->id);
+            $context = $this->qbank->get_most_specific_context();
+            $url = helper::question_history_url($question->questionbankentryid, $this->qbank->returnurl, $context);
             return [$url, 't/log', $this->strpreview];
         }
 

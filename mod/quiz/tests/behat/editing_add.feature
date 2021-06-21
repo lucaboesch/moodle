@@ -1,4 +1,4 @@
-@mod @mod_quiz
+@mod @mod_quiz @javascript
 Feature: Edit quiz page - adding things
   In order to build the quiz I want my students to attempt
   As a teacher
@@ -15,8 +15,11 @@ Feature: Edit quiz page - adding things
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
     And the following "activities" exist:
-      | activity   | name   | intro                           | course | idnumber |
-      | quiz       | Quiz 1 | Quiz 1 for testing the Add menu | C1     | quiz1    |
+      | activity   | name             | intro                           | course | idnumber |
+      | quiz       | Quiz 1           | Quiz 1 for testing the Add menu | C1     | quiz1    |
+    And the following "question categories" exist:
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
 
   @javascript
@@ -104,7 +107,23 @@ Feature: Edit quiz page - adding things
       | Course       | C1        | Default for C1   | Subcat 1       |
       | Course       | C1        | Default for C1   | Subcat 2       |
     When I am on "Course 1" course homepage
+    And I follow "Quiz 1"
     And I navigate to "Question bank" in current page administration
+    And I click on "jump" "select"
+    And I select "Categories" from the "Question bank tertiary navigation" singleselect
+    Then I should see "Add category"
+    And I follow "Add category"
+    Then I set the field "Parent category" to "Test questions"
+    And I set the field "Name" to "Subcat 1"
+    And I set the field "Category info" to "This is sub category 1"
+    And I press "id_submitbutton"
+    And I should see "Subcat 1"
+    And I follow "Add category"
+    Then I set the field "Parent category" to "Test questions"
+    And I set the field "Name" to "Subcat 2"
+    And I set the field "Category info" to "This is sub category 2"
+    And I press "id_submitbutton"
+    And I should see "Subcat 2"
     And I select "Questions" from the "Question bank tertiary navigation" singleselect
     And I should see "Question bank"
 
@@ -131,6 +150,7 @@ Feature: Edit quiz page - adding things
     And I should see "Essay 02"
 
     # Create the Essay 03 question.
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Test questions"
     And I wait until the page is ready
     When I press "Create a new question ..."
     And I set the field "item_qtype_essay" to "1"

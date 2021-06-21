@@ -14,9 +14,15 @@ Feature: Test creating a Description question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
   Scenario: Create a Description question with Correct answer as False
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Description" question filling the form with:
       | Question name                      | description-001                                                |
       | Question text                      | Instructions about the following questions.                    |

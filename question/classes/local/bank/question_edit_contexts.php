@@ -16,6 +16,8 @@
 
 namespace core_question\local\bank;
 
+use context_module;
+
 /**
  * Tracks all the contexts related to the one we are currently editing questions and provides helper methods to check permissions.
  *
@@ -64,9 +66,26 @@ class question_edit_contexts {
     /**
      * Constructor
      * @param \context $thiscontext the current context.
+     * @param int $courseid course id to get the qbanks in the course
      */
-    public function __construct(\context $thiscontext) {
-        $this->allcontexts = array_values($thiscontext->get_parent_contexts(true));
+    public function __construct(\context $thiscontext, $courseid = null) {
+        $contexts = [$thiscontext];
+        if ($courseid) {
+            $qbankmodules = get_coursemodules_in_course('qbank', $courseid);
+            if (!empty($qbankmodules)) {
+                foreach ($qbankmodules as $qbankmodule) {
+                    $contexts [] = context_module::instance($qbankmodule->id);
+                }
+            }
+        }
+        // System context.
+        $systemqbankmodules = get_coursemodules_in_course('qbank', 1);
+        if (!empty($systemqbankmodules)) {
+            foreach ($systemqbankmodules as $systemqbankmodule) {
+                $contexts [] = context_module::instance($systemqbankmodule->id);
+            }
+        }
+        $this->allcontexts = array_values($contexts);
     }
 
     /**

@@ -1,4 +1,4 @@
-@qtype @qtype_description
+@qtype @qtype_description @javascript
 Feature: Test exporting Description questions
   As a teacher
   In order to be able to reuse my Description questions
@@ -14,15 +14,23 @@ Feature: Test exporting Description questions
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name            | template |
       | Test questions   | description | description-001 | info     |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
+    And I click on "jump" "select"
+    And I click on "Export" "option"
 
   Scenario: Export a Description question
-    When I am on the "Course 1" "core_question > course question export" page logged in as teacher
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     Then following "click here" should download between "650" and "900" bytes

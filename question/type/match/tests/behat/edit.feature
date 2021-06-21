@@ -1,4 +1,4 @@
-@qtype @qtype_match
+@qtype @qtype_match @javascript
 Feature: Test editing a Matching question
   As a teacher
   In order to be able to update my Matching question
@@ -14,16 +14,23 @@ Feature: Test editing a Matching question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype | name                 | template |
       | Test questions   | match | Matching for editing | foursubq |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
-  @javascript @_switch_window
+  @javascript
   Scenario: Edit a Matching question
-    When I am on the "Matching for editing" "core_question > edit" page logged in as teacher
+    When I choose "Edit question" action for "Matching for editing" in the question bank
     And I set the following fields to these values:
       | Question name | |
     And I press "id_submitbutton"

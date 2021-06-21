@@ -18,12 +18,12 @@ Feature: Adding random questions to a quiz based on category and tags
       | activity   | name   | intro                                           | course | idnumber |
       | quiz       | Quiz 1 | Quiz 1 for testing the Add random question form | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name                 |
-      | Course       | C1        | Questions Category 1 |
-      | Course       | C1        | Questions Category 2 |
+      | contextlevel          | reference | name                 |
+      | Activity module       | quiz1        | Questions Category 1 |
+      | Activity module       | quiz1        | Questions Category 2 |
     And the following "question categories" exist:
-      | contextlevel | reference | name        | questioncategory     |
-      | Course       | C1        | Subcategory | Questions Category 1 |
+      | contextlevel          | reference | name        | questioncategory     |
+      | Activity module       | quiz1     | Subcategory | Questions Category 1 |
     And the following "questions" exist:
       | questioncategory     | qtype | name            | user     | questiontext    |
       | Questions Category 1 | essay | question 1 name | admin    | Question 1 text |
@@ -105,8 +105,8 @@ Feature: Adding random questions to a quiz based on category and tags
     And I select "1" from the "randomcount" singleselect
     And I follow "New category"
     And I set the following fields to these values:
-      | Name            | New Random category |
-      | Parent category |  Default for Quiz 1 |
+      | categoryname   | New Random category  |
+      | parentcategory | Questions Category 1 |
     And I press "Create category and add random question"
     And I should see "Random question based on filter condition" on quiz page "1"
     And I click on "Configure question" "link" in the "Random question based on filter condition" "list_item"

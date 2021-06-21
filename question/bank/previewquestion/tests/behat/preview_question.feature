@@ -17,13 +17,19 @@ Feature: A teacher can preview questions in the question bank
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | Activity module       | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name                          |
       | Test questions   | numerical | Test question to be previewed |
-    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
+    And I am on the "C1" "Course" page logged in as "teacher1"
+    And I navigate to "Question bank" in current page administration
+    And I am on "Course 1" course homepage
+    And I follow "Test qbank name"
     When I choose "Preview" action for "Test question to be previewed" in the question bank
 
   Scenario: Question preview shows the question and other information
@@ -109,4 +115,3 @@ Feature: A teacher can preview questions in the question bank
   Scenario: Question preview can be closed
     And I press "Close preview"
     Then I should not see "(latest)"
-    And I should see "Test quiz"

@@ -71,3 +71,6 @@ match,core_user
 matchofthefollowing,core_user
 placeholdertypeorselect,core_user
 selectfiltertype,core_user
+deletecoursecategorywithquestions,core_question
+errordeletingquestionsfromcategory,core_question
+questionsinthequestionbank,core

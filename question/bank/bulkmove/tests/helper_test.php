@@ -217,7 +217,6 @@ class helper_test extends \advanced_testcase {
         $url = new \moodle_url('/question/bank/bulkmove/move.php');
         $displaydata = \qbank_bulkmove\helper::get_displaydata($addcontexts, $url, $url);
         $this->assertStringContainsString('Test question category 1', $displaydata['categorydropdown']);
-        $this->assertStringContainsString('Default for Category 1', $displaydata['categorydropdown']);
         $this->assertEquals($url, $displaydata ['moveurl']);
         $this->assertEquals($url, $displaydata ['returnurl']);
     }

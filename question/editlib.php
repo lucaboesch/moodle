@@ -162,21 +162,21 @@ function question_can_delete_cat($todelete) {
  * Common setup for all pages for editing questions.
  * @param string $baseurl the name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param string $edittab code for this edit tab
- * @param bool $requirecmid require cmid? default false
- * @param bool $unused no longer used, do no pass
+ * @param bool|int $requirecmid require cmid? default false
+ * @param bool $courseqbanks get the qustion banks for the course
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
-function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused = null) {
+function question_edit_setup($edittab, $baseurl, $requirecmid = false, $courseqbanks = false) {
     global $PAGE;
-
-    if ($unused !== null) {
-        debugging('Deprecated argument passed to question_edit_setup()', DEBUG_DEVELOPER);
-    }
 
     $params = [];
 
     if ($requirecmid) {
-        $params['cmid'] = required_param('cmid', PARAM_INT);
+        if (is_bool($requirecmid)) {
+            $params['cmid'] = required_param('cmid', PARAM_INT);
+        } else {
+            $params['cmid'] = $requirecmid;
+        }
     } else {
         $params['cmid'] = optional_param('cmid', null, PARAM_INT);
     }
@@ -210,7 +210,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
 
     $PAGE->set_pagelayout('admin');
 
-    return question_build_edit_resources($edittab, $baseurl, $params);
+    return question_build_edit_resources($edittab, $baseurl, $params, DEFAULT_QUESTIONS_PER_PAGE, $courseqbanks);
 }
 
 /**
@@ -241,10 +241,11 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
  * @param string $baseurl The name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param array $params The provided parameters to construct the resources with.
  * @param int $defaultquestionsperpage number of questions per page, if not given in the URL.
+ * @param bool $courseqbanks get the qbanks for the course in the list of categories
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function question_build_edit_resources($edittab, $baseurl, $params,
-        $defaultquestionsperpage = DEFAULT_QUESTIONS_PER_PAGE) {
+        $defaultquestionsperpage = DEFAULT_QUESTIONS_PER_PAGE, $courseqbanks = false) {
     global $DB;
 
     $thispageurl = new moodle_url($baseurl);
@@ -302,16 +303,14 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         $thispageurl->params(compact('cmid'));
         require_login($courseid, false, $cm);
         $thiscontext = context_module::instance($cmid);
-    } else {
-        $module = null;
-        $cm = null;
-        $thispageurl->params(compact('courseid'));
-        require_login($courseid, false);
-        $thiscontext = context_course::instance($courseid);
     }
 
-    if ($thiscontext){
-        $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
+    if ($thiscontext) {
+        if ($courseqbanks) {
+            $contexts = new core_question\local\bank\question_edit_contexts($thiscontext, $courseid);
+        } else {
+            $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
+        }
         $contexts->require_one_edit_tab_cap($edittab);
     } else {
         $contexts = null;
@@ -363,7 +362,7 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         $pagevars['qperpage'] = $qperpage ?? $defaultquestionsperpage;
     }
 
-    $defaultcategory = question_make_default_categories($contexts->all());
+    $defaultcategory = question_make_default_categories([$thiscontext]);
 
     $contextlistarr = [];
     foreach ($contexts->having_one_edit_tab_cap($edittab) as $context){

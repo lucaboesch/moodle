@@ -14,11 +14,18 @@ Feature: Test importing questions from GIFT format.
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
-    And I am on the "Course 1" "core_question > course question import" page logged in as "teacher"
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
 
   @javascript @_file_upload
   Scenario: import some GIFT questions
-    When I set the field "id_format_gift" to "1"
+    When I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
+    And I select "Import" from the "Question bank tertiary navigation" singleselect
+    And I set the field "id_format_gift" to "1"
     And I upload "question/format/gift/tests/fixtures/questions.gift.txt" file to "Import" filemanager
     And I press "id_submitbutton"
     Then I should see "Parsing questions from import file."
@@ -29,6 +36,7 @@ Feature: Test importing questions from GIFT format.
 
     # Now export again.
     And I am on "Course 1" course homepage
+    And I follow "Test quiz"
     And I navigate to "Question bank" in current page administration
     And I select "Export" from the "Question bank tertiary navigation" singleselect
     And I set the field "id_format_gift" to "1"
@@ -37,7 +45,10 @@ Feature: Test importing questions from GIFT format.
 
   @javascript @_file_upload
   Scenario: import a GIFT file which specifies the category
-    When I set the field "id_format_gift" to "1"
+    And I follow "Test quiz"
+    When I navigate to "Question bank" in current page administration
+    And I select "Import" from the "Question bank tertiary navigation" singleselect
+    And I set the field "id_format_gift" to "1"
     And I upload "question/format/gift/tests/fixtures/questions_in_category.gift.txt" file to "Import" filemanager
     And I press "id_submitbutton"
     Then I should see "Parsing questions from import file."
@@ -48,7 +59,10 @@ Feature: Test importing questions from GIFT format.
 
   @javascript @_file_upload
   Scenario: import some GIFT questions with unsupported encoding
-    When I set the field "id_format_gift" to "1"
+    And I follow "Test quiz"
+    When I navigate to "Question bank" in current page administration
+    And I select "Import" from the "Question bank tertiary navigation" singleselect
+    And I set the field "id_format_gift" to "1"
     And I upload "question/format/gift/tests/fixtures/questions_encoding_windows-1252.gift.txt" file to "Import" filemanager
     And I press "id_submitbutton"
     Then I should see "The file you selected does not use UTF-8 character encoding. GIFT format files must use UTF-8."

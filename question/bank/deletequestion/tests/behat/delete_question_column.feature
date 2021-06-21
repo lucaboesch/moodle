@@ -10,8 +10,8 @@ Feature: Use the qbank plugin manager page for deletequestion
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name                  | questiontext              |
       | Test questions   | truefalse | First question        | Answer the first question |
@@ -60,3 +60,30 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     Then I should not see "First question"
     And I should not see "First question second"
+
+  Scenario: Questions bank can display and filter delete/hidden questions
+    Given quiz "Test quiz" contains the following questions:
+      | question       | page |
+      | First question | 1    |
+    When I am on "Course 1" course homepage
+    And I am on the "Test quiz" "quiz activity" page
+    And I navigate to "Question bank" in current page administration
+    And I click on "Clear filters" "button"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Category"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Test questions"
+    And I click on "Apply filters" "button"
+    And I choose "Delete" action for "First question" in the question bank
+    And I press "Delete"
+    And I click on "Clear filters" "button"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Category"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Test questions"
+    And I click on "Apply filters" "button"
+    And I should not see "First question"
+    And I click on "Clear filters" "button"
+    And I set the field "type" in the "Filter 1" "fieldset" to "Category"
+    And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Test questions"
+    And I click on "Add condition" "button"
+    And I set the field "type" in the "Filter 2" "fieldset" to "Show old questions"
+    And I set the field "hidden" in the "Filter 2" "fieldset" to "Yes"
+    And I click on "Apply filters" "button"
+    And I should see "First question"

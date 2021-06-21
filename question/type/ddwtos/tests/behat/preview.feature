@@ -1,4 +1,4 @@
-@qtype @qtype_ddwtos @_switch_window
+@qtype @qtype_ddwtos @javascript
 Feature: Preview a drag-drop into text question
   As a teacher
   In order to check my drag-drop into text questions will work for students
@@ -14,17 +14,25 @@ Feature: Preview a drag-drop into text question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype  | name                  | template |
       | Test questions   | ddwtos | Drag to text          | fox      |
       | Test questions   | ddwtos | Drag to text infinite | infinite |
+      | Test questions   | ddwtos | Funny groups          | oddgroups |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
 
   @javascript @_bug_phantomjs
-  Scenario: Preview a question using the mouse.
-    When I am on the "Drag to text" "core_question > preview" page logged in as teacher
+  Scenario: Preview a question using the mouse
+    When I choose "Preview" action for "Drag to text" in the question bank
     And I drag "quick" to space "1" in the drag and drop into text question
     And I drag "fox" to space "2" in the drag and drop into text question
     And I drag "assiduous" to space "3" in the drag and drop into text question
@@ -33,8 +41,8 @@ Feature: Preview a drag-drop into text question
     And I should see "Mark 0.67 out of 1.00"
 
   @javascript
-  Scenario: Preview a question using the keyboard & submit incomplete.
-    When I am on the "Drag to text" "core_question > preview" page logged in as teacher
+  Scenario: Preview a question using the keyboard & submit incomplete
+    When I choose "Preview" action for "Drag to text" in the question bank
     And I type " " into space "1" in the drag and drop onto image question
     And I type "   " into space "2" in the drag and drop onto image question
     And I type " " into space "3" in the drag and drop onto image question
@@ -44,7 +52,7 @@ Feature: Preview a drag-drop into text question
 
   @javascript
   Scenario: Preview a question using the keyboard.
-    When I am on the "Drag to text" "core_question > preview" page logged in as teacher
+    When I choose "Preview" action for "Drag to text" in the question bank
     And I type "  " into space "1" in the drag and drop onto image question
     And I type "  " into space "2" in the drag and drop onto image question
     And I type "  " into space "3" in the drag and drop onto image question
@@ -53,11 +61,8 @@ Feature: Preview a drag-drop into text question
     And I should see "Mark 0.00 out of 1.00"
 
   @javascript
-  Scenario: Preview a question that uses strange group numbers using the keyboard.
-    Given the following "questions" exist:
-      | questioncategory | qtype  | name         | template  |
-      | Test questions   | ddwtos | Funny groups | oddgroups |
-    When I am on the "Funny groups" "core_question > preview" page logged in as teacher
+  Scenario: Preview a question that uses strange group numbers using the keyboard
+    When I choose "Preview" action for "Funny groups" in the question bank
     And I type " " into space "1" in the drag and drop onto image question
     And I type " " into space "2" in the drag and drop onto image question
     And I type " " into space "3" in the drag and drop onto image question
@@ -66,8 +71,8 @@ Feature: Preview a drag-drop into text question
     And I should see "Mark 1.00 out of 1.00"
 
   @javascript
-  Scenario: Preview a infinite question.
-    When I am on the "Drag to text infinite" "core_question > preview" page logged in as teacher
+  Scenario: Preview a infinite question
+    When I choose "Preview" action for "Drag to text infinite" in the question bank
     And I press "Fill in correct responses"
     Then I should see "Option1" in the home area of drag and drop into text question
     And I should see "Option2" in the home area of drag and drop into text question

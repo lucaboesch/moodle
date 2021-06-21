@@ -14,10 +14,16 @@ Feature: Test creating a drag and drop markers question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
   @javascript @_file_upload
   Scenario: Create a drag and drop markers question
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I press "Create a new question ..."
     And I set the field "Drag and drop markers" to "1"
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"

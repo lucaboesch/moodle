@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/questionlib.php');
+
 /**
  * Return if the plugin supports $feature.
  *
@@ -105,4 +107,36 @@ function qbank_delete_instance($id) {
     $DB->delete_records('qbank', array('id' => $id));
 
     return true;
+}
+
+/**
+ * Question data fragment to get the question html via ajax call.
+ *
+ * @param $args
+ * @return array|string
+ */
+function mod_qbank_output_fragment_question_data($args) {
+    if (empty($args)) {
+        return '';
+    }
+    $param = json_decode($args);
+    $filtercondition = json_decode($param->filtercondition);
+    if (!$filtercondition) {
+        return ['', ''];
+    }
+    $extraparams = json_decode($param->extraparams);
+    $params = \core_question\local\bank\helper::convert_object_array($filtercondition);
+    $extraparamsclean = [];
+    if (!empty($extraparams)) {
+        $extraparamsclean = $extraparams;
+    }
+    $thispageurl = new \moodle_url('/mod/qbank/view.php');
+    $thiscontext = \context::instance_by_id($param->contextid);
+    $thispageurl->param('cmid', $thiscontext->instanceid);
+    $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
+    $contexts->require_one_edit_tab_cap($params['tabname']);
+    $course = get_course($params['courseid']);
+    $questionbank = new \core_question\local\bank\view($contexts, $thispageurl, $course, null, $params, $extraparamsclean);
+    list($questionhtml, $jsfooter) = $questionbank->display_questions_table();
+    return [$questionhtml, $jsfooter];
 }

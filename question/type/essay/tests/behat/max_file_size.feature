@@ -1,4 +1,4 @@
-@qtype @qtype_essay
+@qtype @qtype_essay @javascript
 Feature: In an essay question, let the question author choose the maxbytes for attachments
   In order to constrain student submissions for marking
   As a teacher
@@ -14,22 +14,29 @@ Feature: In an essay question, let the question author choose the maxbytes for a
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype | name          | template         | attachments | maxbytes |
       | Test questions   | essay | essay-1-512KB | editor           | 1           | 524288   |
       | Test questions   | essay | essay-1-max   | editor           | 1           | 0        |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
 
-  @javascript @_switch_window
-  Scenario: Preview an Essay question and see the allowed maximum file sizes and number of attachments.
-    When I am on the "essay-1-512KB" "core_question > preview" page logged in as teacher
+  @javascript
+  Scenario: Preview an Essay question and see the allowed maximum file sizes and number of attachments
+    When I choose "Preview" action for "essay-1-512KB" in the question bank
     Then I should see "Please write a story about a frog."
     And I should see "Maximum file size: 512 KB, maximum number of files: 1"
 
-  @javascript @_switch_window
-  Scenario: Preview an Essay question with Course upload limit and see the allowed maximum file size.
-    When I am on the "essay-1-max" "core_question > preview" page logged in as teacher
+  @javascript
+  Scenario: Preview an Essay question with Course upload limit and see the allowed maximum file size
+    When I choose "Preview" action for "essay-1-max" in the question bank
     Then I should see "Please write a story about a frog."
     And I should see "Maximum file size: 1 MB, maximum number of files: 1"

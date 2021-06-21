@@ -99,7 +99,6 @@ $string['cwrqpfsnoprob'] = 'No question categories in your site are affected by 
 $string['defaultfor'] = 'Default for {$a}';
 $string['defaultinfofor'] = 'The default category for questions shared in context \'{$a}\'.';
 $string['defaultmarkmustbepositive'] = 'The default mark must be positive.';
-$string['deletecoursecategorywithquestions'] = 'There are questions in the question bank associated with this course category. If you proceed, they will be deleted. You may wish to move them first, using the question bank interface.';
 $string['deletequestioncheck'] = 'Are you absolutely sure you want to delete \'{$a}\'?';
 $string['deletequestionscheck'] = 'Are you absolutely sure you want to delete the following questions?<br /><br />{$a}';
 $string['deletingbehaviour'] = 'Deleting question behaviour \'{$a}\'';
@@ -128,7 +127,6 @@ $string['editthiscategory'] = 'Edit this category';
 $string['emptyxml'] = 'Unknown error - empty imsmanifest.xml';
 $string['enabled'] = 'Enabled';
 $string['erroraccessingcontext'] = 'Cannot access context';
-$string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category {$a}.';
 $string['errorduringpost'] = 'Error occurred during post-processing!';
 $string['errorduringpre'] = 'Error occurred during pre-processing!';
 $string['errorduringproc'] = 'Error occurred during processing!';
@@ -508,3 +506,5 @@ $string['notflagged'] = 'Not flagged';
 
 // Deprecated since Moodle 4.1.
 $string['nopermissionmove'] = 'You don\'t have permission to move questions from here. You must save the question in this category or save it as a new question.';
+$string['deletecoursecategorywithquestions'] = 'There are questions in the question bank associated with this course category. If you proceed, they will be deleted. You may wish to move them first, using the question bank interface.';
+$string['errordeletingquestionsfromcategory'] = 'Error deleting questions from category {$a}.';

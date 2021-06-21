@@ -15,19 +15,20 @@ Feature: Show statistics in question bank
       | user     | course | role           |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
+    And the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
+      | quiz       | Quiz 2 | Quiz 2 description | C1     | quiz2    |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference     | name           |
+      | Activity module       | qbank1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name  | questiontext    |
       | Test questions   | truefalse   | TF1   | First question  |
       | Test questions   | truefalse   | TF2   | Second question |
       | Test questions   | truefalse   | TF3   | Third question  |
       | Test questions   | truefalse   | TF4   | Fourth question |
-    And the following "activities" exist:
-      | activity   | name   | intro              | course | idnumber |
-      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
-      | quiz       | Quiz 2 | Quiz 2 description | C1     | quiz2    |
     And quiz "Quiz 1" contains the following questions:
       | question | page | maxmark |
       | TF1      | 1    | 1.0     |
@@ -73,6 +74,7 @@ Feature: Show statistics in question bank
       |   1  | True     |
       |   2  | True     |
     When I am on the "Course 1" course page logged in as admin
+    And I follow "Test qbank name"
     And I navigate to "Question bank" in current page administration
     And I should see "50.00%" in the "TF1" "table_row"
     And I should see "75.00%" in the "TF2" "table_row"
@@ -89,6 +91,7 @@ Feature: Show statistics in question bank
       |   1  | True     |
       |   2  | True     |
     When I am on the "Course 1" course page logged in as admin
+    And I follow "Test qbank name"
     And I navigate to "Question bank" in current page administration
     And I should see "50.00%" in the "TF1" "table_row"
     And I should see "75.00%" in the "TF2" "table_row"
@@ -105,6 +108,7 @@ Feature: Show statistics in question bank
       |   1  | True     |
       |   2  | True     |
     When I am on the "Course 1" course page logged in as admin
+    And I follow "Test qbank name"
     And I navigate to "Question bank" in current page administration
     And I should see "Likely" in the "TF1" "table_row"
     And I should see "Unlikely" in the "TF2" "table_row"
@@ -127,6 +131,7 @@ Feature: Show statistics in question bank
       |   1  | True     |
       |   2  | False    |
     When I am on the "Course 1" course page logged in as admin
+    And I follow "Test qbank name"
     And I navigate to "Question bank" in current page administration
     And I should see "Likely" in the "TF1" "table_row"
     And I should see "Very likely" in the "TF2" "table_row"

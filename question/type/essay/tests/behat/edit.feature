@@ -14,18 +14,24 @@ Feature: Test editing an Essay question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype | name      | template         |
       | Test questions   | essay | essay-001 | editor           |
       | Test questions   | essay | essay-002 | editorfilepicker |
       | Test questions   | essay | essay-003 | plain            |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
   Scenario: Edit an Essay question
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
-    And I choose "Edit question" action for "essay-001" in the question bank
+    When I choose "Edit question" action for "essay-001" in the question bank
     And I set the following fields to these values:
       | Question name | |
     And I press "id_submitbutton"

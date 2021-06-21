@@ -14,12 +14,12 @@ Feature: Questions in the question bank have versions
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
     And the following "activities" exist:
       | activity   | name   | course | idnumber |
       | quiz       | Quiz 1 | C1     | quiz1    |
+    And the following "question categories" exist:
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1        | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name           | questiontext              | answer 1 |
       | Test questions   | truefalse | First question | Answer the first question | True     |
@@ -28,6 +28,7 @@ Feature: Questions in the question bank have versions
       | First question    | 1    |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
+    And I am on the "Quiz 1" "quiz activity" page
 
   @javascript
   Scenario: Question version is displayed

@@ -1,4 +1,4 @@
-@qtype @qtype_match
+@qtype @qtype_match @javascript
 Feature: Preview a Matching question
   As a teacher
   In order to check my Matching questions will work for students
@@ -14,16 +14,23 @@ Feature: Preview a Matching question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype | name         | template | shuffleanswers |
       | Test questions   | match | matching-001 | foursubq | 0              |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
 
-  @javascript @_switch_window
-  Scenario: Preview a Matching question and submit a correct response.
-    When I am on the "matching-001" "core_question > preview" page logged in as teacher
+  @javascript
+  Scenario: Preview a Matching question and submit a correct response
+    When I choose "Preview" action for "matching-001" in the question bank
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
@@ -34,9 +41,9 @@ Feature: Preview a Matching question
     Then I should see "Well done!"
     And I should see "General feedback."
 
-  @javascript @_switch_window
-  Scenario: Preview a Matching question and submit a partially correct response.
-    When I am on the "matching-001" "core_question > preview" page logged in as teacher
+  @javascript
+  Scenario: Preview a Matching question and submit a partially correct response
+    When I choose "Preview" action for "matching-001" in the question bank
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
@@ -47,9 +54,9 @@ Feature: Preview a Matching question
     Then I should see "Parts, but only parts, of your response are correct."
     And I should see "General feedback."
 
-  @javascript @_switch_window
-  Scenario: Preview a Matching question and submit an incorrect response.
-    When I am on the "matching-001" "core_question > preview" page logged in as teacher
+  @javascript
+  Scenario: Preview a Matching question and submit an incorrect response
+    When I choose "Preview" action for "matching-001" in the question bank
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"

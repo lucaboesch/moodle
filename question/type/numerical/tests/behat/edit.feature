@@ -14,18 +14,25 @@ Feature: Test editing a Numerical question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | qbank1    | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name                  | template |
       | Test questions   | numerical | Numerical for editing | pi       |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
   Scenario: Edit a Numerical question when using a custom decimal separator
     Given the following "language customisations" exist:
       | component       | stringid | value |
       | core_langconfig | decsep   | #     |
-    When I am on the "Numerical for editing" "core_question > edit" page logged in as teacher
+    When I choose "Edit question" action for "Numerical for editing" in the question bank
     And the field "id_answer_0" matches value "3#14"
     And I set the following fields to these values:
       | Question name | |
@@ -46,7 +53,7 @@ Feature: Test editing a Numerical question
     And I should see "Edited Numerical name"
 
   Scenario: Edit a Numerical question with very small answer
-    When I am on the "Numerical for editing" "core_question > edit" page logged in as teacher
+    When I choose "Edit question" action for "Numerical for editing" in the question bank
     And I set the following fields to these values:
       | id_answer_0    | 0.00000123456789 |
       | id_tolerance_1 | 0.0000123456789  |

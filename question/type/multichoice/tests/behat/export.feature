@@ -1,4 +1,4 @@
-@qtype @qtype_multichoice
+@qtype @qtype_multichoice @javascript
 Feature: Test exporting Multiple choice questions
   As a teacher
   In order to be able to reuse my Multiple choice questions
@@ -14,16 +14,25 @@ Feature: Test exporting Multiple choice questions
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype        | name             | template    |
       | Test questions   | multichoice  | Multi-choice-001 | two_of_four |
       | Test questions   | multichoice  | Multi-choice-002 | one_of_four |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
+    And I click on "jump" "select"
+    And I click on "Export" "option"
 
+  @javascript
   Scenario: Export a Multiple choice question
-    When I am on the "Course 1" "core_question > course question export" page logged in as teacher
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     Then following "click here" should download between "3900" and "4100" bytes

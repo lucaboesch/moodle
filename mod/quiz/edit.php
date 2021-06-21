@@ -52,7 +52,7 @@ $scrollpos = optional_param('scrollpos', '', PARAM_INT);
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
     question_edit_setup('editq', '/mod/quiz/edit.php', true);
 
-$defaultcategoryobj = question_make_default_categories($contexts->all());
+$defaultcategoryobj = question_make_default_categories([$contexts->lowest()]);
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
 $quizhasattempts = quiz_has_attempts($quiz->id);

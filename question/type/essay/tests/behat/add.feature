@@ -14,10 +14,16 @@ Feature: Test creating an Essay question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Question bank" in current page administration
+    And I follow "Test qbank name"
 
   Scenario: Create an Essay question with Response format set to 'HTML editor'
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
-    And I add a "Essay" question filling the form with:
+    When I add a "Essay" question filling the form with:
       | Question name            | essay-001                      |
       | Question text            | Write an essay with 500 words. |
       | General feedback         | This is general feedback       |
@@ -25,7 +31,6 @@ Feature: Test creating an Essay question
     Then I should see "essay-001"
 
   Scenario: Create an Essay question with Response format set to 'HTML editor with the file picker'
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Essay" question filling the form with:
       | Question name            | essay-002                      |
       | Question text            | Write an essay with 500 words. |
@@ -34,7 +39,6 @@ Feature: Test creating an Essay question
     Then I should see "essay-002"
 
   Scenario: Create an Essay question for testing some default options
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Essay" question filling the form with:
       | Question name          | essay-003                      |
       | Question text          | Write an essay with 500 words. |

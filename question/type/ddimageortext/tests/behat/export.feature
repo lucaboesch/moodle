@@ -14,17 +14,25 @@ Feature: Test exporting drag and drop onto image questions
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype         | name            | template |
       | Test questions   | ddimageortext | Drag onto image | xsection |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
+    And I click on "jump" "select"
+    And I click on "Export" "option"
 
   @javascript
   Scenario: Export a drag and drop onto image question
-    When I am on the "Course 1" "core_question > course question export" page logged in as teacher
-    And I set the field "id_format_xml" to "1"
+    When I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     Then following "click here" should download between "18600" and "19150" bytes
     # If the download step is the last in the scenario then we can sometimes run

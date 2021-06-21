@@ -217,4 +217,5 @@ class helper {
         // Migrate top categories to preserve the same parent category.
         $DB->set_field('question_categories', 'contextid', $contextid, ['contextid' => $oldcontextid]);
     }
+
 }

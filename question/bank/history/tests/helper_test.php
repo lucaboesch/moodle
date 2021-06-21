@@ -59,8 +59,15 @@ class helper_test extends \advanced_testcase {
         $questiongenerator = $generator->get_plugin_generator('core_question');
         // Create a course.
         $course = $generator->create_course();
-        $this->courseid = $course->id;
-        $this->context = \context_course::instance($course->id);
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+
+        $quiz =  $quizgenerator->create_instance([
+            'course' => $course->id,
+            'questionsperpage' => 0,
+            'grade' => 100.0,
+            'sumgrades' => 2,
+        ]);
+        $this->context = \context_module::instance($quiz->cmid);
         // Create a question in the default category.
         $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
         $cat = question_make_default_categories($contexts->all());
@@ -77,11 +84,11 @@ class helper_test extends \advanced_testcase {
      */
     public function test_question_history_url() {
         $this->resetAfterTest();
-        $actionurl = helper::question_history_url($this->questiondata->questionbankentryid, $this->returnurl, $this->courseid);
+        $actionurl = helper::question_history_url($this->questiondata->questionbankentryid, $this->returnurl, $this->context);
         $params = [
             'entryid' => $this->questiondata->questionbankentryid,
             'returnurl' => $this->returnurl,
-            'courseid' => $this->courseid
+            'cmid' => $this->context->instanceid
         ];
         $expectedurl = new \moodle_url('/question/bank/history/history.php', $params);
         $this->assertEquals($expectedurl, $actionurl);

@@ -16,15 +16,15 @@ Feature: In a essay question, limit submittable file types
       | user    | course | role           |
       | teacher | C1     | editingteacher |
       | student | C1     | student        |
-    And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
-    And the following "questions" exist:
-      | questioncategory | qtype       | name  | questiontext    | defaultmark |
-      | Test questions   | essay       | TF1   | First question  | 20          |
     And the following "activities" exist:
       | activity   | name   | intro              | course | idnumber | grade |
       | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | 20    |
+    And the following "question categories" exist:
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype       | name  | questiontext    | defaultmark |
+      | Test questions   | essay       | TF1   | First question  | 20          |
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |

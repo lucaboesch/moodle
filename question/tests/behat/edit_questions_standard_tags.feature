@@ -14,13 +14,21 @@ Feature: The questions can be tagged
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | qbank      | Test qbank name  | Test qbank description  | C1     | qbank1   |
+    And the following "question categories" exist:
+      | contextlevel          | reference | name           |
+      | Activity module       | qbank1    | Test questions |
     And the following "tags" exist:
       | name | isstandard |
       | foo  | 1          |
       | bar  | 1          |
 
   Scenario: The tags autocomplete should include standard tags
-    When I am on the "Course 1" "core_question > course question bank" page logged in as "teacher1"
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Test qbank name"
     And I press "Create a new question ..."
     And I set the field "item_qtype_truefalse" to "1"
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"

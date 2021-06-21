@@ -1,4 +1,4 @@
-@qtype @qtype_description
+@qtype @qtype_description @javascript
 Feature: Preview a Description question
   As a teacher
   In order to check my Description questions will work for students
@@ -14,16 +14,23 @@ Feature: Preview a Description question
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype       | name            | template |
       | Test questions   | description | description-001 | info     |
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
 
-  @javascript @_switch_window
-  Scenario: Preview a Description question and submit a correct response.
-    When I am on the "description-001" "core_question > preview" page logged in as teacher
+  @javascript
+  Scenario: Preview a Description question and submit a correct response
+    When I choose "Preview" action for "description-001" in the question bank
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"

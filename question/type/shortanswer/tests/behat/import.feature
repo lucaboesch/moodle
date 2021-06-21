@@ -1,4 +1,4 @@
-@qtype @qtype_shortanswer
+@qtype @qtype_shortanswer @javascript
 Feature: Test importing Short answer questions
   As a teacher
   In order to reuse Short answer questions
@@ -14,10 +14,18 @@ Feature: Test importing Short answer questions
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
+    And I navigate to "Question bank" in current page administration
+    And I click on "jump" "select"
+    And I click on "Import" "option"
 
   @javascript @_file_upload
-  Scenario: import Matching question.
-    When I am on the "Course 1" "core_question > course question import" page logged in as teacher
+  Scenario: import Matching question
     And I set the field "id_format_xml" to "1"
     And I upload "question/type/shortanswer/tests/fixtures/testquestion.moodle.xml" file to "Import" filemanager
     And I press "id_submitbutton"

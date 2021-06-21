@@ -203,8 +203,6 @@ class helper {
         }
         if ($context->contextlevel == CONTEXT_MODULE) {
             $params['cmid'] = $context->instanceid;
-        } else if ($context->contextlevel == CONTEXT_COURSE) {
-            $params['courseid'] = $context->instanceid;
         }
 
         if (!is_null($preferredbehaviour)) {

@@ -14,13 +14,19 @@ Feature: Test exporting questions using Aiken format.
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype        | name             | template    |
       | Test questions   | multichoice  | Multi-choice-001 | two_of_four |
       | Test questions   | multichoice  | Multi-choice-002 | one_of_four |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Test quiz"
 
   Scenario: Aiken export
     When I am on the "Course 1" "core_question > course question export" page logged in as "teacher1"

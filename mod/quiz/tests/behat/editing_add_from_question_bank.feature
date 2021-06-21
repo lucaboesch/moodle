@@ -15,18 +15,23 @@ Feature: Adding questions to a quiz from the question bank
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity   | name   | intro                           | course | idnumber |
-      | quiz       | Quiz 1 | Quiz 1 for testing the Add menu | C1     | quiz1    |
+      | activity   | name             | intro                           | course | idnumber |
+      | quiz       | Quiz 1           | Quiz 1 for testing the Add menu | C1     | quiz1    |
     And the following "question categories" exist:
-      | contextlevel | reference | name           |
-      | Course       | C1        | Test questions |
+      | contextlevel          | reference | name           |
+      | Activity module       | quiz1     | Test questions |
     And the following "questions" exist:
       | questioncategory | qtype     | name             | user     | questiontext     | idnumber |
       | Test questions   | essay     | question 01 name | admin    | Question 01 text |          |
       | Test questions   | essay     | question 02 name | teacher1 | Question 02 text | qidnum   |
 
+  @javascript
   Scenario: The questions can be filtered by tag
-    Given I am on the "question 01 name" "core_question > edit" page logged in as teacher1
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I follow "Quiz 1"
+    When I navigate to "Question bank" in current page administration
+    And I choose "Edit question" action for "question 01 name" in the question bank
     And I set the following fields to these values:
       | Tags | foo |
     And I press "id_submitbutton"
@@ -45,6 +50,7 @@ Feature: Adding questions to a quiz from the question bank
     And I should see "question 01 name" in the "categoryquestions" "table"
     And I should not see "question 02 name" in the "categoryquestions" "table"
 
+  @javascript
   Scenario: The question modal can be paginated
     Given the following "questions" exist:
       | questioncategory | qtype     | name             | user     | questiontext     |

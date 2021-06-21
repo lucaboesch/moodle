@@ -14,15 +14,19 @@ Feature: A teacher can put questions with idnumbers in categories with idnumbers
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
+    And I am on the "Test quiz" "quiz activity" page
 
   Scenario: A new question category can only be created with a unique idnumber for a context
     # Note need to create the top category each time.
     When the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name          | idnumber |
-      | Course       | C1        | Top              | top           |          |
-      | Course       | C1        | top              | Used category | c1used   |
+      | contextlevel          | reference    | questioncategory | name           | idnumber |
+      | Activity module       | quiz1        | Top              | top            |          |
+      | Activity module       | quiz1        | top              | Used category  | c1used   |
     And I navigate to "Question bank" in current page administration
     And I select "Categories" from the "Question bank tertiary navigation" singleselect
     And I press "Add category"
@@ -46,9 +50,9 @@ Feature: A teacher can put questions with idnumbers in categories with idnumbers
 
   Scenario: A question category can be edited and saved without changing the idnumber
     When the following "question categories" exist:
-      | contextlevel | reference | questioncategory | name          | idnumber |
-      | Course       | C1        | Top              | top           |          |
-      | Course       | C1        | top              | Used category | c1used   |
+      | contextlevel          | reference    | questioncategory | name           | idnumber |
+      | Activity module       | quiz1        | Top              | top            |          |
+      | Activity module       | quiz1        | top              | Used category  | c1used   |
     And I navigate to "Question bank" in current page administration
     And I select "Categories" from the "Question bank tertiary navigation" singleselect
     Then I click on "Edit" "text" in the "Used category" "list_item"
