@@ -22,8 +22,6 @@
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @deprecated since Moodle 4.0 MDL-71585
- * @see \qbank_managecategories\question_category_list
- * @see \qbank_managecategories\question_category_list_item
  * @see \qbank_managecategories\question_category_object
  * @todo Final deprecation on Moodle 4.4 MDL-72438
  */

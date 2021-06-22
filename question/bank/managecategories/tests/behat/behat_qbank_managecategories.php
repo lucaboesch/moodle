@@ -54,4 +54,44 @@ class behat_qbank_managecategories extends behat_question_base {
 
         $this->execute("behat_general::i_click_on", array(get_string('applyfilters'), 'button'));
     }
+
+    /**
+     * Drags and drops the specified element in the question category list.
+     *
+     * @Given /^I drag "(?P<element_string>(?:[^"]|\\")*)" \
+     * and I drop it in "(?P<container_element_string>(?:[^"]|\\")*)" in the question category list$/
+     * @param string $source source element
+     * @param string $target target element
+     */
+    public function i_drag_and_i_drop_it_in_question_category_list(string $source, string $target) {
+        // Finding li element of the drag item.
+        // To differentiate between drag event on li, and other mouse click events on other elements in the item.
+        $source = "//li[contains(@class, 'list_item') and contains(., '" . $this->escape($source) . "')]";
+        $target = "//li[contains(@class, 'list_item') and contains(., '" . $this->escape($target) . "')]";
+        $sourcetype = 'xpath_element';
+        $targettype = 'xpath_element';
+
+        $generalcontext = behat_context_helper::get('behat_general');
+        // Adds support for firefox scrolling.
+        $sourcenode = $this->get_node_in_container($sourcetype, $source, 'region', 'categoriesrendered');
+        $this->execute_js_on_node($sourcenode, '{{ELEMENT}}.scrollIntoView();');
+
+        $generalcontext->i_drag_and_i_drop_it_in($source, $sourcetype, $target, $targettype);
+    }
+
+    /**
+     * Select item from autocomplete list.
+     *
+     * @Given /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>(?:[^"]|\\")*)" \
+     * in the "(?P<modal_name>(?:[^"]|\\")*)" modal$/
+     *
+     * @param string $element the element
+     * @param string $selectortype seletor type
+     * @param string $modal name of the modal
+     */
+    public function i_click_on_in_the_modal(string $element, string $selectortype, string $modal) {
+        $this->execute('behat_general::i_click_on_in_the',
+            [$element, $selectortype, $modal, "dialogue"]
+        );
+    }
 }
