@@ -957,7 +957,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         // Output any access messages.
         if ($messages) {
-            $output .= $this->box($this->access_messages($messages), 'quizinfo');
+            $output .=  html_writer::tag('div', html_writer::tag('div',
+                html_writer::tag('div', '', ['class' => 'col-md-3']) .
+                html_writer::tag('div', $this->access_messages($messages), ['class' => 'col-md-9']), ['class' => 'row']));
         }
 
         // Show number of attempts summary to those who can view reports.
