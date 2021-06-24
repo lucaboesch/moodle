@@ -636,9 +636,9 @@ abstract class quiz_attempts_report_table extends table_sql {
             return;
         }
 
-        echo '<div id="commands">';
+        echo '<div class="row"><div class="col-md-3"></div><div class="col-md-9">';
         $this->submit_buttons();
-        echo '</div>';
+        echo '</div></div>';
 
         // Close the form.
         echo '</div>';
