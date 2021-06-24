@@ -1199,8 +1199,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         if ($viewobj->feedbackcolumn) {
             $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3);
             $resultinfo .= html_writer::div(
-                    quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context),
-                    'quizgradefeedback') . "\n";
+                    quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context)) . "\n";
         }
 
         if ($resultinfo) {
