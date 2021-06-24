@@ -323,19 +323,6 @@ body.path-mod-quiz table tbody tr.gradedattempt > td {
     background-color: #d9edf7;
 }
 
-.quizattemptcounts {
-    clear: left;
-    text-align: center;
-    display: inline;
-    margin-left: 20%;
-}
-
-#page-mod-quiz-view .quizattemptcounts {
-    display: block;
-    margin-left: 0;
-    margin-right: 0;
-}
-
 /** Mod quiz summary **/
 #page-mod-quiz-summary #content {
     text-align: center;

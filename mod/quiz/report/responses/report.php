@@ -132,7 +132,8 @@ class quiz_responses_report extends quiz_attempts_report {
                 // Print information on the grading method.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
                         $quiz, $this->qmsubselect, $options->onlygraded)) {
-                    echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
+                    echo '<div class="row"><div class="col-md-3"></div><div class="col-md-9">' . $strattempthighlight .
+                        '</div></div>';
                 }
             }
 

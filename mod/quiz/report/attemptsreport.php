@@ -167,7 +167,7 @@ abstract class quiz_attempts_report extends quiz_default_report {
 
         // Print information on the number of existing attempts.
         if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
-            echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
+            echo '<div class="row"><div class="col-md-3"></div><div class="col-md-9">' . $strattemptnum . '</div></div>';
         }
 
         if (!$hasquestions) {

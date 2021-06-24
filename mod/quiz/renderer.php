@@ -964,14 +964,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
         if (has_capability('mod/quiz:viewreports', $context)) {
             if ($strattemptnum = $this->quiz_attempt_summary_link_to_reports($quiz, $cm,
                     $context)) {
-                $output .= html_writer::tag('div', $strattemptnum,
-                        array('class' => 'quizattemptcounts'));
+                $output .=  html_writer::tag('div', html_writer::tag('div',
+                    html_writer::tag('div', '', ['class' => 'col-md-3']) .
+                    html_writer::tag('div', $strattemptnum, ['class' => 'col-md-9']), ['class' => 'row']));
             }
         }
 
         if (has_any_capability(['mod/quiz:manageoverrides', 'mod/quiz:viewoverrides'], $context)) {
             if ($overrideinfo = $this->quiz_override_summary_links($quiz, $cm)) {
-                $output .= html_writer::tag('div', $overrideinfo, ['class' => 'quizattemptcounts']);
+                $output .= html_writer::tag('div', html_writer::tag('div',
+                    html_writer::tag('div', '', ['class' => 'col-md-3']) .
+                    html_writer::tag('div', $overrideinfo, ['class' => 'col-md-9']), ['class' => 'row']));
             }
         }
 
