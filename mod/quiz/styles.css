@@ -241,12 +241,6 @@
     margin-left: 0.4em;
 }
 
-/** Mod quiz view **/
-#page-mod-quiz-view .quizinfo,
-#page-mod-quiz-view #page .quizgradefeedback {
-    text-align: center;
-}
-
 #page-mod-quiz-view #page .quizattemptsummary td p {
     margin-top: 0;
 }
