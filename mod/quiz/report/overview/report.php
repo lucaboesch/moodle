@@ -172,7 +172,6 @@ class quiz_overview_report extends attempts_report {
                     echo '</div>';
                     echo '</form>';
                     echo '</div>';
-                    echo '</div>';
                 }
                 // Print information on the grading method.
                 if ($strattempthighlight = quiz_report_highlighting_grading_method(
