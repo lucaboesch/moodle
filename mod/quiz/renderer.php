@@ -839,7 +839,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->view_information($quiz, $cm, $context, $viewobj->infomessages);
         $output .= $this->view_table($quiz, $context, $viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
-        $output .= $this->box($this->view_page_buttons($viewobj), 'quizattempt');
+        $output .= html_writer::tag('div', html_writer::tag('div',
+            html_writer::tag('div', '', ['class' => 'col-md-3']) .
+            html_writer::tag('div', $this->view_page_buttons($viewobj), ['class' => 'col-md-9']), ['class' => 'row']));
         return $output;
     }
 
@@ -1273,7 +1275,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
 
         if ($resultinfo) {
-            $output .= $this->box($resultinfo, 'generalbox', 'feedback');
+            $output .= html_writer::tag('div', html_writer::tag('div',
+                html_writer::tag('div', '', ['class' => 'col-md-3']) .
+                html_writer::tag('div', $resultinfo, ['class' => 'col-md-9']), ['class' => 'row']));
         }
         return $output;
     }
