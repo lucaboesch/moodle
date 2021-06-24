@@ -771,8 +771,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $button = new single_button(
                     new moodle_url($attemptobj->attempt_url(null, $attemptobj->get_currentpage())),
                     get_string('returnattempt', 'quiz'));
-            $output .= $this->container($this->container($this->render($button),
-                    'controls'), 'submitbtns mdl-align');
+            $output .= html_writer::tag('div', html_writer::tag('div',
+                html_writer::tag('div', '', ['class' => 'col-md-3']) .
+                html_writer::tag('div', $this->render($button), ['class' => 'col-md-9']), ['class' => 'submitbtns row']));
         }
 
         // Finish attempt button.
@@ -810,9 +811,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $message = get_string('mustbesubmittedby', 'quiz', userdate($duedate));
         }
 
-        $output .= $this->countdown_timer($attemptobj, time());
-        $output .= $this->container($message . $this->container(
-                $this->render($button), 'controls'), 'submitbtns mdl-align');
+        $output .= html_writer::tag('div', html_writer::tag('div',
+            html_writer::tag('div', '', ['class' => 'col-md-3']) .
+            html_writer::tag('div', $this->container($message ,'mb-3') . $this->render($button),
+            ['class' => 'col-md-9']), ['class' => 'submitbtns row']));
 
         return $output;
     }
