@@ -145,7 +145,7 @@ class quiz_overview_report extends quiz_attempts_report {
                                 get_string('regradeall', 'quiz_overview');
                     }
                     $displayurl = new moodle_url($options->get_url(), array('sesskey' => sesskey()));
-                    echo '<div class="mdl-align">';
+                    echo '<div class="row"><div class="col-md-3"></div><div class="col-md-9">';
                     echo '<form action="'.$displayurl->out_omit_querystring().'">';
                     echo '<div>';
                     echo html_writer::input_hidden_params($displayurl);
@@ -158,6 +158,7 @@ class quiz_overview_report extends quiz_attempts_report {
                     }
                     echo '</div>';
                     echo '</form>';
+                    echo '</div>';
                     echo '</div>';
                 }
                 // Print information on the grading method.
