@@ -820,7 +820,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         if ($viewobj->showbacktocourse) {
             $output .= $this->single_button($viewobj->backtocourseurl,
                     get_string('backtocourse', 'quiz'), 'get',
-                    array('class' => 'continuebutton'));
+                    array('class' => 'mt-3'));
         }
 
         return $output;
