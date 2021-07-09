@@ -886,12 +886,19 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     $this->notification(get_string('noquestions', 'quiz'), 'warning', false),
                     'text-left mb-3');
         }
+
         $output .= $this->access_messages($viewobj->preventmessages);
+
+        if ($viewobj->buttontext) {
+            $output .= $this->start_attempt_button($viewobj->buttontext,
+                    $viewobj->startattempturl, $viewobj->preflightcheckform,
+                    $viewobj->popuprequired, $viewobj->popupoptions);
+        }
 
         if ($viewobj->showbacktocourse) {
             $output .= $this->single_button($viewobj->backtocourseurl,
                     get_string('backtocourse', 'quiz'), 'get',
-                    array('class' => 'continuebutton'));
+                    array('class' => 'mt-3'));
         }
 
         return $output;
