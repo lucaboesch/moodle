@@ -98,6 +98,165 @@ abstract class backup_question_dbops extends backup_dbops {
     }
 
     /**
+     * Calculates all the question_bank_entries to be included
+     * in backup, based in a given context (module).
+     */
+    public static function calculate_question_bank_entries($backupid, $contextid) {
+        global $DB;
+
+        // Check if the question bank entry already added by another activity.
+        $addedentries = $DB->get_fieldset_sql('SELECT itemid
+                                                 FROM {backup_ids_temp}
+                                                WHERE itemname = ?', ['question_bank_entry']);
+
+        $questionbankentries = $DB->get_fieldset_sql("SELECT DISTINCT qv.id
+                                                        FROM {question_categories} qc2
+                                                        JOIN {question_bank_entries} qbe ON qbe.questioncategoryid = qc2.id
+                                                        JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+                                                        JOIN {backup_ids_temp} bi ON bi.itemid = qv.id
+                                                       WHERE bi.backupid = ?
+                                                         AND bi.itemname = 'question_version'
+                                                         AND qc2.contextid != ?", [$backupid, $contextid]);
+
+        foreach ($questionbankentries as $key => $questionbankentry) {
+            if (in_array($questionbankentry, $addedentries)) {
+                unset($questionbankentries[$key]);
+            }
+        }
+
+        // And now, simply insert all the question bank entries (complete question bank).
+        if ($questionbankentries) {
+            list($bankentrysql, $bankentryparams) = $DB->get_in_or_equal($questionbankentries);
+            $params = array_merge([$backupid], $bankentryparams);
+            $sql = "INSERT INTO {backup_ids_temp} (backupid, itemname, itemid)
+                         SELECT ?, 'question_bank_entry', id
+                           FROM {question_bank_entries}
+                          WHERE id $bankentrysql";
+            $DB->execute($sql, $params);
+        }
+
+    }
+
+    /**
+     * Calculate the question versions in use to add as a part of the backup.
+     *
+     * @param int $backupid
+     * @param int $contextid
+     */
+    public static function calculate_question_versions($backupid, $contextid) {
+        global $DB;
+
+        // Check if the question versions already added by another activity.
+        $addedversions = $DB->get_fieldset_sql('SELECT itemid
+                                                  FROM {backup_ids_temp}
+                                                 WHERE itemname = ?', ['question_version']);
+
+        // First of all, annotate all the question versions for the given context (module).
+        $extrasql = '';
+        $allversionparams = [];
+        if ($addedversions) {
+            list($allversionsql, $allversionparams) = $DB->get_in_or_equal($addedversions, SQL_PARAMS_NAMED, 'param', false);
+            $extrasql = "AND qv.id $allversionsql";
+        }
+        $versionparam = [
+                'backupid' => $backupid,
+                'contextid' => $contextid
+            ] + $allversionparams;
+        $DB->execute("INSERT INTO {backup_ids_temp} (backupid, itemname, itemid)
+                               SELECT :backupid, 'question_version', qv.id
+                                 FROM {question_versions} qv
+                                 JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                                 JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                                WHERE qc.contextid = :contextid
+                                $extrasql", $versionparam);
+
+        // Update the added versions.
+        $addedversions = $DB->get_fieldset_sql('SELECT itemid
+                                                  FROM {backup_ids_temp}
+                                                 WHERE itemname = ?', ['question_version']);
+
+        // Now, based in the annotated questions, annotate all the question versions they
+        // belong to (whole context question banks too).
+        $questionversions = $DB->get_fieldset_sql("
+        SELECT DISTINCT qv.id
+          FROM {question_categories} qc2
+          JOIN {question_bank_entries} qbe ON qbe.questioncategoryid = qc2.id
+          JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+          JOIN {question} q ON q.id = qv.questionid
+          JOIN {backup_ids_temp} bi ON bi.itemid = q.id
+         WHERE bi.backupid = ?
+           AND bi.itemname = 'question'
+           AND qc2.contextid != ?", [$backupid, $contextid]);
+
+        // Calculate and get the set reference records.
+        $setreferenceversions = $DB->get_records_sql("
+        SELECT DISTINCT qv.id, qc.contextid
+          FROM {question_versions} qv
+          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+          JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+          JOIN {question_set_references} qsr ON qsr.questionscontextid = qc.contextid
+         WHERE qsr.usingcontextid = ?", [$contextid]);
+        foreach ($setreferenceversions as $setreferenceversion) {
+            if (!in_array($setreferenceversion->id, $questionversions) && (int)$setreferenceversion->contextid !== $contextid) {
+                $questionversions [] = $setreferenceversion->id;
+            }
+        }
+
+        // Calculate and get the reference records.
+        $referenceversionselections = $DB->get_records_sql("
+        SELECT DISTINCT qv.id, qc.contextid
+          FROM {question_versions} qv
+          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+          JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+          JOIN {question_references} qr ON qr.questionbankentryid = qbe.id AND qr.version = qv.version
+         WHERE qr.version IS NOT NULL
+           AND qr.usingcontextid = ?", [$contextid]);
+        foreach ($referenceversionselections as $referenceversionselection) {
+            if (!in_array($referenceversionselection->id, $questionversions) && (int)$referenceversionselection->contextid !== $contextid) {
+                $questionversions [] = $referenceversionselection->id;
+            }
+        }
+
+        $referenceversionlatests = $DB->get_records_sql("
+        SELECT DISTINCT qv.id, qc.contextid
+          FROM {question_versions} qv
+          JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+          JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+          JOIN {question_references} qr ON qr.questionbankentryid = qbe.id
+         WHERE qr.version IS NULL
+           AND qv.version = (SELECT MAX(v.version)
+                               FROM {question_versions} v
+                               JOIN {question_bank_entries} be
+                                 ON be.id = v.questionbankentryid
+                              WHERE be.id = qbe.id
+                                AND v.status <> 'draft')  
+           AND qr.usingcontextid = ?", [$contextid]);
+        foreach ($referenceversionlatests as $referenceversionlatest) {
+            if (!in_array($referenceversionlatest->id, $questionversions) && (int)$referenceversionlatest->contextid !== $contextid) {
+                $questionversions [] = $referenceversionlatest->id;
+            }
+        }
+
+        foreach ($questionversions as $key => $questionversion) {
+            if (in_array($questionversion, $addedversions)) {
+                unset($questionversions[$key]);
+            }
+        }
+
+        // And now, simply insert all the question versions (complete question bank).
+        if ($questionversions) {
+            list($versionsql, $versionparams) = $DB->get_in_or_equal($questionversions);
+            $params = array_merge([$backupid], $versionparams);
+            $sql = "INSERT INTO {backup_ids_temp} (backupid, itemname, itemid)
+                         SELECT ?, 'question_version', id
+                           FROM {question_versions}
+                          WHERE id $versionsql";
+            $DB->execute($sql, $params);
+        }
+
+    }
+
+    /**
      * Delete all the annotated questions present in backup_ids_temp
      */
     public static function delete_temp_questions($backupid) {

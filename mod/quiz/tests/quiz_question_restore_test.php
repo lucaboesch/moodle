@@ -314,11 +314,6 @@ class quiz_question_restore_test extends \advanced_testcase {
         $questions = $quizobj->get_questions();
         $this->assertCount(1, $questions);
 
-        // Count the questions for course question bank.
-        $this->assertEquals(6, $this->question_count(\context_course::instance($newcourseid)->id));
-        $this->assertEquals(6, $this->question_count(\context_course::instance($newcourseid)->id,
-            "AND q.qtype <> 'random'"));
-
         // Count the questions in quiz qbank.
         $this->assertEquals(0, $this->question_count($quizobj->get_context()->id));
     }
@@ -379,4 +374,103 @@ class quiz_question_restore_test extends \advanced_testcase {
         }
 
     }
+
+    /**
+     * Test the scenario that quiz will not duplicate system context questions in restore.
+     */
+    public function test_quiz_restores_should_not_duplicate_system_context_questions() {
+        $this->resetAfterTest();
+        // Create the test quiz.
+        $quiz = $this->create_test_quiz($this->course);
+        // Test for questions from a different context.
+        $quizcontext = \context_module::instance($quiz->cmid);
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qbank = $this->create_test_qbank(get_course(1));
+        $qbankcontext = \context_module::instance($qbank->cmid);
+        $cat = $questiongenerator->create_question_category(['contextid' => $qbankcontext->id]);
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        // Create another version.
+        $questiongenerator->update_question($saq);
+        quiz_add_quiz_question($saq->id, $quiz);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        // Create two version.
+        $questiongenerator->update_question($numq);
+        $questiongenerator->update_question($numq);
+        quiz_add_quiz_question($numq->id, $quiz);
+        // Count the number of versions in the system context.
+        $this->assertEquals(5, $this->question_count($qbankcontext->id));
+        // Make the backup.
+        $backupid = $this->backup_quiz($quiz, $this->user);
+
+        // Delete the current course to make sure there is no data.
+        delete_course($this->course, false);
+
+        // Check if the questions and associated datas are deleted properly.
+        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $quiz->id, $quizcontext)));
+
+        // Restore the course.
+        $newcourse = $this->getDataGenerator()->create_course();
+        $this->restore_quiz($backupid, $newcourse, $this->user);
+
+        // Verify.
+        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
+        $module = reset($modules);
+        $this->assertEquals(2, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module->instance, $module->context)));
+        // Count the questions after restore.
+        $this->assertEquals(0, $this->question_count($module->context->id));
+    }
+
+    /**
+     * Test the scenario that quiz will not duplicate system context questions in restore.
+     */
+    public function test_quiz_restores_restores_questions_in_use() {
+        global $DB;
+        $this->resetAfterTest();
+        // Create the test quiz.
+        $quiz = $this->create_test_quiz($this->course);
+        // Test for questions from a different context.
+        $quizcontext = \context_module::instance($quiz->cmid);
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $qbank = $this->create_test_qbank($this->course);
+        $qbankcontext = \context_module::instance($qbank->cmid);
+        $cat = $questiongenerator->create_question_category(['contextid' => $qbankcontext->id]);
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        // Create another version.
+        $questiongenerator->update_question($saq);
+        quiz_add_quiz_question($saq->id, $quiz);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        // Create two version.
+        $questiongenerator->update_question($numq);
+        $questiongenerator->update_question($numq);
+        quiz_add_quiz_question($numq->id, $quiz);
+        // Count the number of versions in the system context.
+        $this->assertEquals(5, $this->question_count($qbankcontext->id));
+        // Make the backup.
+        $backupid = $this->backup_quiz($quiz, $this->user);
+
+        // Delete the instance.
+        quiz_delete_instance($quiz->id);
+
+        // Delete the current course to make sure there is no data.
+        delete_course($this->course, false);
+
+        // Check if the questions and associated datas are deleted properly.
+        $this->assertEquals(0, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $quiz->id, $quizcontext)));
+
+        // Restore the course.
+        $newcourse = $this->getDataGenerator()->create_course();
+        $this->restore_quiz($backupid, $newcourse, $this->user);
+
+        // Verify.
+        $modules = get_fast_modinfo($newcourse->id)->get_instances_of('quiz');
+        $module = reset($modules);
+        $this->assertEquals(2, count(\mod_quiz\question\bank\qbank_helper::get_question_structure(
+            $module->instance, $module->context)));
+        // Count the questions after restore.
+        $this->assertEquals(2, $DB->count_records('question_versions'));
+    }
+
 }

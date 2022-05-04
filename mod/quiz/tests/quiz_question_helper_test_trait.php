@@ -57,6 +57,22 @@ trait quiz_question_helper_test_trait {
     }
 
     /**
+     * Create a test qbank for the specified course.
+     *
+     * @param \stdClass $course
+     * @return  \stdClass
+     */
+    protected function create_test_qbank(\stdClass $course): \stdClass {
+
+        /** @var mod_quiz_generator $quizgenerator */
+        $qbankgenerator = $this->getDataGenerator()->get_plugin_generator('mod_qbank');
+
+        return $qbankgenerator->create_instance([
+            'course' => $course->id,
+        ]);
+    }
+
+    /**
      * Helper method to add regular questions in quiz.
      *
      * @param component_generator_base $questiongenerator

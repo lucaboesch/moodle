@@ -1042,9 +1042,7 @@ class moodle2_test extends \advanced_testcase {
                 $cats = $DB->get_records('question_categories', array('contextid' => $context->id), 'parent', 'id, name, parent');
 
                 // Make sure all question categories that were inside the backup file were restored correctly.
-                if ($context->contextlevel == CONTEXT_COURSE) {
-                    $this->assertEquals(['top', 'Default for C101'], array_column($cats, 'name'));
-                } else if ($context->contextlevel == CONTEXT_MODULE) {
+                if ($context->contextlevel == CONTEXT_MODULE) {
                     $this->assertEquals(['top', 'Default for Q1'], array_column($cats, 'name'));
                 }
 

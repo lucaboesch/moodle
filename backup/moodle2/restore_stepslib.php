@@ -5242,60 +5242,169 @@ class restore_create_categories_and_questions extends restore_structure_step {
  */
 class restore_move_module_questions_categories extends restore_execution_step {
 
-    protected function define_execution() {
-        global $DB;
+    /**
+     * @var bool if the backup release is made after moodle 3.5.
+     */
+    protected $after35 = false;
 
+    /**
+     * @var bool if the backup release is a pre 4.1 one.
+     */
+    protected $before41 = false;
+
+    protected function define_execution() {
         $backuprelease = $this->task->get_info()->backup_release; // The major version: 2.9, 3.0, 3.10...
         preg_match('/(\d{8})/', $this->task->get_info()->moodle_release, $matches);
         $backupbuild = (int)$matches[1];
-        $after35 = false;
         if (version_compare($backuprelease, '3.5', '>=') && $backupbuild > 20180205) {
-            $after35 = true;
+            $this->after35 = true;
+        }
+        if (version_compare($backuprelease, '4.1', '<') && $backupbuild < 20220512) {
+            $this->before41 = true;
         }
 
+        if ($this->before41) {
+            // Course context.
+            $coursecontexts = restore_dbops::restore_get_question_banks($this->get_restoreid(), CONTEXT_COURSE);
+            foreach ($coursecontexts as $coursecontextid => $coursecontext) {
+                $questioncategories = $this->get_category_for_context($coursecontextid);
+                foreach ($questioncategories as $questioncategory) {
+                    $context = get_string('course');
+                    $course = get_course($questioncategory->instanceid);
+                    $shortdescription = $course->shortname;
+                    $this->migrate_to_qbank_activities($context, $questioncategory->instanceid, $shortdescription,
+                        $coursecontextid, $course);
+                }
+            }
+            // Category context.
+            $coursecategorycontexts = restore_dbops::restore_get_question_banks($this->get_restoreid(), CONTEXT_COURSECAT);
+            foreach ($coursecategorycontexts as $coursecategorycontextid => $coursecategorycontext) {
+                $questioncategories = $this->get_category_for_context($coursecategorycontextid);
+                foreach ($questioncategories as $questioncategory) {
+                    $context = get_string('category');
+                    $shortdescription = \mod_qbank\helper::get_category_name($questioncategory->instanceid);
+                    // Create a new course for each category with questions.
+                    $shortname = substr(get_string('coursenamebydefault', 'mod_qbank',
+                        [
+                            'context' => $context,
+                            'shortdescription' => $shortdescription,
+                        ]
+                    ), 0, 254);
+                    $course = \mod_qbank\helper::get_course($shortname, $questioncategory->instanceid);
+                    if (!$course) {
+                        $course = \mod_qbank\helper::create_category_course($shortname, $questioncategory->instanceid);
+                    }
+                    $this->migrate_to_qbank_activities($context, $questioncategory->instanceid, $shortdescription,
+                        $coursecategorycontextid, $course);
+                }
+            }
+            // System context.
+            $systemcontexts = restore_dbops::restore_get_question_banks($this->get_restoreid(), CONTEXT_SYSTEM);
+            foreach ($systemcontexts as $systemcontextid => $systemcontext) {
+                $questioncategories = $this->get_category_for_context($systemcontextid);
+                foreach ($questioncategories as $questioncategory) {
+                    $course = get_course(SITEID);
+                    $context = get_string('coresystem');
+                    $shortdescription = $context;
+                    $this->migrate_to_qbank_activities($context, $questioncategory->instanceid, $shortdescription,
+                        $systemcontextid, $course);
+                }
+            }
+        }
         $contexts = restore_dbops::restore_get_question_banks($this->get_restoreid(), CONTEXT_MODULE);
         foreach ($contexts as $contextid => $contextlevel) {
             // Only if context mapping exists (i.e. the module has been restored)
             if ($newcontext = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'context', $contextid)) {
-                // Update all the qcats having their parentitemid set to the original contextid
-                $modulecats = $DB->get_records_sql("SELECT itemid, newitemid, info
-                                                      FROM {backup_ids_temp}
-                                                     WHERE backupid = ?
-                                                       AND itemname = 'question_category'
-                                                       AND parentitemid = ?", array($this->get_restoreid(), $contextid));
-                $top = question_get_top_category($newcontext->newitemid, true);
-                $oldtopid = 0;
-                foreach ($modulecats as $modulecat) {
-                    // Before 3.5, question categories could be created at top level.
-                    // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
-                    $info = backup_controller_dbops::decode_backup_temp_info($modulecat->info);
-                    if ($after35 && empty($info->parent)) {
-                        $oldtopid = $modulecat->newitemid;
-                        $modulecat->newitemid = $top->id;
-                    } else {
-                        $cat = new stdClass();
-                        $cat->id = $modulecat->newitemid;
-                        $cat->contextid = $newcontext->newitemid;
-                        if (empty($info->parent)) {
-                            $cat->parent = $top->id;
-                        }
-                        $DB->update_record('question_categories', $cat);
-                    }
-
-                    // And set new contextid (and maybe update newitemid) also in question_category mapping (will be
-                    // used by {@link restore_create_question_files} later.
-                    restore_dbops::set_backup_ids_record($this->get_restoreid(), 'question_category', $modulecat->itemid,
-                            $modulecat->newitemid, $newcontext->newitemid);
-                }
-
-                // Now set the parent id for the question categories that were in the top category in the course context
-                // and have been moved now.
-                if ($oldtopid) {
-                    $DB->set_field('question_categories', 'parent', $top->id,
-                            array('contextid' => $newcontext->newitemid, 'parent' => $oldtopid));
-                }
+                $this->move_categories($newcontext->newitemid, $contextid);
+                unset($contexts[$contextid]);
             }
         }
+        // If there is no modules found, move them to the quiz or relevant context.
+        if (!empty($contexts) && $newcontext) {
+            foreach ($contexts as $contextid => $contextlevel) {
+                $this->move_categories($newcontext->newitemid, $contextid);
+            }
+        }
+    }
+
+    /**
+     * Migrate course, category or system level course categories to qbank activities.
+     *
+     * @param string $context
+     * @param int $instanceid
+     * @param string $shortdescription
+     * @param int $contextid
+     * @param stdClass $course
+     */
+    protected function migrate_to_qbank_activities($context, $instanceid, $shortdescription, $contextid, $course) {
+        $namedata = ['context' => $context, 'instanceid' => $instanceid,
+            'shortdescription' => $shortdescription];
+        $qbankname = substr(get_string('modulenamebydefault', 'mod_qbank', $namedata), 0, 254);
+        $qbank = \mod_qbank\helper::create_qbank_instance($qbankname, $course);
+        $newcontext = \context_module::instance($qbank->coursemodule);
+        $this->move_categories($newcontext->id, $contextid);
+    }
+
+    /**
+     * Move question categories to the given or new context.
+     *
+     * @param int $newcontextid new contextid to move the categories.
+     * @param int $contextid the old context to move from.
+     */
+    protected function move_categories($newcontextid, $contextid) {
+        global $DB;
+        // Update all the qcats having their parentitemid set to the original contextid.
+        $questioncats = $DB->get_records_sql("SELECT itemid, newitemid, info
+                                              FROM {backup_ids_temp}
+                                             WHERE backupid = ?
+                                               AND itemname = 'question_category'
+                                               AND parentitemid = ?", array($this->get_restoreid(), $contextid));
+        $top = question_get_top_category($newcontextid, true);
+        $oldtopid = 0;
+        foreach ($questioncats as $questioncat) {
+            // Before 3.5, question categories could be created at top level.
+            // From 3.5 onwards, all question categories should be a child of a special category called the "top" category.
+            $info = backup_controller_dbops::decode_backup_temp_info($questioncat->info);
+            if ($this->after35 && empty($info->parent)) {
+                $oldtopid = $questioncat->newitemid;
+                $questioncat->newitemid = $top->id;
+            } else {
+                $cat = new stdClass();
+                $cat->id = $questioncat->newitemid;
+                $cat->contextid = $newcontextid;
+                if (empty($info->parent)) {
+                    $cat->parent = $top->id;
+                }
+                $DB->update_record('question_categories', $cat);
+            }
+
+            // And set new contextid (and maybe update newitemid) also in question_category mapping (will be
+            // used by {@link restore_create_question_files} later.
+            restore_dbops::set_backup_ids_record($this->get_restoreid(), 'question_category', $questioncat->itemid,
+                $questioncat->newitemid, $newcontextid);
+        }
+
+        // Now set the parent id for the question categories that were in the top category in the course context
+        // and have been moved now.
+        if ($oldtopid) {
+            $DB->set_field('question_categories', 'parent', $top->id,
+                array('contextid' => $newcontextid, 'parent' => $oldtopid));
+        }
+    }
+
+    /**
+     * Get the question category for the given context.
+     *
+     * @param int $contextid the given context.
+     * @return moodle_recordset
+     */
+    protected function get_category_for_context($contextid) {
+        global $DB;
+        $sql = "SELECT DISTINCT qc.contextid, ctx.contextlevel, ctx.instanceid
+                  FROM {question_categories} qc
+                  JOIN {context} ctx ON ctx.id = qc.contextid
+                 WHERE ctx.id = ?";
+        return $DB->get_recordset_sql($sql, [$contextid]);
     }
 }
 

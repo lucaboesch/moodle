@@ -275,13 +275,15 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
 
 /**
  * backup structure step in charge of calculating the categories to be
- * included in backup, based in the context being backuped (module/course)
+ * included in backup, based in the context being backuped (module)
  * and the already annotated questions present in backup_ids_temp
  */
 class backup_calculate_question_categories extends backup_execution_step {
 
     protected function define_execution() {
         backup_question_dbops::calculate_question_categories($this->get_backupid(), $this->task->get_contextid());
+        backup_question_dbops::calculate_question_versions($this->get_backupid(), $this->task->get_contextid());
+        backup_question_dbops::calculate_question_bank_entries($this->get_backupid(), $this->task->get_contextid());
     }
 }
 
@@ -2402,6 +2404,7 @@ class backup_annotate_all_question_files extends backup_execution_step {
 class backup_questions_structure_step extends backup_structure_step {
 
     protected function define_structure() {
+        global $DB;
 
         // Define each element separately.
         $qcategories = new backup_nested_element('question_categories');
@@ -2503,9 +2506,30 @@ class backup_questions_structure_step extends backup_structure_step {
              WHERE bi.backupid = ?
                AND bi.itemname = 'question_categoryfinal'", [backup::VAR_BACKUPID]);
 
-        $questionbankentry->set_source_table('question_bank_entries', ['questioncategoryid' => backup::VAR_PARENTID]);
+        // Check if question bank entries are annotated.
+        if ($DB->count_records('backup_ids_temp', ['itemname' => 'question_bank_entry'])) {
+            $questionbankentry->set_source_sql("
+            SELECT qbe.*
+              FROM {question_bank_entries} qbe
+              JOIN {backup_ids_temp} bi ON bi.itemid = qbe.id
+             WHERE bi.backupid = ?
+               AND qbe.questioncategoryid = ?
+               AND bi.itemname = 'question_bank_entry'", [backup::VAR_BACKUPID, backup::VAR_PARENTID]);
+        } else {
+            $questionbankentry->set_source_table('question_bank_entries', ['questioncategoryid' => backup::VAR_PARENTID]);
+        }
 
-        $questionverion->set_source_table('question_versions', ['questionbankentryid' => backup::VAR_PARENTID]);
+        if ($DB->count_records('backup_ids_temp', ['itemname' => 'question_version'])) {
+            $questionverion->set_source_sql("
+            SELECT qv.*
+              FROM {question_versions} qv
+              JOIN {backup_ids_temp} bi ON bi.itemid = qv.id
+             WHERE bi.backupid = ?
+               AND qv.questionbankentryid = ?
+               AND bi.itemname = 'question_version'", [backup::VAR_BACKUPID, backup::VAR_PARENTID]);
+        } else {
+            $questionverion->set_source_table('question_versions', ['questionbankentryid' => backup::VAR_PARENTID]);
+        }
 
         $question->set_source_sql('
                 SELECT q.*
