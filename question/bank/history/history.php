@@ -45,6 +45,7 @@ $extraparams['view'] = $viewclass;
 $extraparams['entryid'] = $entryid;
 $extraparams['returnurl'] = $returnurl;
 $questionbank = new $viewclass($contexts, $url, $COURSE, null, $pagevars, $extraparams);
+$questionbank->component = 'qbank_history';
 
 $streditingquestions = get_string('history_header', 'qbank_history');
 $PAGE->set_title($streditingquestions);

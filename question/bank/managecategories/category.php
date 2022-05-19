@@ -52,7 +52,16 @@ $param = new stdClass();
 $param->delete = optional_param('delete', 0, PARAM_INT);
 $param->showdescr = optional_param('qbshowdescr', 0, PARAM_INT);
 
-$PAGE->set_url($thispageurl);
+$url = new moodle_url($thispageurl);
+foreach ((array)$param as $key => $value) {
+    if (($key !== 'cancel' && $key !== 'edit' && $value !== 0) ||
+            ($key === 'cancel' && $value !== '') ||
+            ($key === 'edit' && $value !== null)) {
+        $url->param($key, $value);
+    }
+}
+$PAGE->set_url($url);
+$baseurl = optional_param('baseurl', '/question/edit.php', PARAM_TEXT);
 
 $qcobject = new question_category_object($pagevars['cpage'], $thispageurl,
     $contexts->having_one_edit_tab_cap('categories'), 0,
@@ -114,9 +123,10 @@ $PAGE->activityheader->disable();
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
+
 $categoriesrenderer = $PAGE->get_renderer('qbank_managecategories');
 echo $OUTPUT->header();
-$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
+$qbankaction = new \core_question\output\qbank_action_menu($thispageurl, $contexts->lowest()->id, $baseurl);
 echo $renderer->render($qbankaction);
 if ($questionstomove) {
     $qcobject->display_move_form($questionstomove, $category);

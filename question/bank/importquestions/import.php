@@ -35,6 +35,7 @@ require_login();
 core_question\local\bank\helper::require_plugin_enabled('qbank_importquestions');
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('import', '/question/bank/importquestions/import.php');
+$baseurl = optional_param('baseurl', '/question/edit.php', PARAM_TEXT);
 
 // Get display strings.
 $txt = new stdClass();
@@ -80,7 +81,7 @@ echo $OUTPUT->header();
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
-$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
+$qbankaction = new \core_question\output\qbank_action_menu($thispageurl, $contexts->lowest()->id, $baseurl);
 echo $renderer->render($qbankaction);
 
 // File upload form submitted.

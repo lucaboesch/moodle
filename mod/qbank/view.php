@@ -90,7 +90,7 @@ echo $OUTPUT->header();
 
 
 // Render the selection action.
-$qbankaction = new \core_question\output\qbank_action_menu($url);
+$qbankaction = new \core_question\output\qbank_action_menu($url, $modulecontext->id,'/mod/qbank/view.php');
 echo $renderer->render($qbankaction);
 
 // Print the question area.

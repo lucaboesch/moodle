@@ -35,6 +35,7 @@ core_question\local\bank\helper::require_plugin_enabled('qbank_exportquestions')
 
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('export', '/question/bank/exportquestions/export.php');
+$baseurl = optional_param('baseurl', '/question/edit.php', PARAM_TEXT);
 
 // Get display strings.
 $strexportquestions = get_string('exportquestions', 'question');
@@ -53,7 +54,7 @@ echo $OUTPUT->header();
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
-$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
+$qbankaction = new \core_question\output\qbank_action_menu($thispageurl, $contexts->lowest()->id, $baseurl);
 echo $renderer->render($qbankaction);
 
 $exportform = new export_form($thispageurl,

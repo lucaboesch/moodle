@@ -71,7 +71,7 @@ echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
 // Render the selection action.
-$qbankaction = new qbank_action_menu($url);
+$qbankaction = new \core_question\output\qbank_action_menu($url, $contexts->lowest()->id, '/question/edit.php');
 echo $renderer->render($qbankaction);
 
 // Print the question area.
