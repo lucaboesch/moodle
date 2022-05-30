@@ -28,10 +28,10 @@ namespace mod_qbank\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_quiz course module viewed event class.
+ * The mod_qbank course module viewed event class.
  *
  * @package    mod_qbank
- * @since      Moodle 4.0
+ * @since      Moodle 4.1
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     2021 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

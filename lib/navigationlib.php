@@ -4725,7 +4725,7 @@ class settings_navigation extends navigation_node {
 
         // Questions
         require_once($CFG->libdir . '/questionlib.php');
-        qbank_add_navigation($coursenode, $coursecontext)->trim_if_empty();
+        \core_question\local\bank\helper::qbank_add_navigation($coursenode, $coursecontext)->trim_if_empty();
 
         if ($adminoptions->update) {
             // Repository Instances
@@ -5661,7 +5661,7 @@ class settings_navigation extends navigation_node {
 
         // Questions
         require_once($CFG->libdir . '/questionlib.php');
-        qbank_add_navigation($frontpage, $coursecontext)->trim_if_empty();
+        \core_question\local\bank\helper::qbank_add_navigation($frontpage, $coursecontext)->trim_if_empty();
 
         // Manage files
         if ($adminoptions->files) {

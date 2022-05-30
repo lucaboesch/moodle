@@ -137,4 +137,26 @@ class helper {
         return $classes;
     }
 
+    /**
+    * Adds question banks index page link to the given navigation node if capability is met.
+    *
+    * @param \navigation_node $navigationnode The navigation node to add the question bank index page to
+    * @param \context $context Context
+    * @return \navigation_node Returns the question bank node that was added
+    * @throws \moodle_exception
+    */
+    public static function qbank_add_navigation(\navigation_node $navigationnode, \context $context): \navigation_node {
+
+        $qbanknode = $navigationnode->add(get_string('modulenameplural', 'mod_qbank'),
+            null, \navigation_node::TYPE_CONTAINER, null, 'questionbankmodule');
+
+        if (has_capability('mod/qbank:view', $context)) {
+            $qbanknode->add(get_string('modulenameplural', 'mod_qbank'),
+                new \moodle_url('/mod/qbank/index.php', ['id' => $context->instanceid]),
+                \navigation_node::TYPE_SETTING, null, 'questions');
+        }
+
+        return $qbanknode;
+    }
+
 }

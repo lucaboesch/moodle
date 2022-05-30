@@ -29,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/qbank/backup/moodle2/backup_qbank_stepslib.php');
 
 /**
- * choice backup task that provides all the settings and steps to perform one
- * complete backup of the activity
+ * Qbank module backup task that provides all the settings and steps to perform one
+ * complete backup of the activity.
  */
 class backup_qbank_activity_task extends backup_activity_task {
 

@@ -48,14 +48,13 @@ class helper {
         global $DB;
 
         $sql = "SELECT DISTINCT qc.contextid, ctx.contextlevel, ctx.instanceid
-                  FROM {question} q
-                  JOIN {question_versions} qv ON q.id = qv.questionid
-                  JOIN {question_bank_entries} qbe ON qv.questionbankentryid = qbe.id
+                  FROM {question_bank_entries} qbe
                   JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
                   JOIN {context} ctx ON ctx.id = qc.contextid
+                 WHERE ctx.contextlevel != ?
               ORDER BY ctx.contextlevel";
 
-        return $DB->get_recordset_sql($sql);
+        return $DB->get_recordset_sql($sql, [CONTEXT_MODULE]);
     }
 
     /**
@@ -152,7 +151,7 @@ class helper {
         $newcourse->fullname = $shortname;
         $newcourse->shortname = $shortname;
         $newcourse->category = $categoryid;
-        $newcourse->summary = get_string('course_summary', 'mod_qbank');
+        $newcourse->summary = get_string('question_datamigration_course_summary', 'mod_qbank');
 
         return create_course($newcourse);
     }
@@ -173,7 +172,7 @@ class helper {
             $moduleinfo = new stdClass();
             $moduleinfo->modulename = 'qbank';
             $moduleinfo->name = $name;
-            $moduleinfo->intro = get_string('module_summary', 'mod_qbank');
+            $moduleinfo->intro = get_string('question_datamigration_module_summary', 'mod_qbank');
             if ($course->id === SITEID) {
                 if (!$DB->get_record('course_sections', ['course' => SITEID, 'section' => 1])) {
                     course_create_section(SITEID, 1);
