@@ -59,6 +59,7 @@ class question_history_view extends view {
         array $params = [], array $extraparams = []) {
         $this->entryid = $extraparams['entryid'];
         $this->basereturnurl = new \moodle_url($extraparams['returnurl']);
+        $this->component = 'qbank_history';
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
     }
 

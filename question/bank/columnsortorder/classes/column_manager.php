@@ -40,6 +40,21 @@ class column_manager {
     public $columnorder;
 
     /**
+     * @var array|bool pinned columns.
+     */
+    public $pinnedcolumns;
+
+    /**
+     * @var array|bool hidden columns.
+     */
+    public $hiddencolumns;
+
+    /**
+     * @var array|bool columns with size.
+     */
+    public $colsize;
+
+    /**
      * @var array|bool Disabled columns in config_plugins table.
      */
     public $disabledcolumns;
@@ -48,8 +63,26 @@ class column_manager {
      * Constructor for column_manager class.
      *
      */
-    public function __construct() {
-        $this->columnorder = get_config('qbank_columnsortorder', 'enabledcol');
+    public function __construct($preference = '') {
+        $defaultorder = get_config('qbank_columnsortorder', 'enabledcol');
+        $defaultpinned = get_config('qbank_columnsortorder', 'pinnedcols');
+        $defaulthidden = get_config('qbank_columnsortorder', 'hiddencols');
+        $defaultsize = get_config('qbank_columnsortorder', 'colsize');
+
+        if (empty($preference)) {
+            $this->columnorder = $defaultorder ?: '';
+            $this->pinnedcolumns = $defaultpinned ?: '';
+            $this->hiddencolumns = $defaulthidden ?: '';
+            $this->colsize = $defaultsize ?: '';
+        } else {
+            $this->columnorder = get_user_preferences("${preference}_enabledcol", $defaultorder);
+            $this->pinnedcolumns = get_user_preferences("${preference}_pinnedcols", $defaultpinned);
+            $this->hiddencolumns = get_user_preferences("${preference}_hiddencols", $defaulthidden);
+            $this->colsize = get_user_preferences("${preference}_colsize", $defaultsize);
+        }
+        // To array.
+        $this->pinnedcolumns = explode(',', $this->pinnedcolumns);
+        $this->hiddencolumns = explode(',', $this->hiddencolumns);
         $this->disabledcolumns = get_config('qbank_columnsortorder', 'disabledcol');
         if ($this->columnorder) {
             $this->columnorder = array_flip(explode(',', $this->columnorder));
@@ -63,10 +96,58 @@ class column_manager {
      * Sets column order in the qbank_columnsortorder plugin config.
      *
      * @param array $columns Column order to set.
+     * @param string $preference name of user preference.
      */
-    public static function set_column_order(array $columns) : void {
+    public static function set_column_order(array $columns, string $preference = '') : void {
         $columns = implode(',', $columns);
-        set_config('enabledcol', $columns, 'qbank_columnsortorder');
+        self::save_preference('enabledcol', $columns, $preference);
+    }
+
+    /**
+     * Pinned Columns.
+     *
+     * @param array $columns pinned columns.
+     * @param string $preference name of user preference.
+     */
+    public static function set_pinned_columns(array $columns, string $preference = '') : void {
+        $columns = implode(',', $columns);
+        self::save_preference('pinnedcols', $columns, $preference);
+    }
+
+    /**
+     * Hidden Columns.
+     *
+     * @param array $columns hidden columns
+     * @param string $preference name of user preference.
+     */
+    public static function set_hidden_columns(array $columns, string $preference = '') : void {
+        $columns = implode(',', $columns);
+        self::save_preference('hiddencols', $columns, $preference);
+    }
+
+    /**
+     * Column size.
+     *
+     * @param string $sizes columns with width
+     * @param string $preference name of user preference.
+     */
+    public static function set_column_size(string $sizes, string $preference = '') : void {
+        self::save_preference('colsize', $sizes, $preference);
+    }
+
+    /**
+     * Save Preferences.
+     *
+     * @param string $name name of a configuration
+     * @param string $value value of a configuration
+     * @param string $preference name of user preference.
+     */
+    private static function save_preference(string $name, string $value, string $preference = ''): void {
+        if (empty($preference)) {
+            set_config($name, $value, 'qbank_columnsortorder');
+        } else {
+            set_user_preference("${preference}_${name}", $value);
+        }
     }
 
     /**
@@ -239,6 +320,7 @@ class column_manager {
                     $columnorder[end($colname)] = $colposition;
                 }
             }
+
             $properorder = array_merge($columnorder, $ordertosort);
             // Always have the checkbox at first column position.
             if (isset($properorder['checkbox_column'])) {
@@ -246,6 +328,18 @@ class column_manager {
                 unset($properorder['checkbox_column']);
                 $properorder = array_merge(['checkbox_column' => $checkboxfirstelement], $properorder);
             }
+
+            // Set column visibility.
+            foreach ($properorder as $column) {
+                if ($column instanceof \core_question\local\bank\column_base) {
+                    if (in_array(get_class($column), $this->hiddencolumns)) {
+                        $column->isvisible = false;
+                    } else {
+                        $column->isvisible = true;
+                    }
+                }
+            }
+
             return $properorder;
         }
         return $ordertosort;
