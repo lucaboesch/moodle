@@ -383,8 +383,10 @@ function edit_module_post_actions($moduleinfo, $course) {
         $moduleinfo->showgradingmanagement = $showgradingmanagement;
     }
 
-    \course_modinfo::purge_course_module_cache($course->id, $moduleinfo->coursemodule);
-    rebuild_course_cache($course->id, true, true);
+    if (!moodle_needs_upgrading()) {
+        \course_modinfo::purge_course_module_cache($course->id, $moduleinfo->coursemodule);
+        rebuild_course_cache($course->id, true, true);
+    }
     if ($hasgrades) {
         grade_regrade_final_grades($course->id);
     }
