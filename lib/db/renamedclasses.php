@@ -90,4 +90,5 @@ $renamedclasses = [
     'core_cohort\\local\\entities\\cohort' => 'core_cohort\\reportbuilder\\local\\entities\\cohort',
     'core_cohort\\local\\entities\\cohort_member' => 'core_cohort\\reportbuilder\\local\\entities\\cohort_member',
     'core_question\\bank\\search\\condition' => 'core_question\\local\\bank\\condition',
+    'core_question\\bank\\search\\category_condition' => 'qbank_managecategories\\category_condition',
 ];
