@@ -91,4 +91,5 @@ $renamedclasses = [
     'core_cohort\\local\\entities\\cohort_member' => 'core_cohort\\reportbuilder\\local\\entities\\cohort_member',
     'core_question\\bank\\search\\condition' => 'core_question\\local\\bank\\condition',
     'core_question\\bank\\search\\category_condition' => 'qbank_managecategories\\category_condition',
+    'core_question\\bank\\search\\hidden_condition' => 'qbank_deletequestion\\hidden_condition',
 ];
