@@ -74,7 +74,7 @@ class questionlib_test extends \advanced_testcase {
 
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
 
-        $context = context_module::instance($quiz->cmid);
+        $context = \context_module::instance($quiz->cmid);
 
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
 
@@ -154,8 +154,8 @@ class questionlib_test extends \advanced_testcase {
         $course2 = $this->getDataGenerator()->create_course(['category' => $coursecat1->id]);
         $modqbank1 = $this->getDataGenerator()->create_module('qbank', ['course' => $course1->id]);
         $modqbank2 = $this->getDataGenerator()->create_module('qbank', ['course' => $course2->id]);
-        $context1 = context_module::instance($modqbank1->cmid);
-        $context2 = context_module::instance($modqbank2->cmid);
+        $context1 = \context_module::instance($modqbank1->cmid);
+        $context2 = \context_module::instance($modqbank2->cmid);
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $questioncat1 = $questiongenerator->create_question_category(array('contextid' =>
@@ -211,7 +211,7 @@ class questionlib_test extends \advanced_testcase {
         $modqbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
 
         // Create some question categories and questions in this course.
-        $modcontext = context_module::instance($modqbank->cmid);
+        $modcontext = \context_module::instance($modqbank->cmid);
         $questioncat = $questiongenerator->create_question_category(['contextid' => $modcontext->id]);
 
         $question1 = $questiongenerator->create_question('shortanswer', null, array('category' => $questioncat->id));
@@ -219,8 +219,8 @@ class questionlib_test extends \advanced_testcase {
 
         // Add some tags to these questions.
 
-        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $modcontext, ['tag 1', 'tag 2']);
-        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $modcontext, ['tag 1', 'tag 2']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $modcontext, ['tag 1', 'tag 2']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $modcontext, ['tag 1', 'tag 2']);
 
         // Create a course that we are going to restore the other course to.
         $course2 = $this->getDataGenerator()->create_course();
@@ -245,7 +245,7 @@ class questionlib_test extends \advanced_testcase {
         // Get the created question category.
         $cm = $DB->get_record('course_modules', ['course' => $course2->id], '*', MUST_EXIST);
         $restoredcategory = $DB->get_record_select('question_categories', 'contextid = ? AND parent <> 0',
-                [context_module::instance($cm->id)->id], '*', MUST_EXIST);
+                [\context_module::instance($cm->id)->id], '*', MUST_EXIST);
 
         // Check that there are two questions in the restored to course's context.
         $this->assertEquals(2, $DB->get_record_sql('SELECT COUNT(q.id) as questioncount
@@ -540,12 +540,12 @@ class questionlib_test extends \advanced_testcase {
         $question1 = $questions[0];
         $question2 = $questions[1];
 
-        $modcontext = context_module::instance($quiz->cmid);
+        $modcontext = \context_module::instance($quiz->cmid);
 
         // Create course level tags in the course context that matches the question
         // course context.
-        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $modcontext, ['foo', 'bar']);
-        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $modcontext, ['baz', 'bop']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $modcontext, ['foo', 'bar']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $modcontext, ['baz', 'bop']);
 
         get_question_options($questions, true);
 
@@ -667,10 +667,10 @@ class questionlib_test extends \advanced_testcase {
         list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions();
         $question1 = $questions[0];
         $question2 = $questions[1];
-        $modcontext = context_module::instance($quiz->cmid);
+        $modcontext = \context_module::instance($quiz->cmid);
 
-        core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $modcontext, ['foo', 'bar']);
-        core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $modcontext, ['baz', 'bop']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question1->id, $modcontext, ['foo', 'bar']);
+        \core_tag_tag::set_item_tags('core_question', 'question', $question2->id, $modcontext, ['baz', 'bop']);
 
         get_question_options($questions, true);
 
@@ -996,7 +996,7 @@ class questionlib_test extends \advanced_testcase {
         $question2 = $questions[1];
         $qcontext = \context::instance_by_id($qcat->contextid);
         // Moving up into the course category context.
-        $newcontext = context_module::instance($quiz->cmid);
+        $newcontext = \context_module::instance($quiz->cmid);
 
         foreach ($questions as $question) {
             $question->contextid = $qcat->contextid;
