@@ -16,7 +16,7 @@
 /**
  * Javascript for action on table columns.
  *
- * @module     core_question/question_bank_table
+ * @module     qbank_columnsortorder/qbank_table_action
  * @copyright  2022 Catalyst IT Australia Pty Ltd
  * @author     Nathan Nguyen <nathannguyen@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,8 +28,9 @@ import Ajax from 'core/ajax';
 
 /**
  * Initialize module
+ *
  * @param {Boolean} isEditing whether it is in editing mode
- * @param {String} component name of the component to save the user preference
+ * @param {String} component the component where user preference is saved
  */
 export const init = (isEditing, component) => {
     if (!ColumnAction.setUpTable("categoryquestions", "pluginname", "name")) {
@@ -43,7 +44,7 @@ export const init = (isEditing, component) => {
         ColumnAction.setUpHideShowDropdown("#show-hide-dropdown", (columns) => {
             const call = {
                 methodname: 'qbank_columnsortorder_set_hidden_columns',
-                args: {columns: columns, preference: component},
+                args: {columns: columns, component: component},
             };
             Ajax.call([call])[0]
                 .catch(Notification.exception);
@@ -52,7 +53,7 @@ export const init = (isEditing, component) => {
         ColumnAction.setUpMoveHandle(".move-handle", (columns) => {
             const call = {
                 methodname: 'qbank_columnsortorder_set_columnbank_order',
-                args: {columns: columns, preference: component},
+                args: {columns: columns, component: component},
             };
             Ajax.call([call])[0]
                 .catch(Notification.exception);
@@ -61,7 +62,7 @@ export const init = (isEditing, component) => {
         ColumnAction.setUpPinHandle(".pin-handle", (columns) => {
             const call = {
                 methodname: 'qbank_columnsortorder_set_pinned_columns',
-                args: {columns: columns, preference: component},
+                args: {columns: columns, component: component},
             };
             Ajax.call([call])[0]
                 .catch(Notification.exception);
@@ -70,7 +71,7 @@ export const init = (isEditing, component) => {
         ColumnAction.setUpResizeHandle(".resize-handle", (sizes) => {
             const call = {
                 methodname: 'qbank_columnsortorder_set_column_size',
-                args: {sizes: sizes, preference: component},
+                args: {sizes: sizes, component: component},
             };
             Ajax.call([call])[0]
                 .catch(Notification.exception);

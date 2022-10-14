@@ -1,4 +1,8 @@
 This files describes API changes for code that uses the question API.
+=== 4.1 ==
+
+1) qbank_columnsortorder\column_manager its constructor now accept component string, which is used to retrieve
+user preference of column actions
 
 === 4.0 ===
 

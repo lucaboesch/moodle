@@ -1210,7 +1210,7 @@ class view {
             // Reset link.
             $url = new \moodle_url('/question/bank/columnsortorder/reset_preference.php', [
                 'returnurl' => $this->returnurl,
-                'preference' => $this->component,
+                'component' => $this->component,
                 'sesskey' => sesskey()
             ]);
             $resetlink = \html_writer::link($url, get_string('reset'), ['class' => "btn btn-secondary mr-1"]);

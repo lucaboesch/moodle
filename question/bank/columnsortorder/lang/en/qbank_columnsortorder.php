@@ -25,7 +25,10 @@
 
 $string['hidecolumn'] = 'Hide column';
 $string['pluginname'] = 'Column sort order';
-$string['privacy:metadata'] = 'The Column sort order question bank plugin does not store any personal data.';
+$string['privacy:metadata:preference:enabledcol'] = 'The plugin saves user preference of column orders.';
+$string['privacy:metadata:preference:pinnedcols'] = 'The plugin saves user preference of stikcy columns.';
+$string['privacy:metadata:preference:hiddencols'] = 'The plugin saves user preference of hidden columns.';
+$string['privacy:metadata:preference:colsize'] = 'The plugin saves user preference of column sizes.';
 $string['qbankcolumnsortorder'] = 'Column sort order';
 $string['qbankgotocolumnsort'] = 'You can change the order of the columns in the question bank on the page {$a}.';
 $string['qbankcolumnsdisabled'] = 'Currently disabled question bank plugins:';

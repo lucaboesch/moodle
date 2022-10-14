@@ -17,7 +17,6 @@
 namespace qbank_columnsortorder\external;
 
 use context_system;
-use Exception;
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
@@ -42,7 +41,7 @@ class set_column_size extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'sizes' => new external_value(PARAM_TEXT, 'Size for each column', VALUE_REQUIRED),
-            'preference' => new external_value(PARAM_TEXT, 'User preference', VALUE_DEFAULT, ''),
+            'component' => new external_value(PARAM_TEXT, 'Component where user preference is saved', VALUE_DEFAULT, ''),
         ]);
     }
 
@@ -54,25 +53,26 @@ class set_column_size extends external_api {
     }
 
     /**
-     * Column sizes.
+     * Set sizes for columns
+     * Save against user preference if component is specified
      *
-     * @param string $sizes json string representing pinned columns.
-     * @param string $preference name of user preference.
+     * @param string $sizes json string representing [column => size].
+     * @param string $component where user preference is saved.
      */
-    public static function execute(string $sizes, string $preference = ''): void {
+    public static function execute(string $sizes, string $component = ''): void {
         [
             'sizes' => $sizes,
-            'preference' => $preference,
+            'component' => $component,
         ]
             = self::validate_parameters(self::execute_parameters(),
         [
             'sizes' => $sizes,
-            'preference' => $preference,
+            'component' => $component,
         ]);
 
         $context = context_system::instance();
         self::validate_context($context);
 
-        column_manager::set_column_size($sizes, $preference);
+        column_manager::set_column_size($sizes, $component);
     }
 }

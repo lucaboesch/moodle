@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template qbank_columnsortorder/columnsortorder.mustache
+    @template qbank_columnsortorder/columnsortorder
 
     Admin question bank setting template.
 
@@ -25,11 +25,20 @@
 
     Example context (json):
     {
-        "name": "Creatorname (creator_name_column)",
-        "hiddenname": "creator_name_column"
+        "names": [
+            {
+                "name": "Column A",
+                "colname": "col_name_A",
+                "class": "class_name_A"
+            },
+            {
+                "name": "Column B",
+                "colname": "col_name_B",
+                "class": "class_name_B"
+            }
+        ]
     }
 }}
-
 <div>
     {{#str}}qbanksortdescription, qbank_columnsortorder{{/str}}
 </div>
@@ -62,50 +71,8 @@
     {{/disabled}}
 </div>
 {{#js}}
-    require(['qbank_columnsortorder/qbank_column_action', 'core/ajax', 'core/notification'], function(ColumnAction, Ajax, Notification) {
-        ColumnAction.setUpTable("qbank_columnsortorder-{{uniqid}}", "pluginname", "name");
-        ColumnAction.setUpCurrentPinnedColumns();
-        ColumnAction.setUpCurrentColumnSizes();
-
-        // Setup show/hidden dropdown.
-        ColumnAction.setUpHideShowDropdown("#show-hide-dropdown", (columns) => {
-            const call = {
-                methodname: 'qbank_columnsortorder_set_hidden_columns',
-                args: {columns},
-            };
-            Ajax.call([call])[0]
-                .catch(Notification.exception);
-        });
-
-        // Set up move action.
-        ColumnAction.setUpMoveHandle(".move-handle", (columns) => {
-            const call = {
-                methodname: 'qbank_columnsortorder_set_columnbank_order',
-                args: {columns},
-            };
-            Ajax.call([call])[0]
-                .catch(Notification.exception);
-        });
-
-        // Set up pin action.
-        ColumnAction.setUpPinHandle(".pin-handle", (columns) => {
-            const call = {
-                methodname: 'qbank_columnsortorder_set_pinned_columns',
-                args: {columns},
-            };
-            Ajax.call([call])[0]
-                .catch(Notification.exception);
-        });
-
-        // Set up resize action.
-        ColumnAction.setUpResizeHandle(".resize-handle", (sizes) => {
-            const call = {
-                methodname: 'qbank_columnsortorder_set_column_size',
-                args: {sizes},
-            };
-            Ajax.call([call])[0]
-                .catch(Notification.exception);
-        });
+    require(['qbank_columnsortorder/qbank_admin_action'], function(AdminTable) {
+        AdminTable.init("qbank_columnsortorder-{{uniqid}}");
     });
 {{/js}}
 <br>

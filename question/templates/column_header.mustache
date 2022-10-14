@@ -46,15 +46,17 @@
         "extraclasses": "checkbox pr-3",
         "tiptitle": "<input id=\"qbheadercheckbox\" name=\"qbheadercheckbox\" type=\"checkbox\"  value=\"1\"\n       data-action=\"toggle\"\n       data-toggle=\"master\"\n       data-togglegroup=\"qbank\"\n       data-toggle-selectall=\"Select all\"\n       data-toggle-deselectall=\"Deselect all\"\n       \n\/>\n    <label for=\"qbheadercheckbox\" class=\"accesshide\">Select all<\/label>",
         "sorttip": true,
-        "tip": "Select questions for bulk actions"
+        "tip": "Select questions for bulk actions",
+        "class": "plugin_class",
+        "name": "plugin_name"
     }
 }}
 <th class="header {{extraclasses}}" scope="col" data-pluginname="{{class}}" data-name="{{name}}">
     <div class="d-flex justify-content-start">
-        <div class="move-handle">
+        <div class="move-handle ml-1">
         </div>
 
-        <div class="pin-handle">
+        <div class="pin-handle ml-1">
         </div>
 
         <div class="w-100">
@@ -78,8 +80,7 @@
                 {{>core/help_icon}}
             {{/help}}
         </div>
-        <div class="icon-no-margin resize-handle" style="margin-left: 5px; margin-right: 0px">
+        <div class="icon-no-margin resize-handle">
         </div>
     </div>
 </th>
-

@@ -26,15 +26,15 @@
 require_once(__DIR__ . '/../../../config.php');
 
 $returnurl = required_param('returnurl', PARAM_LOCALURL);
-$preference = required_param('preference', PARAM_TEXT);
+$component = required_param('component', PARAM_TEXT);
 
 require_sesskey();
 require_login();
 
 // Reset user preference.
-unset_user_preference("${preference}_enabledcol");
-unset_user_preference("${preference}_pinnedcols");
-unset_user_preference("${preference}_hiddencols");
-unset_user_preference("${preference}_colsize");
+unset_user_preference("${component}_enabledcol");
+unset_user_preference("${component}_pinnedcols");
+unset_user_preference("${component}_hiddencols");
+unset_user_preference("${component}_colsize");
 
 redirect($returnurl);

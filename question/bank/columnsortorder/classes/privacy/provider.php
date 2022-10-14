@@ -16,6 +16,7 @@
 
 namespace qbank_columnsortorder\privacy;
 
+use core_privacy\local\metadata\collection;
 use \core_privacy\local\metadata\null_provider;
 
 /**
@@ -26,14 +27,33 @@ use \core_privacy\local\metadata\null_provider;
  * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements null_provider {
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+class provider implements
+    // The forms subsystem does not store any data itself, it has no database tables.
+    \core_privacy\local\metadata\provider,
+
+    // The forms subsystem has user preferences.
+    \core_privacy\local\request\user_preference_provider {
+
+    public static function get_metadata(collection $collection): collection {
+        $collection->add_user_preference('enabledcol', 'privacy:metadata:preference:enabledcol');
+        $collection->add_user_preference('pinnedcols', 'privacy:metadata:preference:pinnedcols');
+        $collection->add_user_preference('hiddencols', 'privacy:metadata:preference:hiddencols');
+        $collection->add_user_preference('colsize', 'privacy:metadata:preference:colsize');
+
+        return $collection;
+    }
+
+    public static function export_user_preferences(int $userid) {
+        $components = ['core_question', "qbank_history"];
+        foreach ($components as $component) {
+            $prefnames = ['enabledcol', 'pinnedcols', 'hiddencols', 'colsize'];
+            foreach ($prefnames as $name) {
+                $preference = get_user_preferences("${component}_$name", null, $userid);
+                if ($preference !== null) {
+                    $desc = get_string('enabledcol', 'privacy:metadata:preference:enabledcol');
+                    writer::export_user_preference('qbank_columnsortorder', "${component}_$name", $preference, $desc);
+                }
+            }
+        }
     }
 }

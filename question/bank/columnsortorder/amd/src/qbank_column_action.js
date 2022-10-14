@@ -282,8 +282,7 @@ export const setUpResizeHandle = (handleContainer, callback) => {
             action: "resize",
             target: header.dataset[dataIdAttribute],
             title: header.dataset[dataNameAttribute],
-            pixicon: "i/twoway",
-            pixcomponent: "core"
+            icon: '<i class="icon fa fa-arrows-h fa-fw mr-n1" aria-hidden="true"></i>'
         };
         const container = header.querySelector(handleContainer);
         addHandle(context, container);

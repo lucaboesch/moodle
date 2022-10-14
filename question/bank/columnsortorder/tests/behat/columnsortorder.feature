@@ -1,4 +1,4 @@
-@qbank @qbank_columnsortorder @javascript @sortplugincols
+@qbank @qbank_columnsortorder @javascript
 Feature: An plugin column can be reordered and displayed in the question bank view.
   In order to reorganise the question bank view columns
   As an admin or a teacher
@@ -95,3 +95,17 @@ Feature: An plugin column can be reordered and displayed in the question bank vi
     And I log in as "admin"
     And I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
     And "Status" "text" should appear before "Created by" "text"
+
+  Scenario: Admin can hide a column in site administration page
+    Given I log in as "admin"
+    When I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
+    And I hide header "Created by"
+    And I reload the page
+    Then I should not see "Created by"
+
+  Scenario: Admin can pin a column in site administration page
+    Given I log in as "admin"
+    When I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
+    And I pin header "Created by"
+    And I reload the page
+    Then I should see pinned header "Created by"

@@ -62,23 +62,24 @@ class column_manager {
     /**
      * Constructor for column_manager class.
      *
+     * @param string $component is used to retrieve user preference.
      */
-    public function __construct($preference = '') {
+    public function __construct(string $component = '') {
         $defaultorder = get_config('qbank_columnsortorder', 'enabledcol');
         $defaultpinned = get_config('qbank_columnsortorder', 'pinnedcols');
         $defaulthidden = get_config('qbank_columnsortorder', 'hiddencols');
         $defaultsize = get_config('qbank_columnsortorder', 'colsize');
 
-        if (empty($preference)) {
+        if (empty($component)) {
             $this->columnorder = $defaultorder ?: '';
             $this->pinnedcolumns = $defaultpinned ?: '';
             $this->hiddencolumns = $defaulthidden ?: '';
             $this->colsize = $defaultsize ?: '';
         } else {
-            $this->columnorder = get_user_preferences("${preference}_enabledcol", $defaultorder);
-            $this->pinnedcolumns = get_user_preferences("${preference}_pinnedcols", $defaultpinned);
-            $this->hiddencolumns = get_user_preferences("${preference}_hiddencols", $defaulthidden);
-            $this->colsize = get_user_preferences("${preference}_colsize", $defaultsize);
+            $this->columnorder = get_user_preferences("${component}_enabledcol", $defaultorder);
+            $this->pinnedcolumns = get_user_preferences("${component}_pinnedcols", $defaultpinned);
+            $this->hiddencolumns = get_user_preferences("${component}_hiddencols", $defaulthidden);
+            $this->colsize = get_user_preferences("${component}_colsize", $defaultsize);
         }
         // To array.
         $this->pinnedcolumns = explode(',', $this->pinnedcolumns);
@@ -96,43 +97,43 @@ class column_manager {
      * Sets column order in the qbank_columnsortorder plugin config.
      *
      * @param array $columns Column order to set.
-     * @param string $preference name of user preference.
+     * @param string $component the component where user preference is saved.
      */
-    public static function set_column_order(array $columns, string $preference = '') : void {
+    public static function set_column_order(array $columns, string $component = '') : void {
         $columns = implode(',', $columns);
-        self::save_preference('enabledcol', $columns, $preference);
+        self::save_preference('enabledcol', $columns, $component);
     }
 
     /**
      * Pinned Columns.
      *
      * @param array $columns pinned columns.
-     * @param string $preference name of user preference.
+     * @param string $component the component where user preference is saved.
      */
-    public static function set_pinned_columns(array $columns, string $preference = '') : void {
+    public static function set_pinned_columns(array $columns, string $component = '') : void {
         $columns = implode(',', $columns);
-        self::save_preference('pinnedcols', $columns, $preference);
+        self::save_preference('pinnedcols', $columns, $component);
     }
 
     /**
      * Hidden Columns.
      *
      * @param array $columns hidden columns
-     * @param string $preference name of user preference.
+     * @param string $component the component where user preference is saved.
      */
-    public static function set_hidden_columns(array $columns, string $preference = '') : void {
+    public static function set_hidden_columns(array $columns, string $component = '') : void {
         $columns = implode(',', $columns);
-        self::save_preference('hiddencols', $columns, $preference);
+        self::save_preference('hiddencols', $columns, $component);
     }
 
     /**
      * Column size.
      *
      * @param string $sizes columns with width
-     * @param string $preference name of user preference.
+     * @param string $component the component where user preference is saved.
      */
-    public static function set_column_size(string $sizes, string $preference = '') : void {
-        self::save_preference('colsize', $sizes, $preference);
+    public static function set_column_size(string $sizes, string $component = '') : void {
+        self::save_preference('colsize', $sizes, $component);
     }
 
     /**
@@ -140,13 +141,13 @@ class column_manager {
      *
      * @param string $name name of a configuration
      * @param string $value value of a configuration
-     * @param string $preference name of user preference.
+     * @param string $component the component where user preference is saved.
      */
-    private static function save_preference(string $name, string $value, string $preference = ''): void {
-        if (empty($preference)) {
+    private static function save_preference(string $name, string $value, string $component = ''): void {
+        if (empty($component)) {
             set_config($name, $value, 'qbank_columnsortorder');
         } else {
-            set_user_preference("${preference}_${name}", $value);
+            set_user_preference("${component}_${name}", $value);
         }
     }
 
@@ -332,11 +333,8 @@ class column_manager {
             // Set column visibility.
             foreach ($properorder as $column) {
                 if ($column instanceof \core_question\local\bank\column_base) {
-                    if (in_array(get_class($column), $this->hiddencolumns)) {
-                        $column->isvisible = false;
-                    } else {
-                        $column->isvisible = true;
-                    }
+                    // Visible if the column is not in the hidden column list.
+                    $column->isvisible = !in_array(get_class($column), $this->hiddencolumns);
                 }
             }
 

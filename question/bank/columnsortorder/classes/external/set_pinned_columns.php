@@ -17,7 +17,6 @@
 namespace qbank_columnsortorder\external;
 
 use context_system;
-use Exception;
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
@@ -44,7 +43,7 @@ class set_pinned_columns extends external_api {
             'columns' => new external_multiple_structure(
                 new external_value(PARAM_TEXT, 'Plugin name for the pinned column', VALUE_REQUIRED)
             ),
-            'preference' => new external_value(PARAM_TEXT, 'User preference', VALUE_DEFAULT, ''),
+            'component' => new external_value(PARAM_TEXT, 'Componet where user preference is saved', VALUE_DEFAULT, ''),
         ]);
     }
 
@@ -56,25 +55,26 @@ class set_pinned_columns extends external_api {
     }
 
     /**
-     * Sticky Columns.
+     * Set sticky Columns.
+     * Save against user preference if specified
      *
-     * @param array $columns json string representing pinned columns.
-     * @param string $preference name of user preference.
+     * @param array $columns list of pinned columns.
+     * @param string $component where user preference is saved.
      */
-    public static function execute(array $columns, string $preference = ''): void {
+    public static function execute(array $columns, string $component = ''): void {
         [
             'columns' => $columns,
-            'preference' => $preference,
+            'component' => $component,
         ]
             = self::validate_parameters(self::execute_parameters(),
         [
             'columns' => $columns,
-            'preference' => $preference,
+            'component' => $component,
         ]);
 
         $context = context_system::instance();
         self::validate_context($context);
 
-        column_manager::set_pinned_columns($columns, $preference);
+        column_manager::set_pinned_columns($columns, $component);
     }
 }
