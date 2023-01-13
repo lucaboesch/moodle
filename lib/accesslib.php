@@ -2807,6 +2807,24 @@ function get_profile_roles(context $context) {
 }
 
 /**
+ * Gets the list of enrolment methods assigned to this context
+ *
+ * @param int $courseid The id of the course to check
+ * @return array
+ */
+function get_enrolments_used_in_course(int $courseid) : array {
+    global $DB;
+
+    $params['courseid'] = $courseid;
+
+    $sql = "SELECT *
+              FROM {enrol} e
+             WHERE e.courseid = :courseid
+          ORDER BY e.sortorder ASC";
+    return $DB->get_records_sql($sql, $params);
+}
+
+/**
  * Gets the list of roles assigned to this context and up (parents)
  *
  * @param context $context

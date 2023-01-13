@@ -592,6 +592,7 @@ class backup_enrolments_structure_step extends backup_structure_step {
         // To know if we are including users
         $users = $this->get_setting_value('users');
         $keptroles = $this->task->get_kept_roles();
+        $keepenrolmentmethods = $this->task->get_keepenrolmentmethods();
 
         // Define each element separated
 
