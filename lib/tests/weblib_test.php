@@ -281,6 +281,33 @@ class weblib_test extends advanced_testcase {
     }
 
     /**
+     * Test the clean_html_from_markdown function that takes HTML fresh from the Markdown parser
+     * and preserves the attributes from the <code> element. The rest is passed on clean_text() to
+     * purge any oddities in the HTML.
+     *
+     * @covers ::clean_html_from_markdown()
+     */
+    public function test_clean_html_from_markdown() {
+        $preserved = [
+            '<pre><code class="someclass" lang="en" data-foo="bar">some code</code></pre>',
+            '<pre><code class="someclass" lang="en" data-foo="bar">some code</code></pre>
+                 <pre><code class="otherclass" lang="se" data-foo="bas">some other code </code></pre>',
+            "\n\n<code lang=\"python\">\nsome fancy \r\npython!!\ncode\r\n</code>",
+        ];
+        foreach ($preserved as $text) {
+            $this->assertSame($text, clean_html_from_markdown($text));
+        }
+        $changed = [
+            // Input => Output.
+            '<pre class="x" data-foo="bar">lorem ipsum</pre>' => '<pre class="x">lorem ipsum</pre>',
+            '<img onerror="foobar" data-foo="bar" src="test.jpg">' => '<img src="test.jpg" alt="test.jpg" />',
+        ];
+        foreach ($changed as $input => $output) {
+            $this->assertSame($output, clean_html_from_markdown($input));
+        }
+    }
+
+    /**
      * @covers ::qualified_me
      */
     public function test_qualified_me() {

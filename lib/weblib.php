@@ -1356,7 +1356,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
             // The markdown parser does not strip dangerous html so we need to clean it, even if noclean is set to true.
-            $text = clean_text($text, FORMAT_HTML, $options);
+            $text = clean_html_from_markdown($text, $options);
             $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
 
@@ -1971,6 +1971,49 @@ function purify_html($text, $options = array()) {
     }
 
     return $filteredtext;
+}
+
+/**
+ * Input is the html that is derived from the MarkdownParser. This needs to be cleaned from possible XSS attacks
+ * and other nasty things that might be in the HTML. However, the purifier cleans too much (e.g. doesn't allow any
+ * data-* attributes. For the <code> tag we still need them, therefore these are preserved here with this function.
+ * The <code> element may have some other attributes that have a special meaning especially for the coderunner. So
+ * preserve the element as it is with all its attributes. After trying out some XSS vectors, it seems that the
+ * MarkdownParser handles them, so that they do not appear in the HTML, thus as attributes in the <code> element.
+ * That should us keep save from XSS attacks.
+ *
+ * @param string $text html from the Markdown Parser
+ * @param array $options the options for the clean_text() call.
+ * @return string cleaned html that can be displayed safely
+ */
+function clean_html_from_markdown(string $text, array $options = []): string {
+    // Keep here the patterns in an array, in case there are more to come.
+    $patterns = [
+        '/<code[^>]*>/i',
+        '/<\/code>/i',
+    ];
+    // This is the placeholder string.
+    $tokenreplacement = '__!!%d!!__';
+    // Store here the matches that are replaced by the tokens.
+    $tokens = [];
+    // Replace all strings that match the patterns with a placeholder string
+    // which remains unchanged during the clean_text() opration.
+    foreach ($patterns as $pattern) {
+        while (true) {
+            preg_match($pattern, $text, $match);
+            if (empty($match)) {
+                break;
+            }
+            $tokens[] = $match[0];
+            $text = str_replace($match[0], sprintf($tokenreplacement, count($tokens)), $text);
+        }
+    }
+    $text = clean_text($text, FORMAT_HTML, $options);
+    // Restore the real content that was hidden by the tokens.
+    foreach (array_keys($tokens) as $i) {
+        $text = str_replace(sprintf($tokenreplacement, ($i + 1)), $tokens[$i], $text);
+    }
+    return $text;
 }
 
 /**
