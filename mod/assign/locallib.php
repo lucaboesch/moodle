@@ -1987,8 +1987,9 @@ class assign {
         } else {
             // Scale.
             if (empty($this->cache['scale'])) {
-                if ($scale = $DB->get_record('scale', array('id'=>-($this->get_instance()->grade)))) {
-                    $this->cache['scale'] = make_menu_from_list($scale->scale);
+                $scale = new grade_scale(array('id' => -($this->get_instance()->grade), true));
+                if ($scale->scale) {
+                    $this->cache['scale'] = make_menu_from_list($scale->get_scale());
                 } else {
                     $o .= '-';
                     return $o;
@@ -2912,8 +2913,9 @@ class assign {
                 }
             } else {
                 // This is a scale.
-                if ($scale = $DB->get_record('scale', array('id' => -($this->get_instance()->grade)))) {
-                    $scaleoptions = make_menu_from_list($scale->scale);
+
+                if ($scale = new grade_scale(array('id' => -($this->get_instance()->grade), true))) {
+                    $scaleoptions = make_menu_from_list($scale->get_scale());
                     if (!array_key_exists((int) $grade->grade, $scaleoptions)) {
                         return false;
                     }

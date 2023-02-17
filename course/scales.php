@@ -66,10 +66,11 @@ if ($scaleid) {
     if ($scale = $DB->get_record("scale", array('id'=>$scaleid))) {
         if ($scale->courseid == 0 || $scale->courseid == $course->id) {
 
-            $scalemenu = make_menu_from_list($scale->scale);
+            $scale = new grade_scale(array('id' => $scale->id), true);
+            $scalemenu = $scale->get_items();
 
             echo $OUTPUT->box_start();
-            echo $OUTPUT->heading($scale->name);
+            echo $OUTPUT->heading($scale->get_name());
             echo "<center>";
             echo html_writer::label(get_string('scales'), 'scaleunused'. $scaleid, false, array('class' => 'accesshide'));
             echo html_writer::select($scalemenu, 'unused', '', array('' => 'choosedots'), array('id' => 'scaleunused'.$scaleid));
@@ -98,10 +99,11 @@ if ($scales = $DB->get_records("scale", array("courseid"=>$course->id), "name AS
 
         $scale->description = file_rewrite_pluginfile_urls($scale->description, 'pluginfile.php', $systemcontext->id, 'grade', 'scale', $scale->id);
 
-        $scalemenu = make_menu_from_list($scale->scale);
+        $scale = new grade_scale(array('id' => $scale->id), true);
+        $scalemenu = $scale->get_items();
 
         echo $OUTPUT->box_start();
-        echo $OUTPUT->heading($scale->name);
+        echo $OUTPUT->heading($scale->get_name());
         echo "<center>";
         echo html_writer::label(get_string('scales'), 'courseunused' . $scale->id, false, array('class' => 'accesshide'));
         echo html_writer::select($scalemenu, 'unused', '', array('' => 'choosedots'), array('id' => 'courseunused' . $scale->id));
@@ -125,10 +127,11 @@ if ($scales = $DB->get_records("scale", array("courseid"=>0), "name ASC")) {
 
         $scale->description = file_rewrite_pluginfile_urls($scale->description, 'pluginfile.php', $systemcontext->id, 'grade', 'scale', $scale->id);
 
-        $scalemenu = make_menu_from_list($scale->scale);
+        $scale = new grade_scale(array('id' => $scale->id), true);
+        $scalemenu = $scale->get_items();
 
         echo $OUTPUT->box_start();
-        echo $OUTPUT->heading($scale->name);
+        echo $OUTPUT->heading($scale->get_name());
         echo "<center>";
         echo html_writer::label(get_string('scales'), 'sitescale' . $scale->id, false, array('class' => 'accesshide'));
         echo html_writer::select($scalemenu, 'unused', '', array('' => 'choosedots'), array('id' => 'sitescale' . $scale->id));

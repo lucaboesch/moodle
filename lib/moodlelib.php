@@ -8987,12 +8987,12 @@ function make_menu_from_list($list, $separator=',') {
  * @return array
  */
 function make_grades_menu($gradingtype) {
-    global $DB;
 
     $grades = array();
     if ($gradingtype < 0) {
-        if ($scale = $DB->get_record('scale', array('id'=> (-$gradingtype)))) {
-            return make_menu_from_list($scale->scale);
+        $scale = new grade_scale(array('id' => (-$gradingtype), true));
+        if ($scale->scale) {
+            return make_menu_from_list($scale->get_scale());
         }
     } else if ($gradingtype > 0) {
         for ($i=$gradingtype; $i>=0; $i--) {

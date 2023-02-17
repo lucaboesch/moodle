@@ -73,8 +73,8 @@ class edit_grade_form extends moodleform {
             }
 
             $i = 1;
-            if ($scale = $DB->get_record('scale', array('id' => $grade_item->scaleid))) {
-                foreach (explode(",", $scale->scale) as $option) {
+            if ($scale = new grade_scale(array('id' => $grade_item->scaleid), true)) {
+                foreach ($scale->get_items() as $option) {
                     $scaleopt[$i] = $option;
                     $i++;
                 }

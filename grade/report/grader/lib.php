@@ -944,13 +944,13 @@ class grade_report_grader extends grade_report {
         $rows = $this->get_right_icons_row($rows);
 
         // Preload scale objects for items with a scaleid and initialize tab indices
-        $scaleslist = array();
+        $scalesarray = array();
         $tabindices = array();
 
         foreach ($this->gtree->get_items() as $itemid => $item) {
             $scale = null;
             if (!empty($item->scaleid)) {
-                $scaleslist[] = $item->scaleid;
+                $scalesarray[$item->scaleid] = new grade_scale(array('id' => $item->scaleid), true);
                 $jsarguments['items'][$itemid] = array('id'=>$itemid, 'name'=>$item->get_name(true), 'type'=>'scale', 'scale'=>$item->scaleid, 'decimals'=>$item->get_decimals());
             } else {
                 $jsarguments['items'][$itemid] = array('id'=>$itemid, 'name'=>$item->get_name(true), 'type'=>'value', 'scale'=>false, 'decimals'=>$item->get_decimals());
@@ -958,11 +958,6 @@ class grade_report_grader extends grade_report {
             $tabindices[$item->id]['grade'] = $gradetabindex;
             $tabindices[$item->id]['feedback'] = $gradetabindex + $numusers;
             $gradetabindex += $numusers * 2;
-        }
-        $scalesarray = array();
-
-        if (!empty($scaleslist)) {
-            $scalesarray = $DB->get_records_list('scale', 'id', $scaleslist);
         }
         $jsscales = $scalesarray;
 
@@ -1104,7 +1099,7 @@ class grade_report_grader extends grade_report {
                     if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
                         $scale = $scalesarray[$item->scaleid];
                         $gradeval = (int)$gradeval; // scales use only integers
-                        $scales = explode(",", $scale->scale);
+                        $scales = $scale->get_items();
                         // reindex because scale is off 1
 
                         // MDL-12104 some previous scales might have taken up part of the array
@@ -1130,8 +1125,6 @@ class grade_report_grader extends grade_report {
                                     array('class' => 'accesshide'));
                             $itemcell->text .= html_writer::select($scaleopt, 'grade['.$userid.']['.$item->id.']', $gradeval, array(-1=>$nogradestr), $attributes);
                         } else if (!empty($scale)) {
-                            $scales = explode(",", $scale->scale);
-
                             // invalid grade if gradeval < 1
                             if ($gradeval < 1) {
                                 $itemcell->text .= $gradepassicon .
@@ -1225,7 +1218,7 @@ class grade_report_grader extends grade_report {
             $jsarguments['cfg']['scales'] = array();
             foreach ($jsscales as $scale) {
                 // Trim the scale values, as they may have a space that is ommitted from values later.
-                $jsarguments['cfg']['scales'][$scale->id] = array_map('trim', explode(',', $scale->scale));
+                $jsarguments['cfg']['scales'][$scale->id] = array_map('trim', $scale->get_items());
             }
             $jsarguments['cfg']['feedbacktrunclength'] =  $this->feedback_trunc_length;
 

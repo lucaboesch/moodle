@@ -125,10 +125,11 @@ class assign_feedback_offline extends assign_feedback_plugin {
         // Does this assignment use a scale?
         $scaleoptions = null;
         if ($this->assignment->get_instance()->grade < 0) {
-            if ($scale = $DB->get_record('scale', array('id'=>-($this->assignment->get_instance()->grade)))) {
-                $scaleoptions = make_menu_from_list($scale->scale);
+            if ($scale = new grade_scale(array('id' => -($this->assignment->get_instance()->grade), true))) {
+                $scaleoptions = make_menu_from_list($scale->get_scale());
             }
         }
+
         // We may need to upgrade the gradebook comments after this update.
         $adminconfig = $this->assignment->get_admin_config();
         $gradebookplugin = $adminconfig->feedback_plugin_for_gradebook;

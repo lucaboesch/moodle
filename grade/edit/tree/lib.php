@@ -913,12 +913,12 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
         if ($item->gradetype == GRADE_TYPE_TEXT) {
             $grademax = ' - ';
         } else if ($item->gradetype == GRADE_TYPE_SCALE) {
-            $scale = $DB->get_record('scale', array('id' => $item->scaleid));
+            $scale = new grade_scale(array('id' => $item->scaleid), true);
             $scale_items = null;
-            if (empty($scale)) { //if the item is using a scale that's been removed
+            if (!$scale) { // If the item is using a scale that's been removed.
                 $scale_items = array();
             } else {
-                $scale_items = explode(',', $scale->scale);
+                $scale_items = $scale->get_items();
             }
             if ($parentcat->aggregation == GRADE_AGGREGATE_SUM) {
                 $grademax = end($scale_items) . ' (' .

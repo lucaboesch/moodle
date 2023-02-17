@@ -34,6 +34,8 @@ define ('RATING_AGGREGATE_SUM', 5);
 
 define ('RATING_DEFAULT_SCALE', 5);
 
+require_once($CFG->libdir.'/grade/grade_scale.php'); // Needed when some functions are invoked via ajax.
+
 /**
  * The rating class represents a single rating by a single user
  *
@@ -717,10 +719,10 @@ class rating_manager {
 
             if ($scaleid < 0) {
                 // It is a proper scale (not numeric).
-                $scalerecord = $DB->get_record('scale', array('id' => abs($scaleid)));
+                $scalerecord = new grade_scale(array('id' => abs($scaleid), true));
                 if ($scalerecord) {
                     // We need to generate an array with string keys starting at 1.
-                    $scalearray = explode(',', $scalerecord->scale);
+                    $scalearray = $scalerecord->get_items();
                     $c = count($scalearray);
                     for ($i = 0; $i < $c; $i++) {
                         // Treat index as a string to allow sorting without changing the value.
@@ -1161,10 +1163,9 @@ class rating_manager {
             } else if ($firstrating->settings->scale->id < 0) { // If its non-numeric scale.
                 // Dont use the scale item if the aggregation method is sum as adding items from a custom scale makes no sense.
                 if ($firstrating->settings->aggregationmethod != RATING_AGGREGATE_SUM) {
-                    $scalerecord = $DB->get_record('scale', array('id' => -$firstrating->settings->scale->id));
+                    $scalerecord = new grade_scale(array('id' => -$firstrating->settings->scale->id), true);
                     if ($scalerecord) {
-                        $scalearray = explode(',', $scalerecord->scale);
-                        $aggregatetoreturn = $scalearray[$aggregatetoreturn - 1];
+                        $scalearray = $scalerecord->get_items();
                     }
                 }
             }

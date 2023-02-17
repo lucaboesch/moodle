@@ -118,7 +118,7 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
 
             $options = [-1 => get_string('nograde')];
 
-            foreach ($scale->scale_items as $i => $name) {
+            foreach ($scale->get_items() as $i => $name) {
                 $options[$i + 1] = $name;
             }
 

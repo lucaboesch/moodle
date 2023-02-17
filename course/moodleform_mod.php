@@ -438,15 +438,17 @@ abstract class moodleform_mod extends moodleform {
             if (isset($data[$assessedfieldname]) && $data[$assessedfieldname] > 0 && empty($data[$scalefieldname])) {
                 $errors[$assessedfieldname] = get_string('scaleselectionrequired', 'rating');
             }
+        }
 
-            // Check that the grade pass is a valid number.
-            $gradepassvalid = false;
-            if (isset($data[$gradepassfieldname])) {
-                if (unformat_float($data[$gradepassfieldname], true) === false) {
-                    $errors[$gradepassfieldname] = get_string('err_numeric', 'form');
-                } else {
-                    $gradepassvalid = true;
-                }
+        // Grade to pass: ensure that the grade to pass is valid for points and scales.
+        // If we are working with a scale, convert into a positive number for validation.
+        if ($gradepassvalid && isset($data['gradepass']) && (!empty($data['grade']) || !empty($data['scale']))) {
+            $scale = !empty($data['grade']) ? $data['grade'] : $data['scale'];
+            if ($scale < 0) {
+                $scalevalues = new grade_scale(array('id' => -$scale, true));
+                $grade = $scalevalues->get_items();
+            } else {
+                $grade = $scale;
             }
 
             // Grade to pass: ensure that the grade to pass is valid for points and scales.

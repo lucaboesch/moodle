@@ -122,7 +122,7 @@ foreach ($report_info as $outcomeid => $outcomedata) {
     $sitewide_html = '<td class="cell c2" rowspan="' . $rowspan . '">' . $sitewide . "</td>\n";
 
     $outcomedata['outcome']->sum = 0;
-    $scale = new grade_scale(array('id' => $outcomedata['outcome']->scaleid), false);
+    $scale = new grade_scale(array('id' => $outcomedata['outcome']->scaleid), true);
 
     $print_tr = false;
     $items_html = '';
