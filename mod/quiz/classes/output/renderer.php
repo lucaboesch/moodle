@@ -1261,13 +1261,13 @@ class renderer extends plugin_renderer_base {
                 $a->method = quiz_get_grading_option_name($quiz->grademethod);
                 $a->mygrade = quiz_format_grade($quiz, $viewobj->mygrade);
                 $a->quizgrade = quiz_format_grade($quiz, $quiz->grade);
-                $resultinfo .= $this->heading(get_string('gradesofar', 'quiz', $a), 3);
+                $resultinfo .= $this->heading(get_string('gradesofar', 'quiz', $a), 4);
             } else {
                 $a = new stdClass();
                 $a->grade = quiz_format_grade($quiz, $viewobj->mygrade);
                 $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
                 $a = get_string('outofshort', 'quiz', $a);
-                $resultinfo .= $this->heading(get_string('yourfinalgradeis', 'quiz', $a), 3);
+                $resultinfo .= $this->heading(get_string('yourfinalgradeis', 'quiz', $a), 4);
             }
         }
 
@@ -1277,11 +1277,11 @@ class renderer extends plugin_renderer_base {
                             ['class' => 'overriddennotice']) . "\n";
         }
         if ($viewobj->gradebookfeedback) {
-            $resultinfo .= $this->heading(get_string('comment', 'quiz'), 3);
+            $resultinfo .= $this->heading(get_string('comment', 'quiz'), 4);
             $resultinfo .= html_writer::div($viewobj->gradebookfeedback, 'quizteacherfeedback') . "\n";
         }
         if ($viewobj->feedbackcolumn) {
-            $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3);
+            $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 4);
             $resultinfo .= html_writer::div(
                             quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context),
                             'quizgradefeedback') . "\n";
