@@ -71,7 +71,8 @@ function xmldb_label_upgrade($oldversion) {
 
     if ($oldversion < 2022112801) {
         $prevlang = force_current_language($CFG->lang);
-        $labels = $DB->get_recordset('label');
+        $conditions[] = $DB->sql_like('intro', 'PLUGINFILE');
+        $labels = $DB->get_recordset('label', $conditions);
         foreach ($labels as $label) {
             // Make sure that all labels have now the same name according to the new convention.
             // Note this is the same (and duplicated) code as in get_label_name as we cannot call any API function
