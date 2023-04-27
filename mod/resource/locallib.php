@@ -523,3 +523,26 @@ function resource_set_mainfile($data) {
         file_set_sortorder($context->id, 'mod_resource', 'content', 0, $file->get_filepath(), $file->get_filename(), 1);
     }
 }
+
+/**
+ * Optimised mimetype detection from general resource
+ * @param string $mainfile The filename to get the icon for
+ * @param int $size of the icon.
+ * @return string|null mimetype or null when the filetype is not relevant.
+ */
+function resource_guess_icon($mainfile, $size = null) {
+    global $CFG;
+    require_once("$CFG->libdir/filelib.php");
+
+    $icon = file_extension_icon($mainfile, $size);
+    $htmlicon = file_extension_icon('.htm', $size);
+    $unknownicon = file_extension_icon('', $size);
+    $phpicon = file_extension_icon('.php', $size); // Exception for php files.
+
+    // We do not want to return those icon types, the module icon is more appropriate.
+    if ($icon === $unknownicon || $icon === $htmlicon || $icon === $phpicon) {
+        return null;
+    }
+
+    return $icon;
+}
