@@ -744,11 +744,33 @@ class tool_uploadcourse_course {
 
         // Add data for course format options.
         if (isset($coursedata['format']) || $exists) {
-            if (isset($coursedata['format'])) {
+
+            // Look for existing values in template course.
+            if (isset($this->options['templatecourse'])) {
+                $templatecourse = $DB->get_record('course', ['shortname' => $this->options['templatecourse']]);
+                $formatoptions = course_get_format($templatecourse)->course_format_options(false);
+
+                foreach ($formatoptions as $key => $value) {
+                    $this->rawdata[$key] = $DB->get_field('course_format_options', 'value',
+                        ['name' => $key, 'courseid' => $templatecourse->id]);
+                }
+            }
+
+            if (isset($coursedata['format']) && trim($coursedata['format'] == '')) {
+                // Fall back to topics format since format empty string.
+                $coursedata['format'] = 'topics';
+                $courseformat = course_get_format((object)['format' => 'topics']);
+            } else if (isset($coursedata['format'])) {
                 $courseformat = course_get_format((object)['format' => $coursedata['format']]);
             } else {
                 $courseformat = course_get_format($existingdata);
             }
+            $coursedata += $courseformat->validate_course_format_options($this->rawdata);
+        }
+        if (!$exists || !array_key_exists('format', $coursedata)) {
+            // Fall back to topics format since no format given.
+            $coursedata['format'] = 'topics';
+            $courseformat = course_get_format((object)['format' => 'topics']);
             $coursedata += $courseformat->validate_course_format_options($this->rawdata);
         }
 
