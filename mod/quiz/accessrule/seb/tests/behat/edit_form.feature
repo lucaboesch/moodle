@@ -1,4 +1,4 @@
-@javascript @mod_quiz @quizaccess @quizaccess_seb
+@javascript @mod_quiz @quizaccess @quizaccess_seb @_file_upload
 Feature: Safe Exam Browser settings in quiz edit form
 
   Background:
@@ -234,3 +234,32 @@ Feature: Safe Exam Browser settings in quiz edit form
     Then I should not see "Allowed browser exam keys"
     Then I should not see "Safe Exam Browser config template"
     Then I should not see "Template 1"
+
+  Scenario: SEB settings with config and without neither showsebdownloadlink nor sebconfigfile capabilities
+    Given the following "permission overrides" exist:
+      | capability                                      | permission | role           | contextlevel | reference |
+      | quizaccess/seb:manage_seb_showsebdownloadlink   | Prohibit   | editingteacher | System       | cata      |
+      | quizaccess/seb:manage_filemanager_sebconfigfile | Prohibit   | editingteacher | System       | cata      |
+    And the following "activities" exist:
+      | activity | name      | course | idnumber |
+      | quiz     | Test quiz | C1     | quiz1    |
+    And the following "user" exists:
+      | username  | teacher |
+      | firstname | Teacher |
+      | lastname  | One     |
+    And the following "course enrolment" exists:
+      | user   | teacher        |
+      | course | C1             |
+      | role   | editingteacher |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I am on the "Test quiz" "quiz activity" page logged in as admin
+    And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I set the field "Require the use of Safe Exam Browser" to "Yes – Upload my own config"
+    And I upload "mod/quiz/accessrule/seb/tests/fixtures/unencrypted.seb" file to "Upload Safe Exam Browser config file" filemanager
+    And I press "Save and return to course"
+    And I log out
+    And I am on the "Test quiz" "quiz activity" page logged in as teacher
+    And I navigate to "Settings" in current page administration
+    Then I should not see "Element 'seb_showsebdownloadlink' does not exist in HTML_QuickForm::insertElementBefore()"
