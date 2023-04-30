@@ -366,6 +366,37 @@ img.resize {
     display: inline;
 }
 
+.dropdown-menu {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+// Dividers (basically an `<hr>`) within the dropdown
+.dropdown-divider {
+    @include nav-divider($dropdown-divider-bg);
+    height: 0;
+    margin: 0 0;
+    overflow: hidden;
+    border-top: 1px solid $dropdown-divider-bg;
+}
+
+.dropdown-menu .dropdown-item {
+    padding-top: $dropdown-item-padding-y;
+    padding-bottom: $dropdown-item-padding-y;
+}
+// The first in the menu: larger padding-top.
+.dropdown-menu .dropdown-item:first-child {
+    padding-top: ($dropdown-padding-y + $dropdown-item-padding-y);
+}
+// The last in the menu: larger padding-bottom.
+.dropdown-menu .dropdown-item:last-child {
+    padding-bottom: ($dropdown-padding-y + $dropdown-item-padding-y);
+}
+// After a divider: larger padding-top.
+.dropdown-menu .dropdown-divider + .dropdown-item {
+    padding-top: ($dropdown-padding-y + $dropdown-item-padding-y);
+}
+
 .block img.resize {
     height: 0.9em;
     width: 0.8em;
