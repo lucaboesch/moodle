@@ -865,11 +865,6 @@ abstract class question_edit_form extends question_wizard_form {
         }
 
         // Can only have one idnumber per category.
-        if (strpos($fromform['category'], ',') !== false) {
-            list($category, $categorycontextid) = explode(',', $fromform['category']);
-        } else {
-            $category = $fromform['category'];
-        }
         if (isset($fromform['idnumber']) && ((string) $fromform['idnumber'] !== '')) {
             if (empty($fromform['usecurrentcat']) && !empty($fromform['categorymoveto'])) {
                 $categoryinfo = $fromform['categorymoveto'];
