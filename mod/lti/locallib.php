@@ -1732,6 +1732,8 @@ function lti_get_tool_table($tools, $id) {
             $update = get_string('update', 'lti');
             $delete = get_string('delete', 'lti');
 
+            $type->name = format_string($type->name, true, array('context' => context_course::instance(SITEID)));
+
             if (empty($type->toolproxyid)) {
                 $baseurl = new \moodle_url('/mod/lti/typessettings.php', array(
                         'action' => 'accept',
@@ -2314,6 +2316,8 @@ function lti_filter_tool_types(array $tools, $state) {
 function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
     global $DB, $SITE;
 
+    $returnedtypes = new stdClass();
+
     if ($coursevisible === null) {
         $coursevisible = [LTI_COURSEVISIBLE_PRECONFIGURED, LTI_COURSEVISIBLE_ACTIVITYCHOOSER];
     }
@@ -2330,6 +2334,7 @@ function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
         return [];
     }
     $coursecond = implode(" OR ", $courseconds);
+    $returnedtypes = array();
     $query = "SELECT *
                 FROM {lti_types}
                WHERE coursevisible $coursevisiblesql
@@ -2337,8 +2342,15 @@ function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
                  AND state = :active
             ORDER BY name ASC";
 
-    return $DB->get_records_sql($query,
+    $types = $DB->get_records_sql($query,
         array('siteid' => $SITE->id, 'courseid' => $courseid, 'active' => LTI_TOOL_STATE_CONFIGURED) + $coursevisparams);
+    foreach ($types as $type) {
+        // Entry to return.
+        $type->name = format_string($type->name, true, array('context' => context_course::instance($courseid)));
+        $type->description = format_string($type->description, true, array('context' => context_course::instance($courseid)));
+        $returnedtypes[] = $type;
+    }
+    return $returnedtypes;
 }
 
 /**
