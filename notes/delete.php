@@ -74,7 +74,7 @@ if (data_submitted() && confirm_sesskey()) {
     echo $OUTPUT->confirm(get_string('deleteconfirm', 'notes'),
                           new moodle_url('delete.php', $optionsyes),
                           new moodle_url('index.php', $optionsno));
-    echo '<br />';
+    echo html_writer::empty_tag('br');
     note_print($note, NOTES_SHOW_BODY | NOTES_SHOW_HEAD);
     echo $OUTPUT->footer();
 }
