@@ -241,6 +241,14 @@ body.path-question-type {
         clip-path: none;
         border: 0;
     }
+    label.col-form-label.sr-only[for=id_filetypeslist] {
+        /* But not the filetypeslist label. */
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+    }
 }
 
 .que {
