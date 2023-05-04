@@ -23235,6 +23235,39 @@ img.resize {
   display: inline;
 }
 
+.dropdown-menu {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.dropdown-divider {
+  height: 0;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-top: 1px solid #e9ecef;
+  height: 0;
+  margin: 0 0;
+  overflow: hidden;
+  border-top: 1px solid #e9ecef;
+}
+
+.dropdown-menu .dropdown-item {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.dropdown-menu .dropdown-item:first-child {
+  padding-top: 0.75rem;
+}
+
+.dropdown-menu .dropdown-item:last-child {
+  padding-bottom: 0.75rem;
+}
+
+.dropdown-menu .dropdown-divider + .dropdown-item {
+  padding-top: 0.75rem;
+}
+
 .block img.resize {
   height: 0.9em;
   width: 0.8em;
