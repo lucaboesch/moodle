@@ -82,6 +82,8 @@ $dropdown-link-hover-color: $white;
 $dropdown-link-hover-bg: $primary;
 
 $popover-max-width: 300px !default;
+// Text wrapping in buttons
+$btn-white-space: nowrap !default;
 
 $border-radius: .5rem !default;
 $border-radius-lg: .6rem !default;
