@@ -205,6 +205,22 @@ class copy_form extends \moodleform {
         $hook = new after_copy_form_definition($mform);
         di::get(manager::class)->dispatch($hook);
 
+        // Keep enrolment methods.
+        // Only get enrolment methods actually used in this course.
+        $enrolmentmethods = get_enrolments_used_in_course($course->id);
+
+        // Only add the option if there are enrolments methods in this course.
+        if (!empty($enrolmentmethods)) {
+            $mform->addElement(
+                'select',
+                'keepenrolmentmethods',
+                get_string('rootsettingenrolments', 'backup'),
+                [0 => get_string('no'), 1 => get_string('yes')],
+            );
+            $mform->setDefault('keepenrolmentmethods', 1);
+            $mform->addHelpButton('keepenrolmentmethods', 'rootsettingenrolments', 'backup');
+        }
+
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'submitreturn', get_string('copyreturn', 'backup'));
         $buttonarray[] = $mform->createElement('submit', 'submitdisplay', get_string('copyview', 'backup'));
