@@ -23918,8 +23918,7 @@ tr.flagged-tag a {
 }
 
 .userenrolment .col_userdetails .subfield {
-  margin-left: 40px;
-}
+  float: left; }
 
 .userenrolment .col_userdetails .subfield_picture {
   float: left;
