@@ -29,7 +29,8 @@ defined('MOODLE_INTERNAL') || die;
 $ADMIN->add('enrolments', new admin_category('enrolltifolder', new lang_string('pluginname', 'enrol_lti'),
     $this->is_enabled() === false));
 
-$settings = new admin_settingpage($section, "User default values", 'moodle/site:config', $this->is_enabled() === false);
+$settings = new admin_settingpage($section, get_string('userdefaultvalues', 'enrol_lti'), 'moodle/site:config',
+    $this->is_enabled() === false);
 // Add all the user default values settings to the first page.
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('enrol_lti_settings', '', get_string('pluginname_desc', 'enrol_lti')));
@@ -81,8 +82,8 @@ if ($ADMIN->fulltree) {
 $ADMIN->add('enrolltifolder', $settings);
 
 // Now, create a tool registrations settings page.
-$settings = new admin_settingpage('enrolsettingslti_registrations', "Tool registration", 'moodle/site:config',
-    $this->is_enabled() === false);
+$settings = new admin_settingpage('enrolsettingslti_registrations', get_string('toolregistration', 'enrol_lti'),
+    'moodle/site:config', $this->is_enabled() === false);
 
 $settings->add(new admin_setting_heading('enrol_lti_tool_registrations_heading',
     get_string('registeredplatforms', 'enrol_lti'), ''));
