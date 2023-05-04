@@ -46,6 +46,7 @@ $string['allowsubmissionsfromdate'] = 'Allow submissions from';
 $string['allowsubmissionsfromdate_help'] = 'If enabled, students will not be able to submit before this date. If disabled, students will be able to start submitting right away.';
 $string['alwaysshowdescription'] = 'Always show description';
 $string['alwaysshowdescription_help'] = 'If disabled, the assignment description above will only become visible to students on the "Allow submissions from" date.';
+$string['anonymous'] = 'Anonymous';
 $string['applytoteam'] = 'Apply grades and feedback to entire group';
 $string['assign:addinstance'] = 'Add a new assignment';
 $string['assign:exportownsubmission'] = 'Export own submission';
@@ -225,6 +226,7 @@ $string['eventsubmissionformviewed'] = 'Submission form viewed.';
 $string['eventsubmissiongraded'] = 'The submission has been graded.';
 $string['eventsubmissionlocked'] = 'The submissions have been locked for a user.';
 $string['eventsubmissionremoved'] = 'Submission removed.';
+$string['eventsubmissionremoved'] = 'Submission removed.';
 $string['eventsubmissionstatusupdated'] = 'The status of the submission has been updated.';
 $string['eventsubmissionstatusviewed'] = 'The status of the submission has been viewed.';
 $string['eventsubmissionunlocked'] = 'The submissions have been unlocked for a user.';
@@ -247,7 +249,7 @@ It is available here:
 
     {$a->url}';
 $string['gradersubmissionupdatedhtml'] = '{$a->username} has updated their assignment submission
-for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
+for <i>\'{$a->assignment}\' at {$a->timeupdated}</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
 $string['gradersubmissionupdatedsmall'] = '{$a->username} has updated their submission for assignment {$a->assignment}.';
 $string['gradeuser'] = 'Grade {$a}';
@@ -542,16 +544,34 @@ $string['studentnotificationworkflowstateerror'] = 'Marking workflow state must 
 $string['submissionattachments'] = 'Only show files during submission';
 $string['submissionattachments_help'] = 'Tick the box to only show files on the submission page. Otherwise, files will be shown on both the assignment and submission pages.';
 $string['confirmstart'] = 'You have {$a} to complete this assignment. When you begin, the timer will start to count down and can\'t be paused.';
-$string['submissioncopiedtext'] = 'You have made a copy of your previous
+$string['submissioncopiedtext'] = 'You copied your previous
 assignment submission for \'{$a->assignment}\'
 
 You can see the status of your assignment submission:
 
     {$a->url}';
-$string['submissioncopiedhtml'] = '<p>You have made a copy of your previous
-assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+$string['submissioncopiedhtml'] = '<p>You copied your previous assignment submission for \'<i>{$a->assignment}</i>\'.</p>
 <p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
-$string['submissioncopiedsmall'] = 'You have copied your previous assignment submission for {$a->assignment}';
+$string['submissioncopiedsmall'] = 'You copied your previous assignment submission for {$a->assignment}';
+$string['submissioncopiedgroupsmall'] = '{$a->username} copied a previous group assignment submission for {$a->assignment}';
+$string['submissioncopiedgrouptext'] = '{$a->username} copied a previous
+group assignment submission for \'{$a->assignment}\'
+
+You can see the status of the assignment submission:
+
+    {$a->url}';
+$string['submissioncopiedgrouphtml'] = '{$a->username} copied a previous
+group assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
+You can see the status of the <a href="{$a->url}">assignment submission</a>.';
+$string['submissioncopiedgroupprivatesmall'] = 'A member of your group whose name you cannot see due to your Moodle\'s privacy settings copied a previous group assignment submission for {$a->assignment}';
+$string['submissioncopiedgroupprivatetext'] = 'A member of your group whose name you cannot see due to your Moodle\'s privacy settings copied a
+previous group assignment submission for \'{$a->assignment}\'
+
+You can see the status of the assignment submission:
+
+    {$a->url}';
+$string['submissioncopiedgroupprivatehtml'] = '<p>A member of your group whose name you cannot see due to your Moodle\'s privacy settings copied a previous group assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+<p>You can see the status of the <a href="{$a->url}">assignment submission</a>.</p>';
 $string['submissiondrafts'] = 'Require students to click the submit button';
 $string['submissiondrafts_help'] = 'If enabled, students will have to click a submit button to declare their submission as final. This allows students to keep a draft version of the submission on the system. If this setting is changed from "No" to "Yes" after students have already submitted, those submissions will be regarded as final.';
 $string['submissioneditable'] = 'Student can edit this submission';
@@ -581,7 +601,53 @@ You can see the status of your assignment submission:
     {$a->url}';
 $string['submissionreceipthtml'] = '<p>You have submitted an assignment submission for \'<i>{$a->assignment}</i>\'.</p>
 <p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
+$string['submissionreceiptgroupsmall'] = '{$a->username} has submitted your group assignment submission for {$a->assignment}';
+$string['submissionreceiptgrouptext'] = '{$a->username} has submitted a group
+assignment submission for \'{$a->assignment}\'
+
+You can see the status of your group assignment submission:
+
+    {$a->url}';
+$string['submissionreceiptgrouphtml'] = '<p>{$a->username} has submitted a group assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+<p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
+$string['submissionreceiptgroupprivatesmall'] = 'A member of your group whose name you cannot see due to your Moodle\'s privacy settings has submitted your group assignment submission for {$a->assignment}';
+$string['submissionreceiptgroupprivatetext'] = 'A member of your group whose name you cannot see due to your Moodle\'s privacy settings has submitted a group
+assignment submission for \'{$a->assignment}\'
+
+You can see the status of your group assignment submission:
+
+    {$a->url}';
+$string['submissionreceiptgroupprivatehtml'] = '<p>A member of your group whose name you cannot see due to your Moodle\'s privacy settings has submitted a group assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+<p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['submissionreceiptsmall'] = 'You have submitted your assignment submission for {$a->assignment}';
+$string['submissionremovedtext'] = 'You have removed your previous
+assignment submission for \'{$a->assignment}\'
+
+You can see the status of your assignment submission:
+
+    {$a->url}';
+$string['submissionremovedhtml'] = '<p>You have removed your previous assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+<p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
+$string['submissionremovedsmall'] = 'You have removed your previous assignment submission for {$a->assignment}';
+$string['submissionremovedgroupsmall'] = '{$a->username} has removed a previous group assignment submission for {$a->assignment}';
+$string['submissionremovedgrouptext'] = '{$a->username} has removed a previous
+group assignment submission for \'{$a->assignment}\'
+
+You can see the status of the assignment submission:
+
+    {$a->url}';
+$string['submissionremovedgrouphtml'] = '{$a->username} has removed a previous
+group assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
+You can see the status of the <a href="{$a->url}">assignment submission</a>.';
+$string['submissionremovedgroupprivatesmall'] = 'A member of your group whose name you cannot see due to your Moodle\'s privacy settings has removed a previous group assignment submission for {$a->assignment}';
+$string['submissionremovedgroupprivatetext'] = 'A member of your group whose name you cannot see due to your Moodle\'s privacy settings has removed a
+previous group assignment submission for \'{$a->assignment}\'
+
+You can see the status of the assignment submission:
+
+    {$a->url}';
+$string['submissionremovedgroupprivatehtml'] = '<p>A member of your group whose name you cannot see due to your Moodle\'s privacy settings has removed a previous group assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+<p>You can see the status of the <a href="{$a->url}">assignment submission</a>.</p>';
 $string['submissionslocked'] = 'This assignment is not accepting submissions';
 $string['submissionslockedshort'] = 'Submission changes not allowed';
 $string['submissionsclosed'] = 'Submissions closed';

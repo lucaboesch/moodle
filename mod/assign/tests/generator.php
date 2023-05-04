@@ -86,14 +86,15 @@ trait mod_assign_test_generator {
     }
 
     /**
-     * Submit the assignemnt for grading.
+     * Submit the assignment for grading.
      *
      * @param   \stdClass   $student The user to submit for
      * @param   \assign     $assign The assignment to submit to
      * @param   array       $data Additional data to set
      * @param   bool        $changeuser Whether to switch user to the user being submitted as.
+     * @param   bool        $mailout Whether to mail out, i.e. closing sink immediately.
      */
-    public function submit_for_grading($student, $assign, $data = [], $changeuser = true) {
+    public function submit_for_grading($student, $assign, $data = [], $changeuser = true, $mailout = false) {
         if ($changeuser) {
             $this->setUser($student);
         }
@@ -102,9 +103,13 @@ trait mod_assign_test_generator {
                 'userid' => $student->id,
             ]);
 
-        $sink = $this->redirectMessages();
+        if (!$mailout) {
+            $sink = $this->redirectMessages();
+        }
         $assign->submit_for_grading($data, []);
-        $sink->close();
+        if (!$mailout) {
+            $sink->close();
+        }
 
         return $data;
     }

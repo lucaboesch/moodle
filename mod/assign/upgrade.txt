@@ -5,6 +5,9 @@ This file has been replaced by UPGRADING.md. See MDL-81125 for further informati
 ===
 This files describes API changes in the assign code.
 
+=== 4.4 ===
+* The method \assign::send_notification() now has an optional $suppressidentity parameter to steer whether identity is suppressed.
+
 === 4.3 ===
 * The following deprecated methods have been removed and should not be used any more:
   - `assign::add_to_log`
