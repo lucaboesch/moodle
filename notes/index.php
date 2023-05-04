@@ -149,7 +149,8 @@ if ($courseid != SITEID) {
     $view = has_capability('moodle/notes:view', $context);
     $fullname = format_string($course->fullname, true, array('context' => $context));
     note_print_notes(
-        '<a name="sitenotes"></a>' . $strsitenotes,
+        html_writer::tag('a', '', array('name' => 'sitenotes')) .
+        $strsitenotes,
         $addid,
         $view,
         0,
@@ -158,7 +159,8 @@ if ($courseid != SITEID) {
         0
     );
     note_print_notes(
-        '<a name="coursenotes"></a>' . $strcoursenotes. ' ('.$fullname.')',
+        html_writer::tag('a', '', array('name' => 'coursenotes')) .
+        $strcoursenotes. ' ('.$fullname.')',
         $addid,
         $view,
         $courseid,
@@ -167,7 +169,8 @@ if ($courseid != SITEID) {
         0
     );
     note_print_notes(
-        '<a name="personalnotes"></a>' . $strpersonalnotes,
+        html_writer::tag('a', '', array('name' => 'personalnotes')) .
+        $strpersonalnotes,
         $addid,
         $view,
         $courseid,
@@ -178,15 +181,16 @@ if ($courseid != SITEID) {
 
 } else {  // Normal course.
     $view = has_capability('moodle/notes:view', context_system::instance());
-    note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, 0, $view, 0, $userid, NOTES_STATE_SITE, 0);
-    echo '<a name="coursenotes"></a>';
+    note_print_notes(html_writer::tag('a', '', array('name' => 'sitenotes')) .
+        $strsitenotes, 0, $view, 0, $userid, NOTES_STATE_SITE, 0);
+    echo html_writer::tag('a', '', array('name' => 'coursenotes'));
 
     if (!empty($userid)) {
         $courses = enrol_get_users_courses($userid);
         foreach ($courses as $c) {
             $ccontext = context_course::instance($c->id);
             $cfullname = format_string($c->fullname, true, array('context' => $ccontext));
-            $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $cfullname . '</a>';
+            $header = html_writer::link(new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $c->id)), $cfullname);
             $viewcoursenotes = has_capability('moodle/notes:view', $ccontext);
             if (has_capability('moodle/notes:manage', $ccontext)) {
                 $addid = $c->id;
