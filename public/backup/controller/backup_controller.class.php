@@ -138,6 +138,12 @@ class backup_controller extends base_controller {
     protected $keptroles = array();
 
     /**
+     * Whether to keep enrolment methods.
+     * @var bool
+     */
+    protected $keepenrolmentmethods = false;
+
+    /**
      * Constructor for the backup controller class.
      *
      * @param string $type Type of the backup; One of backup::TYPE_1COURSE, TYPE_1SECTION, TYPE_1ACTIVITY
@@ -532,6 +538,22 @@ class backup_controller extends base_controller {
     }
 
     /**
+     * Sets whether enrolment methods should be kept in the destination course
+     * for a course copy operation.
+     *
+     * @param bool $keepenrolmentmethods
+     * @throws backup_controller_exception
+     */
+    public function set_keepenrolmentmethods(bool $keepenrolmentmethods): void {
+        // Only allow of keeping user roles when controller is in copy mode.
+        if ($this->mode != backup::MODE_COPY) {
+            throw new backup_controller_exception('cannot_set_keep_roles_wrong_mode');
+        }
+
+        $this->keepenrolmentmethods = $keepenrolmentmethods;
+    }
+
+    /**
      * Executes the backup
      * @return void Throws and exception of completes
      */
@@ -562,6 +584,7 @@ class backup_controller extends base_controller {
         // Handle copy operation specific settings.
         if ($this->mode == backup::MODE_COPY) {
             $this->plan->set_kept_roles($this->keptroles);
+            $this->plan->set_keepenrolmentmethods($this->keepenrolmentmethods);
         }
 
         return $this->plan->execute();

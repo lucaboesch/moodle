@@ -79,6 +79,8 @@ class asynchronous_copy_task extends adhoc_task {
 
         $bc->set_kept_roles($keptroles);
 
+        $keepenrolmentmethods = (bool)$copyinfo->keepenrolmentmethods;
+
         // If we are not keeping user data don't include users or data in the backup.
         // In this case we'll add the user enrolments at the end.
         // Also if we have no roles to keep don't backup users.
@@ -131,6 +133,10 @@ class asynchronous_copy_task extends adhoc_task {
         // Create and dispatch a hook to allow interaction with the task immediately prior to execution.
         $hook = new before_copy_course_execute($plan, $copyinfo);
         di::get(manager::class)->dispatch($hook);
+
+        if ($keepenrolmentmethods) {
+            $plan->get_setting('enrolments')->set_value(\backup::ENROL_ALWAYS);
+        }
 
         // Do some preflight checks on the restore.
         $rc->execute_precheck();

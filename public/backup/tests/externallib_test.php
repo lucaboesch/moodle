@@ -80,6 +80,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $copydata = \copy_helper::process_formdata($formdata);
         $copydetails = \copy_helper::create_copy($copydata);
@@ -153,6 +154,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $urlform = http_build_query($formdata); // Take the form data and url encode it.
         $jsonformdata = json_encode($urlform); // Take form string and JSON encode.

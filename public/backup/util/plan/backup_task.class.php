@@ -56,6 +56,16 @@ abstract class backup_task extends base_task {
     public function get_kept_roles(): array {
         return $this->plan->get_kept_roles();
     }
+
+    /**
+     * Get whether enrolments should be kept in the destination course
+     * for a course copy operation.
+     *
+     * @return bool
+     */
+    public function get_keepenrolmentmethods(): bool {
+        return $this->plan->get_keepenrolmentmethods();
+    }
 }
 
 /*
