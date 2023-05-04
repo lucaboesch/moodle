@@ -321,7 +321,7 @@ class restore_course_search extends restore_search_base {
             'shortnamesearch' => '%'.$this->get_search().'%'
         );
 
-        $select     = " SELECT c.id, c.fullname, c.shortname, c.visible, c.sortorder ";
+        $select     = " SELECT c.id, c.fullname, c.shortname, c.visible, c.sortorder, c.idnumber ";
         $from       = " FROM {course} c ";
         $where      = " WHERE (".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".
             $DB->sql_like('c.shortname', ':shortnamesearch', false).")";

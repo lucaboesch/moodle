@@ -843,7 +843,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'ics-results'));
 
         $table = new html_table();
-        $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
+        $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'), get_string('idnumbercourse'));
         $table->data = array();
         foreach ($component->get_results() as $course) {
             $row = new html_table_row();
@@ -852,6 +852,10 @@ class core_backup_renderer extends plugin_renderer_base {
                 $row->attributes['class'] .= ' dimmed';
             }
             $id = $this->make_unique_id('import-course');
+            $courseidnumber = '';
+            if (trim($course->idnumber) != '') {
+                $courseidnumber = $course->idnumber . " ";
+            }
             $row->cells = [
                 html_writer::empty_tag('input', ['type' => 'radio', 'name' => 'importid', 'value' => $course->id,
                     'id' => $id]),
@@ -861,7 +865,8 @@ class core_backup_renderer extends plugin_renderer_base {
                     true,
                     ['class' => 'd-block']
                 ),
-                format_string($course->fullname, true, ['context' => context_course::instance($course->id)])
+                format_string($course->fullname, true, ['context' => context_course::instance($course->id)]),
+                $courseidnumber . "(" . $course->id . ")"
             ];
             $table->data[] = $row;
         }
