@@ -55,6 +55,12 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $mform->setDefault('shuffleanswers', $this->get_default_value('shuffleanswers',
             get_config('qtype_multichoice', 'shuffleanswers')));
 
+        $mform->addElement('advcheckbox', 'shuffleallbutlast',
+            get_string('shuffleallbutlast', 'qtype_multichoice'), null, null, array(0, 1));
+        $mform->addHelpButton('shuffleallbutlast', 'shuffleallbutlast', 'qtype_multichoice');
+        $mform->setDefault('shuffleallbutlast', get_config('qtype_multichoice', 'shuffleallbutlast'));
+        $mform->disabledIf('shuffleallbutlast', 'shuffleanswers', 'eq', 0);
+
         $mform->addElement('select', 'answernumbering',
                 get_string('answernumbering', 'qtype_multichoice'),
                 qtype_multichoice::get_numbering_styles());
@@ -107,6 +113,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
         if (!empty($question->options)) {
             $question->single = $question->options->single;
             $question->shuffleanswers = $question->options->shuffleanswers;
+            $question->shuffleallbutlast = $question->options->shuffleallbutlast;
             $question->answernumbering = $question->options->answernumbering;
             $question->showstandardinstruction = $question->options->showstandardinstruction;
         }

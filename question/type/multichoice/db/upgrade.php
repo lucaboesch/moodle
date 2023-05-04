@@ -32,6 +32,36 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_qtype_multichoice_upgrade($oldversion) {
     global $CFG;
 
+    $dbman = $DB->get_manager();
+
+    // Automatically generated Moodle v3.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v3.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v3.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Add a new checkbox for the question author to decide
+    // Whether standard instruction ('Select one:' or 'Select one or more:') is displayed.
+
+    if ($oldversion < 2020041600) {
+
+        // Define field showstandardinstruction to be added to qtype_multichoice_options.
+        $table = new xmldb_table('qtype_multichoice_options');
+        $field = new xmldb_field('showstandardinstruction', XMLDB_TYPE_INTEGER, '2',
+            null, XMLDB_NOTNULL, null, '1', 'shownumcorrect');
+
+        // Conditionally launch add field showstandardinstruction.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Multichoice savepoint reached.
+        upgrade_plugin_savepoint(true, 2020041600, 'qtype', 'multichoice');
+    }
+
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -43,6 +73,22 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2022112800) {
+
+        // Add "shuffleallbutlast" column to the question type options to save the option to preserve the last answer on its place.
+        $table = new xmldb_table('qtype_multichoice_options');
+        $field = new xmldb_field('shuffleallbutlast', XMLDB_TYPE_INTEGER, '1',
+            null, null, null, '0', 'shuffleanswers');
+
+        // Conditionally launch add field shuffleallbutlast.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Multichoice savepoint reached.
+        upgrade_plugin_savepoint(true, 2022112801, 'qtype', 'multichoice');
+    }
 
     return true;
 }
