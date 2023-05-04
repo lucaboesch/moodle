@@ -2372,6 +2372,7 @@ $string['userselectorsearchexactmatchonly'] = 'exact matches only';
 $string['usersnew'] = 'New users';
 $string['usersnoaccesssince'] = 'Inactive for more than';
 $string['userpreferences'] = 'User preferences';
+$string['userprivatefiles'] = '{$a}: Private files';
 $string['userswithfiles'] = 'Users with files';
 $string['useruploadtype'] = 'User upload type: {$a}';
 $string['userzones'] = 'User zones';
