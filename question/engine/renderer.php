@@ -426,8 +426,12 @@ class core_question_renderer extends plugin_renderer_base {
         $output = '';
         $output .= html_writer::nonempty_tag('div',
                 $qtoutput->feedback($qa, $options), array('class' => 'feedback'));
-        $output .= html_writer::nonempty_tag('div',
+        if ($qa->get_state() != 'mangrpartial') {
+            // Don't display if manually overridden and not getting the full mark.
+            // It would not show the correct partial.
+            $output .= html_writer::nonempty_tag('div',
                 $behaviouroutput->feedback($qa, $options), array('class' => 'im-feedback'));
+        }
         $output .= html_writer::nonempty_tag('div',
                 $options->extrainfocontent, array('class' => 'extra-feedback'));
         return $output;
