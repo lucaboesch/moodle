@@ -250,7 +250,15 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
      * @param string $error An error message associated with a group
      */
     function accept(&$renderer, $required = false, $error = null) {
-        form_init_date_js();
+        // Only display a disable static element or don't display the optional check box if this element is frozen.
+        // 4 is the index where the checkbox is located.
+        if ($this->isFrozen() && $this->_options['optional'] && !$this->_elements[4]->getChecked()) {
+            $this->_elements = array();
+            $this->_elements[] = $this->_mform->createElement('static', 'disabled', '', get_string('disabled', 'filters'));
+        } else if ($this->isFrozen() && isset($this->_elements[4])) {
+            // Remove the checkbox when frozen.
+            unset($this->_elements[4]);
+        }
         $renderer->renderElement($this, $required, $error);
     }
 
