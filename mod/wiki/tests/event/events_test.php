@@ -89,6 +89,35 @@ class events_test extends \advanced_testcase {
     }
 
     /**
+     * Test comment_updated event.
+     */
+    public function test_comment_updated() {
+        $this->setUp();
+
+        $page = $this->wikigenerator->create_first_page($this->wiki);
+        $context = context_module::instance($this->wiki->cmid);
+
+        // Add comment so we can update it later.
+        wiki_add_comment($context, $page->id, 'Test comment', 'html');
+        $comment = wiki_get_comments($context->id, $page->id);
+        $this->assertCount(1, $comment);
+        $comment = array_shift($comment);
+
+        // Triggering and capturing the event.
+        $sink = $this->redirectEvents();
+        wiki_delete_comment($comment->id, $context, $page->id);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_wiki\event\comment_deleted', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($page->id, $event->other['itemid']);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
      * Test comment_deleted event.
      */
     public function test_comment_deleted() {
