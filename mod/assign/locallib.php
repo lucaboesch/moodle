@@ -6560,7 +6560,7 @@ class assign {
             $userfrom->lastname = $uniqueidforuser;
             $userfrom->email = $CFG->noreplyaddress;
         } else {
-            $info->username = fullname($userfrom, true);
+            $info->username = fullname($userfrom, has_capability('moodle/site:viewfullnames', $context, $userto));
         }
         $info->assignment = format_string($assignmentname, true, array('context'=>$context));
         $info->url = $CFG->wwwroot.'/mod/assign/view.php?id='.$coursemodule->id;
@@ -6627,11 +6627,17 @@ class assign {
      * @param string $messagetype
      * @param string $eventtype
      * @param int $updatetime
+     * @param bool $suppressidentity
      * @return void
      */
-    public function send_notification($userfrom, $userto, $messagetype, $eventtype, $updatetime) {
+    public function send_notification($userfrom, $userto, $messagetype, $eventtype, $updatetime, $suppressidentity = false) {
         global $USER;
-        $userid = core_user::is_real_user($userfrom->id) ? $userfrom->id : $USER->id;
+        $userid = core_user::is_real_user($userto->id) ? $userto->id : $USER->id;
+        if ($suppressidentity == true && ($userid != $USER->id)) {
+            $userfrom = clone($userfrom);
+            $userfrom->firstname = get_string('anonymous', 'assign');
+            $userfrom->lastname = get_string('anonymous', 'assign');
+        }
         $uniqueid = $this->get_uniqueid_for_user($userid);
         self::send_assignment_notification($userfrom,
                                            $userto,
@@ -6654,7 +6660,7 @@ class assign {
      * @return void
      */
     protected function notify_student_submission_copied(stdClass $submission) {
-        global $DB, $USER;
+        global $DB, $USER, $COURSE;
 
         $adminconfig = $this->get_admin_config();
         // Use the same setting for this - no need for another one.
@@ -6662,16 +6668,50 @@ class assign {
             // No need to do anything.
             return;
         }
-        if ($submission->userid) {
-            $user = $DB->get_record('user', array('id'=>$submission->userid), '*', MUST_EXIST);
+        if ($this->get_instance()->teamsubmission ||
+            ($this->get_instance()->requireallteammemberssubmit || $COURSE->groupmodeforce)) {
+            // Is it a group submission or is the course set to forced group mode.
+            $group = $this->get_submission_group($USER->id);
+            if ($group) {
+                $groupid = $group->id;
+                $suppressidentity = false;
+                // Get the group members and notify them all.
+                $members = $this->get_submission_group_members($groupid, false);
+                foreach ($members as $member) {
+                    // Whether the member has the right to see the user's identity in this course.
+                    $viewparticipants = has_capability('moodle/course:viewparticipants', $this->context, $member);
+                    // Notify text for the submitting user.
+                    $message = 'submissioncopied';
+                    if ($USER->id != $member->id) {
+                        // Notify text for the group members.
+                        if ($viewparticipants) {
+                            $message = 'submissioncopiedgroup';
+                        } else {
+                            $suppressidentity = true;
+                            $message = 'submissioncopiedgroupprivate';
+                        }
+                    }
+                    $this->send_notification($USER,
+                        $member,
+                        $message,
+                        'assign_notification',
+                        $submission->timemodified,
+                        $suppressidentity);
+                }
+            }
         } else {
-            $user = $USER;
+            // Is it a single user submission.
+            if ($submission->userid) {
+                $user = $DB->get_record('user', array('id' => $submission->userid), '*', MUST_EXIST);
+            } else {
+                $user = $USER;
+            }
+            $this->send_notification($user,
+                                     $user,
+                                     'submissioncopied',
+                                     'assign_notification',
+                                     $submission->timemodified);
         }
-        $this->send_notification($user,
-                                 $user,
-                                 'submissioncopied',
-                                 'assign_notification',
-                                 $submission->timemodified);
     }
     /**
      * Notify student upon successful submission.
@@ -6680,30 +6720,64 @@ class assign {
      * @return void
      */
     protected function notify_student_submission_receipt(stdClass $submission) {
-        global $DB, $USER;
+        global $DB, $USER, $COURSE;
 
         $adminconfig = $this->get_admin_config();
         if (empty($adminconfig->submissionreceipts)) {
             // No need to do anything.
             return;
         }
-        if ($submission->userid) {
-            $user = $DB->get_record('user', array('id'=>$submission->userid), '*', MUST_EXIST);
+        if ($this->get_instance()->teamsubmission ||
+            ($this->get_instance()->requireallteammemberssubmit || $COURSE->groupmodeforce)) {
+            // Is it a group submission or is the course set to forced group mode.
+            $group = $this->get_submission_group($USER->id);
+            if ($group) {
+                $suppressidentity = false;
+                $groupid = $group->id;
+                // Get the group members and notify them all.
+                $members = $this->get_submission_group_members($groupid, false);
+                foreach ($members as $member) {
+                    // Whether the member has the right to see the user's identity in this course.
+                    $viewparticipants = has_capability('moodle/course:viewparticipants', $this->context, $member->id);
+                    // Notify text for the submitting user.
+                    $message = 'submissionreceipt';
+                    if ($USER->id != $member->id) {
+                        // Notify text for the group members.
+                        if ($viewparticipants) {
+                            $message = 'submissionreceiptgroup';
+                        } else {
+                            $suppressidentity = true;
+                            $message = 'submissionreceiptgroupprivate';
+                        }
+                    }
+                    $this->send_notification($USER,
+                        $member,
+                        $message,
+                        'assign_notification',
+                        $submission->timemodified,
+                        $suppressidentity);
+                }
+            }
         } else {
-            $user = $USER;
-        }
-        if ($submission->userid == $USER->id) {
-            $this->send_notification(core_user::get_noreply_user(),
-                                     $user,
-                                     'submissionreceipt',
-                                     'assign_notification',
-                                     $submission->timemodified);
-        } else {
-            $this->send_notification($USER,
-                                     $user,
-                                     'submissionreceiptother',
-                                     'assign_notification',
-                                     $submission->timemodified);
+            // Is it a single user submission.
+            if ($submission->userid) {
+                $user = $DB->get_record('user', array('id' => $submission->userid), '*', MUST_EXIST);
+            } else {
+                $user = $USER;
+            }
+            if ($submission->userid == $USER->id) {
+                $this->send_notification(core_user::get_noreply_user(),
+                    $user,
+                    'submissionreceipt',
+                    'assign_notification',
+                    $submission->timemodified);
+            } else {
+                $this->send_notification($USER,
+                    $user,
+                    'submissionreceiptother',
+                    'assign_notification',
+                    $submission->timemodified);
+            }
         }
     }
 
