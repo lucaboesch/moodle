@@ -407,7 +407,10 @@ class settings_provider {
                         get_string('filemanager_sebconfigfile', 'quizaccess_seb'),
                         $link
                     );
-                    self::insert_element($quizform, $mform, $element, 'seb_showsebdownloadlink');
+                    if (self::can_upload_seb_file($quizform->get_context()) &&
+                        self::can_change_seb_showsebdownloadlink($quizform->get_context())) {
+                        self::insert_element($quizform, $mform, $element, 'seb_showsebdownloadlink');
+                    }
                 }
             }
 
