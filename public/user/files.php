@@ -33,7 +33,8 @@ if (isguestuser()) {
 $context = context_user::instance($USER->id);
 require_capability('moodle/user:manageownfiles', $context);
 
-$title = get_string('privatefiles');
+$title = get_string('userprivatefiles', 'core', fullname($USER));
+$struser = get_string('user');
 
 $PAGE->set_url('/user/files.php');
 $PAGE->set_context($context);
