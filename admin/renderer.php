@@ -34,7 +34,6 @@ class core_admin_renderer extends plugin_renderer_base {
         $output = '';
 
         $copyrightnotice = text_to_html(get_string('gpl3'));
-        $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
 
         $continue = new single_button(new moodle_url($this->page->url, array(
             'lang' => $CFG->lang, 'agreelicense' => 1)), get_string('continue'), 'get');

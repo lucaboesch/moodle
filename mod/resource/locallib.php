@@ -223,7 +223,7 @@ function resource_print_workaround($resource, $cm, $course, $file) {
             break;
 
         case RESOURCELIB_DISPLAY_NEW:
-            $extra = 'onclick="this.target=\'_blank\'"';
+            $extra = 'target="_blank"';
             echo resource_get_clicktoopen($file, $resource->revision, $extra);
             break;
 
