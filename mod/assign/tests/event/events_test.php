@@ -208,8 +208,9 @@ class events_test extends \advanced_testcase {
         $submission = $assign->get_user_submission($student->id, 0);
 
         $sink = $this->redirectEvents();
+        $sink->clear();
         $assign->remove_submission($student->id);
-        $events = $sink->get_events();
+        $events = $sink->get_events_by_component('mod_assign');
         $this->assertCount(2, $events);
         $event = $events[0];
         $this->assertInstanceOf('mod_assign\event\submission_removed', $event);
@@ -250,7 +251,7 @@ class events_test extends \advanced_testcase {
 
         $sink = $this->redirectEvents();
         $assign->remove_submission($student->id);
-        $events = $sink->get_events();
+        $events = $sink->get_events_by_component('mod_assign');
         $this->assertCount(2, $events);
         $event = $events[0];
         $this->assertInstanceOf('mod_assign\event\submission_removed', $event);
@@ -286,7 +287,7 @@ class events_test extends \advanced_testcase {
 
         $assign->testable_save_user_extension($student->id, $tomorrow);
 
-        $events = $sink->get_events();
+        $events = $sink->get_events_by_component('mod_assign');
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertInstanceOf('\mod_assign\event\extension_granted', $event);
@@ -311,7 +312,7 @@ class events_test extends \advanced_testcase {
 
         $assign->lock_submission($student->id);
 
-        $events = $sink->get_events();
+        $events = $sink->get_events_by_component('mod_assign');
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertInstanceOf('\mod_assign\event\submission_locked', $event);
@@ -432,7 +433,7 @@ class events_test extends \advanced_testcase {
         $sink = $this->redirectEvents();
         $assign->remove_submission($student->id);
 
-        $events = $sink->get_events();
+        $events = $sink->get_events_by_component('mod_assign');
         $this->assertCount(2, $events);
 
         $event = $events[1];
@@ -471,7 +472,7 @@ class events_test extends \advanced_testcase {
         $sink = $this->redirectEvents();
         $assign->remove_submission($student->id);
 
-        $events = $sink->get_events();
+        $events = $sink->get_events_by_component('mod_assign');
         $this->assertCount(2, $events);
 
         $event = $events[1];

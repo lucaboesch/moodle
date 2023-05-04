@@ -39,6 +39,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  *
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
  */
 class locallib_test extends \advanced_testcase {
 
@@ -4670,5 +4671,727 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         set_user_preference('assign_filter', '');
         $this->AssertTrue($assign->is_userid_filtered($student1->id));
         $this->AssertTrue($assign->is_userid_filtered($student2->id));
+    }
+
+    /**
+     * Test group submission notification when students do have the right to see other participants.
+     *
+     * @covers \assign::notify_student_submission_receipt
+     */
+    public function test_nominal_group_submission_notification(): void {
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        // First run cron so there are no messages waiting to be sent (from other tests).
+        \core\cron::setup_user();
+        \assign::cron();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        // Create an assignment.
+        $this->setUser($teacher);
+        $assign = $this->create_instance($course, [
+            'sendstudentnotifications' => 1,
+            'sendnotifications' => 1,
+            'teamsubmission' => 1,
+        ]);
+
+        $sink = $this->redirectEmails();
+
+        // Simulate a submission.
+        $this->add_submission($student, $assign);
+        $this->submit_for_grading($student, $assign, [], false, true);
+
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], one to the other student member of the group [1], and
+        // one to the teacher [2].
+        $this->assertCount(3, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You have submitted an assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You have submitted your assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' has submitted a group assignment submission for',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' has submitted your group assignment submission for Assignment', quoted_printable_decode($emails[1]->subject));
+        // E-mail to the teacher.
+        $headerlines = explode("\r\n", $emails[2]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' has updated their assignment submission for ', str_replace("\r\n", ' ', quoted_printable_decode($emails[2]->body)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' has updated their submission for assignment Assignment 1', quoted_printable_decode($emails[2]->subject));
+        $sink->clear();
+        $sink->close();
+    }
+
+    /**
+     * Test group submission notification when students have not the right to see other participants.
+     *
+     * @covers \assign::notify_student_submission_receipt
+     */
+    public function test_hidden_group_submission_notification(): void {
+        global $DB;
+
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        // First run cron so there are no messages waiting to be sent (from other tests).
+        \core\cron::setup_user();
+        \assign::cron();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        // Remove the capability to see other group members to students.
+        $coursecontext = \context_course::instance($course->id);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        $capability = 'moodle/course:viewparticipants';
+        assign_capability($capability, CAP_PROHIBIT, $studentrole->id, $coursecontext);
+
+        // Create an assignment.
+        $this->setUser($teacher);
+        $assign = $this->create_instance($course, [
+            'sendstudentnotifications' => 1,
+            'sendnotifications' => 1,
+            'teamsubmission' => 1,
+        ]);
+
+        $sink = $this->redirectEmails();
+
+        // Simulate a submission.
+        $this->add_submission($student, $assign);
+        $this->submit_for_grading($student, $assign, [], false, true);
+
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], one to the other student member of the group [1], and
+        // one to the teacher [2].
+        $this->assertCount(3, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You have submitted an assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You have submitted your assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString('Anonymous Anonymous', iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('A member of your group whose name you cannot see due to your Moodle\'s privacy ' .
+            'settings has submitted a group assignment submission for',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString('A member of your group whose name you cannot see due to your Moodle\'s privacy ' .
+            'settings has submitted your group assignment submission for Assignment', quoted_printable_decode($emails[1]->subject));
+        // E-mail to the teacher.
+        $headerlines = explode("\r\n", $emails[2]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' has updated their assignment submission for ', str_replace("\r\n", ' ', quoted_printable_decode($emails[2]->body)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' has updated their submission for assignment Assignment 1', quoted_printable_decode($emails[2]->subject));
+        $sink->clear();
+        $sink->close();
+    }
+
+    /**
+     * Test group submission notification when students do not have the right to see other participants
+     * and fullname (for students) as well as alternativefullname (for teachers) is set differently than standard.
+     *
+     * @covers \assign::notify_student_submission_receipt
+     */
+    public function test_different_fullname_group_submission_notification(): void {
+        global $DB, $CFG;
+
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        // First run cron so there are no messages waiting to be sent (from other tests).
+        \core\cron::setup_user();
+        \assign::cron();
+
+        // Set fullname (for students) to somewhat different.
+        $CFG->fullnamedisplay = 'firstname (firstnamephonetic) lastname';
+        // Set alternatefullname (for teachers) to somewhat different.
+        $CFG->alternativefullnameformat = 'firstname middlename alternatename lastname';
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Name don't behave great in PHPUnit when with cyrillic or other ASCII characters.
+        $student->firstname = 'Grainne';
+        $student->lastname = 'Beauchamp';
+        $student->middlename = 'Ann';
+        $student->firstnamephonetic = 'Gronya';
+        $student->lastnamephonetic = 'Beecham';
+        $student->alternatename = 'Jill';
+        $student2->firstname = 'Niamh';
+        $student2->lastname = 'Cholmondely';
+        $student2->middlename = 'Jane';
+        $student2->firstnamephonetic = 'Nee';
+        $student2->lastnamephonetic = 'Chumlee';
+        $student2->alternatename = 'Nina';
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        // Remove the capability to see other group members to students.
+        $coursecontext = \context_course::instance($course->id);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        $capability = 'moodle/course:viewparticipants';
+        assign_capability($capability, CAP_PROHIBIT, $studentrole->id, $coursecontext);
+
+        // Add the capability to see alternatefullname to teachers.
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher'], '*', MUST_EXIST);
+        $capability = 'moodle/site:viewfullnames';
+        assign_capability($capability, CAP_ALLOW, $teacherrole->id, \context_system::instance()->id);
+
+        // Create an assignment.
+        $this->setUser($teacher);
+        $assign = $this->create_instance($course, [
+            'sendstudentnotifications' => 1,
+            'sendnotifications' => 1,
+            'teamsubmission' => 1,
+        ]);
+
+        $sink = $this->redirectEmails();
+
+        // Simulate a submission.
+        $this->add_submission($student, $assign);
+        $this->submit_for_grading($student, $assign, [], false, true);
+
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], one to the other student member of the group [1], and
+        // one to the teacher [2].
+        $this->assertCount(3, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' . $student->lastname,
+            iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You have submitted an assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You have submitted your assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString('Anonymous (Anonymous) Anonymous', iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('A member of your group whose name you cannot see due to your Moodle\'s privacy ' .
+            'settings has submitted a group assignment submission for',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString('A member of your group whose name you cannot see due to your Moodle\'s privacy ' .
+            'settings has submitted your group assignment submission for Assignment', quoted_printable_decode($emails[1]->subject));
+        // E-mail to the teacher.
+        $headerlines = explode("\r\n", $emails[2]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' . $student->lastname,
+            iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->middlename . ' ' . $student->alternatename .
+            ' ' . $student->lastname . ' has updated their assignment submission for ',
+            str_replace("\r\n", ' ', quoted_printable_decode($emails[2]->body)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->middlename . ' ' . $student->alternatename .
+            ' ' . $student->lastname . ' has updated their submission for assignment Assignment 1',
+            quoted_printable_decode($emails[2]->subject));
+        $sink->clear();
+        $sink->close();
+    }
+
+    /**
+     * Test group submission copy notification when students do have the right to see other participants.
+     *
+     * @covers \assign::notify_student_submission_copied
+     */
+    public function test_nominal_group_copy_notification(): void {
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        $this->setUser($student);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1,
+            'submissiondrafts' => 0,
+        ]);
+
+        $assign->get_group_submission($student->id, $group1->id, true);
+
+        $submission1 = $assign->get_group_submission($student->id, $group1->id, true, 0);
+        $submission2 = $assign->get_group_submission($student->id, $group1->id, true, 1);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $assign->testable_update_submission($submission2, $student->id, time(), $assign->get_instance()->teamsubmission);
+
+        $sink = $this->redirectEmails();
+        $notices = null;
+        $assign->copy_previous_attempt($notices);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], and one to the other student member of the group [1].
+        $this->assertCount(2, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You copied your previous assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You copied your previous assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' copied a previous group assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' copied a previous group assignment submission for ',
+            quoted_printable_decode($emails[1]->subject));
+        $sink->clear();
+        $sink->close();
+    }
+
+    /**
+     * Test group submission copy notification when students have not the right to see other participants.
+     *
+     * @covers \assign::notify_student_submission_copied
+     */
+    public function test_hidden_group_copy_notification(): void {
+        global $DB;
+
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        // Remove the capability to see other group members to students.
+        $coursecontext = \context_course::instance($course->id);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        $capability = 'moodle/course:viewparticipants';
+        assign_capability($capability, CAP_PROHIBIT, $studentrole->id, $coursecontext);
+
+        $this->setUser($student);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1,
+            'submissiondrafts' => 0,
+        ]);
+
+        $assign->get_group_submission($student->id, $group1->id, true);
+
+        $submission1 = $assign->get_group_submission($student->id, $group1->id, true, 0);
+        $submission2 = $assign->get_group_submission($student->id, $group1->id, true, 1);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $assign->testable_update_submission($submission2, $student->id, time(), $assign->get_instance()->teamsubmission);
+
+        $sink = $this->redirectEmails();
+        $notices = null;
+        $assign->copy_previous_attempt($notices);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], and one to the other student member of the group [1].
+        $this->assertCount(2, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You copied your previous assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You copied your previous assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString('Anonymous Anonymous', iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('A member of your group whose name you cannot see due to your Moodle\'s privacy' .
+            ' settings copied a previous group assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString('A member of your group whose name you cannot see due to your Moodle\'s privacy' .
+            ' settings copied a previous group assignment submission for ',
+            quoted_printable_decode($emails[1]->subject));
+        $sink->clear();
+        $sink->close();
+    }
+
+    /**
+     * Test group submission copy notification when students do not have the right to see other participants
+     * and fullname (for students) as well as alternativefullname (for teachers) is set differently than standard.
+     *
+     * @covers \assign::notify_student_submission_copied
+     */
+    public function test_different_fullname_group_copy_notification(): void {
+        global $DB, $CFG;
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        // Set fullname (for students) to somewhat different.
+        $CFG->fullnamedisplay = 'firstname (firstnamephonetic) lastname';
+        // Set alternatefullname (for teachers) to somewhat different.
+        $CFG->alternativefullnameformat = 'firstname middlename alternatename lastname';
+
+        $this->setUser($student);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1,
+            'submissiondrafts' => 0,
+        ]);
+
+        $assign->get_group_submission($student->id, $group1->id, true);
+
+        $submission1 = $assign->get_group_submission($student->id, $group1->id, true, 0);
+        $submission2 = $assign->get_group_submission($student->id, $group1->id, true, 1);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $assign->testable_update_submission($submission2, $student->id, time(), $assign->get_instance()->teamsubmission);
+
+        $sink = $this->redirectEmails();
+        $notices = null;
+        $assign->copy_previous_attempt($notices);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], and one to the other student member of the group [1].
+        $this->assertCount(2, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' .
+            $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You copied your previous assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You copied your previous assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' . $student->lastname,
+            iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' . $student->lastname .
+            ' copied a previous group assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' . $student->lastname .
+            ' copied a previous group assignment submission for ',
+            quoted_printable_decode($emails[1]->subject));
+        $sink->clear();
+        $sink->close();
+    }
+
+    /**
+     * Test group submission remove notification when students do have the right to see other participants.
+     *
+     * @covers \assign::notify_student_submission_removed
+     */
+    public function test_nominal_group_remove_notification(): void {
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        $this->setUser($student);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1,
+            'submissiondrafts' => 0,
+        ]);
+
+        $assign->get_group_submission($student->id, $group1->id, true);
+
+        $submission1 = $assign->get_group_submission($student->id, $group1->id, true, 0);
+        $submission2 = $assign->get_group_submission($student->id, $group1->id, true, 1);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $assign->testable_update_submission($submission2, $student->id, time(), $assign->get_instance()->teamsubmission);
+
+        $sink = $this->redirectEmails();
+        $assign->remove_submission($student->id);
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], and one to the other student member of the group [1].
+        $this->assertCount(2, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You have removed your previous assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You have removed your previous assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' has removed a previous group assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname .
+            ' has removed a previous group assignment submission for ',
+            quoted_printable_decode($emails[1]->subject));
+        $sink->clear();
+        $sink->close();
+    }
+
+    /**
+     * Test group submission remove notification when students have not the right to see other participants.
+     *
+     * @covers \assign::notify_student_submission_removed
+     */
+    public function test_hidden_group_remove_notification(): void {
+        global $DB;
+
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        // Remove the capability to see other group members to students.
+        $coursecontext = \context_course::instance($course->id);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        $capability = 'moodle/course:viewparticipants';
+        assign_capability($capability, CAP_PROHIBIT, $studentrole->id, $coursecontext);
+
+        $this->setUser($student);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1,
+            'submissiondrafts' => 0,
+        ]);
+
+        $assign->get_group_submission($student->id, $group1->id, true);
+
+        $submission1 = $assign->get_group_submission($student->id, $group1->id, true, 0);
+        $submission2 = $assign->get_group_submission($student->id, $group1->id, true, 1);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $assign->testable_update_submission($submission2, $student->id, time(), $assign->get_instance()->teamsubmission);
+
+        $sink = $this->redirectEmails();
+        $assign->remove_submission($student->id);
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], and one to the other student member of the group [1].
+        $this->assertCount(2, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' ' . $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You have removed your previous assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You have removed your previous assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString('Anonymous Anonymous', iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('A member of your group whose name you cannot see due to your Moodle\'s privacy' .
+            ' settings has removed a previous group assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString('A member of your group whose name you cannot see due to your Moodle\'s privacy' .
+            ' settings has removed a previous group assignment submission for ',
+            quoted_printable_decode($emails[1]->subject));
+        $sink->clear();
+        $sink->close();
+    }
+
+    /**
+     * Test group submission remove notification when students do not have the right to see other participants
+     * and fullname (for students) as well as alternativefullname (for teachers) is set differently than standard.
+     *
+     * @covers \assign::notify_student_submission_removed
+     */
+    public function test_different_fullname_group_remove_notification(): void {
+        global $DB, $CFG;
+        $this->preventResetByRollback(); // Messaging is not compatible with transactions.
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Create and enrol two students.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        // Create and enrol a teacher.
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        // Create a group.
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        // Add student1 and student2 to group.
+        $this->getDataGenerator()->create_group_member(['userid' => $student->id, 'groupid' => $group1->id]);
+        $this->getDataGenerator()->create_group_member(['userid' => $student2->id, 'groupid' => $group1->id]);
+
+        // Set fullname (for students) to somewhat different.
+        $CFG->fullnamedisplay = 'firstname (firstnamephonetic) lastname';
+        // Set alternatefullname (for teachers) to somewhat different.
+        $CFG->alternativefullnameformat = 'firstname middlename alternatename lastname';
+
+        $this->setUser($student);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1,
+            'submissiondrafts' => 0,
+        ]);
+
+        $assign->get_group_submission($student->id, $group1->id, true);
+
+        $submission1 = $assign->get_group_submission($student->id, $group1->id, true, 0);
+        $submission2 = $assign->get_group_submission($student->id, $group1->id, true, 1);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $assign->testable_update_submission($submission2, $student->id, time(), $assign->get_instance()->teamsubmission);
+
+        $sink = $this->redirectEmails();
+        $assign->remove_submission($student->id);
+        $emails = $sink->get_messages();
+        // One e-mail went out to the student itself [0], and one to the other student member of the group [1].
+        $this->assertCount(2, $emails);
+        // The order could have been random because of race conditions, so they have to be ordered by the "to" field.
+        usort($emails, function($a, $b) {
+            return strcmp($a->to, $b->to);
+        });
+        // E-mail to the student itself.
+        $headerlines = explode("\r\n", $emails[0]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' .
+            $student->lastname, iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString('You have removed your previous assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[0]->body)));
+        $this->assertStringContainsString('You have removed your previous assignment submission for Assignment 1',
+            quoted_printable_decode($emails[0]->subject));
+        // E-mail to the other group member.
+        $headerlines = explode("\r\n", $emails[1]->header);
+        $fromheader = preg_grep('/^From/', $headerlines);
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' . $student->lastname,
+            iconv_mime_decode(reset($fromheader)));
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' . $student->lastname .
+            ' has removed a previous group assignment submission for ',
+            preg_replace('~[\r\n]~', ' ', quoted_printable_decode($emails[1]->body)));
+        $this->assertStringContainsString($student->firstname . ' (' . $student->firstnamephonetic . ') ' . $student->lastname .
+            ' has removed a previous group assignment submission for ',
+            quoted_printable_decode($emails[1]->subject));
+        $sink->clear();
+        $sink->close();
     }
 }

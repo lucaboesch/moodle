@@ -65,8 +65,41 @@ class phpunit_event_sink {
      *
      * @return \core\event\base[]
      */
-    public function get_events() {
+    public function get_events(?callable $filter = null): array {
+        if ($filter) {
+            return array_filter($this->events, $filter);
+        }
         return $this->events;
+    }
+
+    /**
+     * Return all redirected events for a given component.
+     *
+     * @param string $component Component name.
+     * @return array List of events.
+     */
+    public function get_events_by_component(string $component): array {
+        $component = core_component::normalize_componentname($component);
+
+        return $this->get_events(
+            fn ($event) => core_component::normalize_componentname($event->component) === $component,
+        );
+    }
+
+    /**
+     * Return all redirected events for a given component and type.
+     *
+     * @param string $component Component name.
+     * @param string $type Event type.
+     * @return array List of events.
+     */
+    public function get_events_by_component_and_name(
+        string $component,
+        string $type,
+    ): array {
+        return array_filter($this->get_events_by_component($component), function($event) use ($name) {
+            return $event->eventname == $type;
+        });
     }
 
     /**
