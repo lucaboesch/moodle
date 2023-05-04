@@ -4747,6 +4747,25 @@ function get_hidden_courses_on_timeline($user = null) {
 }
 
 /**
+ * Get a list of starred courses
+ *
+ * @param int|object|null $user User override to get the filter from. Defaults to current user
+ * @return array $ids List of starred courses
+ * @throws coding_exception
+ */
+function get_starred_courses_on_timeline($user = null) {
+    global $USER, $DB;
+
+    if (empty($user)) {
+        $user = $USER->id;
+    }
+
+    $ids = $DB->get_records('favourite', array('userid' => $user, 'component' => 'core_course'), 'itemid', 'itemid');
+
+    return $ids;
+}
+
+/**
  * Returns a list of the most recently courses accessed by a user
  *
  * @param int $userid User id from which the courses will be obtained

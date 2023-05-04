@@ -3188,7 +3188,17 @@ class global_navigation extends navigation_node {
 
         $limit = (int) $CFG->navcourselimit;
 
-        $courses = enrol_get_my_courses('*');
+        // Get the suppressed courses so to not to have them in the request we make hereafter.
+        $hiddencourses = get_hidden_courses_on_timeline();
+
+        $courses = enrol_get_my_courses('*', null, 0, [], false, 0, $hiddencourses);
+
+        // Reorder courses to prioritise starred ones. First, get the starred courses.
+        $starredcourses = array_keys(get_starred_courses_on_timeline());
+
+        // Put starred courses in front.
+        $courses = array_replace(array_flip($starredcourses), $courses);
+
         $flatnavcourses = [];
 
         // Go through the courses and see which ones we want to display in the flatnav.
