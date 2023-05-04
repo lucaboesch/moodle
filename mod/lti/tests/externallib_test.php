@@ -455,11 +455,21 @@ class externallib_test extends mod_lti_testcase {
         $type = new \stdClass();
         $data = new \stdClass();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
-        $type->name = "Test tool";
-        $type->description = "Example description";
+        $type->name = "<span lang=\"en\" class=\"multilang\">Test tool</span><span lang=\"ru\" " .
+            "class=\"multilang\">заглавие RU</span>";
+        $type->description = "<span lang=\"en\" class=\"multilang\">Example description</span><span lang=\"ru\" " .
+            "class=\"multilang\">описание RU</span>";
         $type->toolproxyid = $proxy->id;
         $type->baseurl = $this->getExternalTestFileUrl('/test.html');
         lti_add_type($type, $data);
+
+        // Enable multilang filter to on content and heading.
+        filter_manager::reset_caches();
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+        // Set WS filtering.
+        $wssettings = external_settings::get_instance();
+        $wssettings->set_filter(true);
 
         $types = mod_lti_external::get_tool_types($proxy->id);
         $types = external_api::clean_returnvalue(mod_lti_external::get_tool_types_returns(), $types);

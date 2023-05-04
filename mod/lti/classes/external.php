@@ -691,7 +691,15 @@ class mod_lti_external extends external_api {
             $types = lti_get_lti_types();
         }
 
-        return array_map("serialise_tool_type", array_values($types));
+        $returnedtypes = array();
+
+        foreach ($types as $type) {
+            // Entry to return.
+            $type->name = external_format_string($type->name, $context->id);
+            $type->description = external_format_string($type->description, $context->id);
+            $returnedtypes[] = $type;
+        }
+        return array_map("serialise_tool_type", array_values($returnedtypes));
     }
 
     /**
