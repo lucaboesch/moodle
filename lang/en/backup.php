@@ -351,6 +351,7 @@ $string['rootenrolmanual'] = 'Restore as manual enrolments';
 $string['rootsettingcustomfield'] = 'Include custom fields';
 $string['rootsettingenrolments'] = 'Include enrolment methods';
 $string['rootsettingenrolments_always'] = 'Yes, always';
+$string['rootsettingenrolments_help'] = 'If enabled, enrolment methods are copied over to the duplicated course.';
 $string['rootsettingenrolments_never'] = 'No, restore users as manual enrolments';
 $string['rootsettingenrolments_withusers'] = 'Yes, but only if users are included';
 $string['rootsettings'] = 'Backup settings';

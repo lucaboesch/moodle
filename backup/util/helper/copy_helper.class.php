@@ -44,6 +44,7 @@ final class copy_helper {
             'enddate', // Integer timestamp of the end of the destination course.
             'idnumber', // ID of the destination course.
             'userdata', // Integer to determine if the copied course will contain user data.
+            'keepenrolmentmethods', // Integer to determine if the copied course will contain enrolment methods.
         ];
 
         $missingfields = array_diff($requiredfields, array_keys((array)$formdata));
