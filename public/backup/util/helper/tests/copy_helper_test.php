@@ -170,7 +170,8 @@ final class copy_helper_test extends \advanced_testcase {
             'startdate' => 87539319,
             'enddate' => 6963472309248,
             'idnumber' => 1730,
-            'userdata' => 1
+            'userdata' => 1,
+            'keepenrolmentmethods' => 1,
         ];
 
         $roles = [
@@ -211,6 +212,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $copies = [];
         for ($i = 0; $i < 5; $i++) {
@@ -302,6 +304,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $copydata = \copy_helper::process_formdata($formdata);
         $result = \copy_helper::create_copy($copydata);
@@ -354,6 +357,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $formdata2 = clone($formdata);
         $formdata2->shortname = 'tree';
@@ -426,6 +430,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $formdata2 = clone ($formdata);
         $formdata2->shortname = 'tree';
@@ -483,6 +488,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create some copies.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -513,6 +519,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create some copies.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -549,6 +556,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create the course copy records and associated ad-hoc task.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -626,6 +634,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 0;
         $formdata->role_3 = 0;
         $formdata->role_5 = 0;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create the course copy records and associated ad-hoc task.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -695,6 +704,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 0;
         $formdata->role_3 = 0;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create the course copy records and associated ad-hoc task.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -764,6 +774,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create the course copy records and associated ad-hoc task.
         $copydata = \copy_helper::process_formdata($formdata);

@@ -40,6 +40,12 @@ class backup_plan extends base_plan implements loggable {
     protected $keptroles = array();
 
     /**
+     * Whether to keep enrolment methods.
+     * @var bool
+     */
+    protected $keepenrolmentmethods = false;
+
+    /**
      * Constructor - instantiates one object of this class
      */
     public function __construct($controller) {
@@ -128,6 +134,26 @@ class backup_plan extends base_plan implements loggable {
      */
     public function get_kept_roles(): array {
         return $this->keptroles;
+    }
+
+    /**
+     * Sets whether enrolment methods should be kept in the destination course
+     * for a course copy operation.
+     *
+     * @param bool $keepenrolmentmethods
+     */
+    public function set_keepenrolmentmethods(bool $keepenrolmentmethods): void {
+        $this->keepenrolmentmethods = $keepenrolmentmethods;
+    }
+
+    /**
+     * Get whether enrolment methods should be kept in the destination course
+     * for a course copy operation.
+     *
+     * @return bool
+     */
+    public function get_keepenrolmentmethods(): bool {
+        return $this->keepenrolmentmethods;
     }
 
     public function log($message, $level, $a = null, $depth = null, $display = false) {
