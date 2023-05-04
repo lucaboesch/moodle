@@ -206,13 +206,16 @@ class course_test extends \advanced_testcase {
 
         // Try to add a new course.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
-        $data = array('shortname' => 'newcourse', 'fullname' => 'New course', 'summary' => 'New', 'category' => 1);
+        // Here, 'format' is lacking.
+        $data = array('shortname' => 'newcourse', 'fullname' => 'New course', 'summary' => 'New', 'category' => 1,
+            'hiddensections' => 1);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $this->assertFalse($DB->record_exists('course', array('shortname' => 'newcourse')));
         $co->proceed();
         $course = $DB->get_record('course', array('shortname' => 'newcourse'), '*', MUST_EXIST);
         $this->assertEquals(0, course_get_format($course)->get_course()->coursedisplay);
+        $this->assertEquals(1, course_get_format($course)->get_course()->hiddensections);
 
         // Try to add a new course, that already exists.
         $coursecount = $DB->count_records('course', array());
@@ -235,12 +238,13 @@ class course_test extends \advanced_testcase {
         // Add a new course with non-default course format option.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $data = array('shortname' => 'c3', 'fullname' => 'C3', 'summary' => 'New c3', 'category' => 1,
-            'format' => 'weeks', 'coursedisplay' => 1);
+            'format' => 'weeks', 'coursedisplay' => 1, 'hiddensections' => 1);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $co->proceed();
         $course = $DB->get_record('course', array('shortname' => 'c3'), '*', MUST_EXIST);
         $this->assertEquals(1, course_get_format($course)->get_course()->coursedisplay);
+        $this->assertEquals(1, course_get_format($course)->get_course()->hiddensections);
     }
 
     public function test_create_with_sections() {
@@ -251,7 +255,8 @@ class course_test extends \advanced_testcase {
 
         // Add new course, make sure default number of sections is created.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
-        $data = array('shortname' => 'newcourse1', 'fullname' => 'New course1', 'format' => 'topics', 'category' => 1);
+        // Here, 'format' is given an empty string.
+        $data = array('shortname' => 'newcourse1', 'fullname' => 'New course1', 'format' => '', 'category' => 1);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $co->proceed();
@@ -387,12 +392,13 @@ class course_test extends \advanced_testcase {
         // Update course format option.
         $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
         $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
-        $data = array('shortname' => 'c1', 'coursedisplay' => 1);
+        $data = array('shortname' => 'c1', 'coursedisplay' => 1, 'hiddensections' => 1);
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $co->proceed();
         $course = $DB->get_record('course', array('shortname' => 'c1'), '*', MUST_EXIST);
         $this->assertEquals(1, course_get_format($course)->get_course()->coursedisplay);
+        $this->assertEquals(1, course_get_format($course)->get_course()->hiddensections);
     }
 
     public function test_data_saved() {
