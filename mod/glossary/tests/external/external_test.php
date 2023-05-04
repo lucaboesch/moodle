@@ -28,6 +28,7 @@ namespace mod_glossary\external;
 use core_external\external_api;
 use core_external\util as external_util;
 use externallib_advanced_testcase;
+use external_api;
 use mod_glossary_external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -912,6 +913,88 @@ class external_test extends externallib_advanced_testcase {
         $e3 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1), array('dog'));
         $e4 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 0, 'concept' => 'dog'));
         $e5 = $gg->create_content($g2, array('userid' => $u1->id, 'approved' => 1, 'concept' => 'dog'), array('cat'));
+
+        // Search concept + alias.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'cat', 0, 20, array('includenotapproved' => false));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array($e1->id, $e2->id);
+        $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
+        $this->assertEqualsCanonicalizing($expected, $actual);
+        // Compare rawnames of all expected tags, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array('Cats', 'Dogs'); // Only $e1 has 2 tags.
+        $actual = array(); // Accumulate all tags returned.
+        foreach ($return['entries'] as $entry) {
+            foreach ($entry['tags'] as $tag) {
+                $actual[] = $tag['rawname'];
+            }
+        }
+        $this->assertEqualsCanonicalizing($expected, $actual);
+
+        // Search alias.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => false));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array($e2->id, $e3->id);
+        $actual = array($return['entries'][0]['id'], $return['entries'][1]['id']);
+        $this->assertEqualsCanonicalizing($expected, $actual);
+
+        // Search including not approved.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        // Compare ids, ignore ordering of array, using canonicalize parameter of assertEquals.
+        $expected = array($e4->id, $e2->id, $e3->id);
+        $actual = array($return['entries'][0]['id'], $return['entries'][1]['id'], $return['entries'][2]['id']);
+        $this->assertEqualsCanonicalizing($expected, $actual);
+
+        // Pagination.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 1, array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        // We don't compare the returned entry id because it may be different depending on the DBMS,
+        // for example, Postgres does a random sorting in this case.
+        $this->assertEquals(3, $return['count']);
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 1, 1, array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+    }
+
+    public function test_get_entries_by_multilingual_term() {
+        $this->resetAfterTest(true);
+
+        // Enable multilang filter to on content and heading.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', 1);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+
+        $this->setAdminUser();
+
+        $e1 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1, 'concept' => '<span lang="en" ' .
+            'class="multilang">cat</span><span lang="fr" class="multilang">chat</span>', 'tags' => array('Cats', 'Dogs')));
+        $e2 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1), array('<span lang="en" class="' .
+            'multilang">cat</span><span lang="fr" class="multilang">chat</span>', '<span lang="en" class="multilang">' .
+            'dog</span><span lang="fr" class="multilang">chien</span>'));
+        $e3 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1), array('<span lang="en" class="' .
+            'multilang">dog</span><span lang="fr" class="multilang">chien</span>'));
+        $e4 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 0, 'concept' => '<span lang="en" class="' .
+            'multilang">dog</span><span lang="fr" class="multilang">chien</span>'));
+        $e5 = $gg->create_content($g2, array('userid' => $u1->id, 'approved' => 1, 'concept' => '<span lang="en" class="' .
+            'multilang">cog</span><span lang="fr" class="multilang">chien</span>'), array('cat'));
 
         // Search concept + alias.
         $return = mod_glossary_external::get_entries_by_term($g1->id, 'cat', 0, 20, array('includenotapproved' => false));

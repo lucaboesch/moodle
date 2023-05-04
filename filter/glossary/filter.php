@@ -29,8 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Glossary linking filter class.
- *
- * NOTE: multilang glossary entries are not compatible with this filter.
  */
 class filter_glossary extends moodle_text_filter {
     /** @var null|cache_store cache used to store the terms for this course. */

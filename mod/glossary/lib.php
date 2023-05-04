@@ -3420,18 +3420,12 @@ function glossary_entry_view($entry, $context) {
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
  *                          the current user. When true, also includes the ones that the user has the permission to approve.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $limit, $options = array()) {
-
     $qb = new mod_glossary_entry_query_builder($glossary);
-    if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
-        $qb->filter_by_concept_letter($letter);
-    }
-    if ($letter == 'SPECIAL') {
-        $qb->filter_by_concept_non_letter();
-    }
 
     if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
         $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
@@ -3444,11 +3438,58 @@ function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $li
     $qb->add_user_fields();
     $qb->order_by('concept', 'entries');
     $qb->order_by('id', 'entries', 'ASC'); // Sort on ID to avoid random ordering when entries share an ordering value.
-    $qb->limit($from, $limit);
 
-    // Fetching the entries.
-    $count = $qb->count_records();
+    // Fetching the entries. Those are all entries.
     $entries = $qb->get_records();
+
+    // Now sorting out the array.
+    $filteredentries = array();
+
+    if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
+        // Build a new array with the filtered entries.
+        foreach ($entries as $key => $entry) {
+            if (strtoupper(substr(format_string($entry->concept), 0, 1)) === strtoupper($letter)) {
+                // Add it when starting with the correct letter.
+                $filteredentries[$key] = $entry;
+            }
+        }
+        $entries = $filteredentries;
+    }
+
+    if ($letter == 'SPECIAL') {
+        // Build a new array with the filtered entries.
+        foreach ($entries as $key => $entry) {
+            if (!ctype_alpha(substr(format_string($entry->concept), 0, 1))) {
+                // Add it when starting with a non-letter character.
+                $filteredentries[$key] = $entry;
+            }
+        }
+        $entries = $filteredentries;
+    }
+
+    if ($letter == 'ALL') {
+        // No filtering needed.
+        $filteredentries = $entries;
+    }
+
+    // Now sort the array in regard to the current language.
+    usort($filteredentries, function($a, $b) {
+        return format_string($a->concept) <=> format_string($b->concept);
+    });
+
+    // Size of the overall array.
+    $count = count($entries);
+
+    // Now applying limit.
+    if (isset($limit)) {
+        if (isset($from)) {
+            $entries = array_slice($filteredentries, $from, $limit);
+        } else {
+            $entries = array_slice($filteredentries);
+        }
+    } else {
+        $entries = $filteredentries;
+    }
 
     return array($entries, $count);
 }
@@ -3465,7 +3506,8 @@ function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $li
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
  *                          the current user. When true, also includes the ones that the user has the permission to approve.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_entries_by_date($glossary, $context, $order, $sort, $from, $limit, $options = array()) {
@@ -3507,7 +3549,8 @@ function glossary_get_entries_by_date($glossary, $context, $order, $sort, $from,
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
  *                          the current user. When true, also includes the ones that the user has the permission to approve.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_entries_by_category($glossary, $context, $categoryid, $from, $limit, $options = array()) {
@@ -3564,7 +3607,8 @@ function glossary_get_entries_by_category($glossary, $context, $categoryid, $fro
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
  *                          the current user. When true, also includes the ones that the user has the permission to approve.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_entries_by_author($glossary, $context, $letter, $field, $sort, $from, $limit, $options = array()) {
@@ -3612,7 +3656,8 @@ function glossary_get_entries_by_author($glossary, $context, $letter, $field, $s
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
  *                          the current user. When true, also includes the ones that the user has the permission to approve.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_entries_by_author_id($glossary, $context, $authorid, $order, $sort, $from, $limit, $options = array()) {
@@ -3657,7 +3702,8 @@ function glossary_get_entries_by_author_id($glossary, $context, $authorid, $orde
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes self even if all of their entries require approval.
  *                          When true, also includes authors only having entries pending approval.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_authors($glossary, $context, $limit, $from, $options = array()) {
@@ -3697,7 +3743,8 @@ function glossary_get_authors($glossary, $context, $limit, $from, $options = arr
  * @param  object $glossary The glossary.
  * @param  int $from Fetch records from.
  * @param  int $limit Number of records to fetch.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_categories($glossary, $from, $limit) {
@@ -3869,7 +3916,8 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
  *                          the current user. When true, also includes the ones that the user has the permission to approve.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit, $options = array()) {
@@ -3883,18 +3931,51 @@ function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit,
     }
 
     $qb->add_field('*', 'entries');
+    $qb->add_field('alias', 'alias');
     $qb->join_alias();
     $qb->join_user();
     $qb->add_user_fields();
     $qb->filter_by_term($term);
-
     $qb->order_by('concept', 'entries');
     $qb->order_by('id', 'entries');     // Sort on ID to avoid random ordering when entries share an ordering value.
-    $qb->limit($from, $limit);
 
-    // Fetching the entries.
-    $count = $qb->count_records();
+    // Fetching the entries. Those are all entries.
     $entries = $qb->get_records();
+    // Now sorting out the array.
+    $filteredentries = array();
+
+    // Now sorting out the array.
+    foreach ($entries as $key => $entry) {
+        if (strtoupper(format_string($entry->concept)) === strtoupper($term)) {
+            // Add it when matching concept or alias.
+            $filteredentries[$key] = $entry;
+        }
+        if ((isset($entry->alias)) && (strtoupper(format_string($entry->alias)) === strtoupper($term))) {
+            // Add it when matching concept or alias.
+            $filteredentries[$key] = $entry;
+        }
+    }
+    $entries = $filteredentries;
+    // Check whether concept or alias match the term.
+
+    // Now sort the array in regard to the current language.
+    usort($filteredentries, function($a, $b) {
+        return format_string($a->concept) <=> format_string($b->concept);
+    });
+
+    // Size of the overall array.
+    $count = count($entries);
+
+    // Now applying limit.
+    if (isset($limit)) {
+        if (isset($from)) {
+            $entries = array_slice($filteredentries, $from, $limit);
+        } else {
+            $entries = array_slice($filteredentries);
+        }
+    } else {
+        $entries = $filteredentries;
+    }
 
     return array($entries, $count);
 }
@@ -3909,36 +3990,97 @@ function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit,
  * @param  string $sort The direction of the ordering: ASC or DESC.
  * @param  int $from Fetch records from.
  * @param  int $limit Number of records to fetch.
- * @return array The first element being the recordset, the second the number of entries.
+ * @return array The first element being the recordset (taking into account the limit), the second the number of entries the overall
+ *               array has.
  * @since Moodle 3.1
  */
 function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $sort, $from, $limit) {
-
     $qb = new mod_glossary_entry_query_builder($glossary);
-    if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
-        $qb->filter_by_concept_letter($letter);
-    }
-    if ($letter == 'SPECIAL') {
-        $qb->filter_by_concept_non_letter();
-    }
 
     $qb->add_field('*', 'entries');
     $qb->join_user();
     $qb->add_user_fields();
     $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ONLY);
-    if ($order == 'CREATION') {
-        $qb->order_by('timecreated', 'entries', $sort);
-    } else if ($order == 'UPDATE') {
-        $qb->order_by('timemodified', 'entries', $sort);
-    } else {
-        $qb->order_by('concept', 'entries', $sort);
-    }
-    $qb->order_by('id', 'entries', $sort); // Sort on ID to avoid random ordering when entries share an ordering value.
-    $qb->limit($from, $limit);
 
-    // Fetching the entries.
-    $count = $qb->count_records();
+    // Fetching the entries. Those are all entries.
     $entries = $qb->get_records();
+
+    // If a letter is set, restrict by that letter.
+    $filteredentries = array();
+
+    if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
+        // Build a new array with the filtered entries.
+        foreach ($entries as $key => $entry) {
+            if (strtoupper(substr(format_string($entry->concept), 0, 1)) === strtoupper($letter)) {
+                // Add it when starting with the correct letter.
+                $filteredentries[$key] = $entry;
+            }
+        }
+        $entries = $filteredentries;
+    }
+
+    if ($letter == 'SPECIAL') {
+        // Build a new array with the filtered entries.
+        foreach ($entries as $key => $entry) {
+            if (!ctype_alpha(substr(format_string($entry->concept), 0, 1))) {
+                // Add it when starting with a non-letter character.
+                $filteredentries[$key] = $entry;
+            }
+        }
+        $entries = $filteredentries;
+    }
+
+    if ($letter == 'ALL') {
+        // No filtering needed.
+        $filteredentries = $entries;
+    }
+
+    // Now sort the array in regard to the current language.
+    if ($order == 'CREATION') {
+        if ($sort == "DESC") {
+            usort($filteredentries, function($a, $b) {
+                return $b->timecreated <=> $a->timecreated;
+            });
+        } else {
+            usort($filteredentries, function($a, $b) {
+                return $a->timecreated <=> $b->timecreated;
+            });
+        }
+    } else if ($order == 'UPDATE') {
+        if ($sort == "DESC") {
+            usort($filteredentries, function($a, $b) {
+                return $b->timemodified <=> $a->timemodified;
+            });
+        } else {
+            usort($filteredentries, function($a, $b) {
+                return $a->timemodified <=> $b->timemodified;
+            });
+        }
+    } else {
+        if ($sort == "DESC") {
+            usort($filteredentries, function($a, $b) {
+                return format_string($b->concept) <=> format_string($a->concept);
+            });
+        } else {
+            usort($filteredentries, function($a, $b) {
+                return format_string($a->concept) <=> format_string($b->concept);
+            });
+        }
+    }
+
+    // Size of the overall array.
+    $count = count($entries);
+
+    // Now applying limit.
+    if (isset($limit)) {
+        if (isset($from)) {
+            $entries = array_slice($filteredentries, $from, $limit);
+        } else {
+            $entries = array_slice($filteredentries);
+        }
+    } else {
+        $entries = $filteredentries;
+    }
 
     return array($entries, $count);
 }
