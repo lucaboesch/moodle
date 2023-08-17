@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_calculatedmulti';
-$plugin->version   = 2023042400;
+$plugin->version   = 2023081700;
 
 $plugin->requires  = 2023041800;
 $plugin->dependencies = array(
