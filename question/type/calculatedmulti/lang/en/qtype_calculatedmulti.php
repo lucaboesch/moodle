@@ -22,6 +22,8 @@
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$string['allowhtml'] = 'Allow HTML in answers';
+$string['allowhtml_help'] = 'For compatibility reasons, HTML is generally disallowed in answer options for a calculated multiple choice question. You need to activate this checkbox in order to use HTML in the answers.';
 $string['answeroptions'] = 'Choice options';
 $string['answeroptions_help'] = 'The suggested choice formula is ...<strong>{={x}+..}</strong>...';
 $string['pluginname'] = 'Calculated multichoice';

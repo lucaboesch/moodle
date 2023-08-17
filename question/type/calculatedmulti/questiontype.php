@@ -40,16 +40,16 @@ require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
 class qtype_calculatedmulti extends qtype_calculated {
 
     public function save_question_options($question) {
-        global $CFG, $DB;
+        global $DB;
         $context = $question->context;
 
         // Make it impossible to save bad formulas anywhere.
         $this->validate_question_data($question);
 
         // Calculated options.
-        $update = true;
         $options = $DB->get_record('question_calculated_options',
                 array('question' => $question->id));
+        $specificoptions = $DB->get_record('question_calcmulti_options', ['question' => $question->id]);
         if (!$options) {
             $options = new stdClass();
             $options->question = $question->id;
@@ -58,12 +58,20 @@ class qtype_calculatedmulti extends qtype_calculated {
             $options->incorrectfeedback = '';
             $options->id = $DB->insert_record('question_calculated_options', $options);
         }
+        if (!$specificoptions) {
+            $specificoptions = new stdClass();
+            $specificoptions->question = $question->id;
+            $specificoptions->allowhtml = 0;
+            $specificoptions->id = $DB->insert_record('question_calcmulti_options', $specificoptions);
+        }
         $options->synchronize = $question->synchronize;
         $options->single = $question->single;
         $options->answernumbering = $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
+        $specificoptions->allowhtml = $question->allowhtml ?? 0;
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $DB->update_record('question_calculated_options', $options);
+        $DB->update_record('question_calcmulti_options', $specificoptions);
 
         // Get old versions of the objects.
         if (!$oldanswers = $DB->get_records('question_answers',
@@ -185,6 +193,7 @@ class qtype_calculatedmulti extends qtype_calculated {
         question_type::initialise_question_instance($question, $questiondata);
 
         $question->shuffleanswers = $questiondata->options->shuffleanswers;
+        $question->allowhtml = $questiondata->specificoptions->allowhtml;
         $question->answernumbering = $questiondata->options->answernumbering;
         if (!empty($questiondata->options->layout)) {
             $question->layout = $questiondata->options->layout;
@@ -195,7 +204,12 @@ class qtype_calculatedmulti extends qtype_calculated {
         $question->synchronised = $questiondata->options->synchronize;
 
         $this->initialise_combined_feedback($question, $questiondata, true);
-        $this->initialise_question_answers($question, $questiondata);
+        if ($question->allowhtml) {
+            // Setting 'false' as last parameter to stop forcing into plain text answer.
+            $this->initialise_question_answers($question, $questiondata, false);
+        } else {
+            $this->initialise_question_answers($question, $questiondata);
+        }
 
         foreach ($questiondata->options->answers as $a) {
             $question->answers[$a->id]->correctanswerlength = $a->correctanswerlength;
@@ -318,5 +332,35 @@ class qtype_calculatedmulti extends qtype_calculated {
                 'partiallycorrectfeedback', $questionid);
         $fs->delete_area_files($contextid, 'qtype_calculatedmulti',
                 'incorrectfeedback', $questionid);
+    }
+
+    public function get_question_options($question) {
+        global $DB;
+
+        $question->specificoptions = $DB->get_record('question_calcmulti_options', ['question' => $question->id]);
+
+        if ($question->specificoptions === false) {
+            debugging("Question ID {$question->id} was missing its specific options record. Using default.", DEBUG_DEVELOPER);
+            $question->specificoptions = $this->create_default_specificoptions($question);
+        }
+
+        parent::get_question_options($question);
+    }
+
+    /**
+     * Create a default specificoptions object for the provided question. FIXME
+     *
+     * @param \stdClass $question The question we are working with.
+     * @return \stdClass The options object.
+     */
+    protected function create_default_specificoptions(\stdClass $question): \stdClass {
+        // Create a default question options record.
+        $specificoptions = new stdClass();
+        $specificoptions->question = $question->id;
+
+        // By default, disallow HTML in answers.
+        $specificoptions->allowhtml = 0;
+
+        return $specificoptions;
     }
 }
