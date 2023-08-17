@@ -35,4 +35,21 @@ require_once($CFG->dirroot .
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_calculatedmulti_plugin extends backup_qtype_calculated_plugin {
+
+    /**
+     * Returns the qtype information to attach to question element
+     */
+    protected function define_question_plugin_structure() {
+
+        $plugin = parent::define_question_plugin_structure();
+        $pluginwrapper = $plugin->get_child($this->get_recommended_name());
+
+        $calculatedoptions = new backup_nested_element('calculated_specificoptions');
+        $calculatedoption = new backup_nested_element('calculated_specificoption', ['id'], ['allowhtml']);
+
+        $pluginwrapper->add_child($calculatedoptions);
+        $calculatedoptions->add_child($calculatedoption);
+
+        $calculatedoption->set_source_table('question_calcmulti_options', ['question' => backup::VAR_PARENTID]);
+    }
 }

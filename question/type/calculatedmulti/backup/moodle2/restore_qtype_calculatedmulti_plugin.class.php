@@ -37,9 +37,28 @@ require_once($CFG->dirroot .
  */
 class restore_qtype_calculatedmulti_plugin extends restore_qtype_calculated_plugin {
 
+    /**
+     * @param int $questionid
+     * @param int $sequencenumber
+     * @param array $response
+     * @return array
+     */
     public function recode_response($questionid, $sequencenumber, array $response) {
         return $this->step->questions_recode_response_data('multichoice',
                 $questionid, $sequencenumber, $response);
+    }
+
+    /**
+     * Returns the paths to be handled by the plugin at question level
+     */
+    protected function define_question_plugin_structure() {
+        $paths = parent::define_question_plugin_structure();
+
+        $elename = 'calculated_specificoption';
+        $elepath = $this->get_pathfor('/calculated_specificoptions/calculated_specificoption');
+        $paths[] = new restore_path_element($elename, $elepath);
+
+        return $paths;
     }
 
     /**
@@ -68,5 +87,31 @@ class restore_qtype_calculatedmulti_plugin extends restore_qtype_calculated_plug
             $result = 'dataset' . $itemid . '-' . $newanswer;
         }
         return $result ? $result : $answer;
+    }
+
+    /**
+     * Process the qtype/calculated_option element
+     *
+     * @param array $data extra question data
+     * @return void
+     */
+    public function process_calculated_specificoption($data) {
+        global $DB;
+
+        // Detect if the question is created or mapped.
+        $oldquestionid   = $this->get_old_parentid('question');
+        $newquestionid   = $this->get_new_parentid('question');
+        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) !== false;
+
+        // If the question has been created by restore, we need to create its
+        // question_calculated too.
+        if ($questioncreated) {
+            // Adjust some columns.
+            $obj = new stdClass();
+            $obj->question = $newquestionid;
+            $obj->allowhtml = $data['allowhtml'] ?? 0;
+            // Insert record.
+            $DB->insert_record('question_calcmulti_options', $obj);
+        }
     }
 }
