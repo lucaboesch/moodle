@@ -40,17 +40,16 @@ require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
 class qtype_calculatedmulti extends qtype_calculated {
 
     public function save_question_options($question) {
-        global $CFG, $DB;
+        global $DB;
         $context = $question->context;
 
         // Make it impossible to save bad formulas anywhere.
         $this->validate_question_data($question);
 
         // Calculated options.
-        $update = true;
         $options = $DB->get_record('question_calculated_options',
                 array('question' => $question->id));
-        $specific_options = $DB->get_record('question_calculatedmulti', ['question' => $question->id]);
+        $specific_options = $DB->get_record('question_calcmulti_options', ['question' => $question->id]);
         if (!$options) {
             $options = new stdClass();
             $options->question = $question->id;
@@ -62,16 +61,17 @@ class qtype_calculatedmulti extends qtype_calculated {
         if (!$specific_options) {
             $specific_options = new stdClass();
             $specific_options->question = $question->id;
-            $specific_options->id = $DB->insert_record('question_calculatedmulti', $specific_options);
+            $specific_options->allowhtml = 0;
+            $specific_options->id = $DB->insert_record('question_calcmulti_options', $specific_options);
         }
         $options->synchronize = $question->synchronize;
         $options->single = $question->single;
         $options->answernumbering = $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
-        $specific_options->allowhtml = $question->allowhtml;
+        $specific_options->allowhtml = $question->allowhtml ?? 0;
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $DB->update_record('question_calculated_options', $options);
-        $DB->update_record('question_calculatedmulti', $specific_options);
+        $DB->update_record('question_calcmulti_options', $specific_options);
 
         // Get old versions of the objects.
         if (!$oldanswers = $DB->get_records('question_answers',
@@ -338,7 +338,7 @@ class qtype_calculatedmulti extends qtype_calculated {
     public function get_question_options($question) {
         global $DB;
 
-        $question->specific_options = $DB->get_record('question_calculatedmulti', ['question' => $question->id]);
+        $question->specific_options = $DB->get_record('question_calcmulti_options', ['question' => $question->id]);
 
         if ($question->specific_options === false) {
             debugging("Question ID {$question->id} was missing its specific options record. Using default.", DEBUG_DEVELOPER);

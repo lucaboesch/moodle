@@ -160,6 +160,7 @@ class qformat_xml extends qformat_default {
         if ($istext) {
             if (!is_string($xml)) {
                 $this->error(get_string('invalidxml', 'qformat_xml'));
+                return false;
             }
             $xml = trim($xml);
         }
@@ -899,7 +900,7 @@ class qformat_xml extends qformat_default {
             }
         }
 
-        $datasets = $question['#']['dataset_definitions'][0]['#']['dataset_definition'];
+        $datasets = $question['#']['dataset_definitions'][0]['#']['dataset_definition'] ?? [];
         $qo->dataset = array();
         $qo->datasetindex= 0;
         foreach ($datasets as $dataset) {
@@ -1043,6 +1044,7 @@ class qformat_xml extends qformat_default {
             return $qo;
         } else if ($questiontype == 'calculatedmulti') {
             $qo = $this->import_calculated($questionxml);
+            $qo->allowhtml = (int)$this->getpath($questionxml, ['#', 'allowhtml', 0, '#'], 0);
             $qo->qtype = 'calculatedmulti';
             return $qo;
         } else if ($questiontype == 'category') {
@@ -1412,6 +1414,12 @@ class qformat_xml extends qformat_default {
                         "</answernumbering>\n";
                 $expout .= "    <shuffleanswers>" . $question->options->shuffleanswers .
                         "</shuffleanswers>\n";
+                if (isset($question->specific_options->allowhtml)) {
+                    $expout .= "    <allowhtml>{$question->specific_options->allowhtml}</allowhtml>\n";
+                    $allowhtmlinanswer = true;
+                } else {
+                    $allowhtmlinanswer = false;
+                }
 
                 $component = 'qtype_' . $question->qtype;
                 $files = $fs->get_area_files($contextid, $component,
@@ -1439,7 +1447,7 @@ class qformat_xml extends qformat_default {
                     $percent = 100 * $answer->fraction;
                     $expout .= "<answer fraction=\"{$percent}\">\n";
                     // The "<text/>" tags are an added feature, old files won't have them.
-                    $expout .= "    <text>{$answer->answer}</text>\n";
+                    $expout .= $allowhtmlinanswer ? $this->writetext($answer->answer) : "<text>{$answer->answer}</text>\n";
                     $expout .= "    <tolerance>{$answer->tolerance}</tolerance>\n";
                     $expout .= "    <tolerancetype>{$answer->tolerancetype}</tolerancetype>\n";
                     $expout .= "    <correctanswerformat>" .
