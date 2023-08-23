@@ -1414,8 +1414,8 @@ class qformat_xml extends qformat_default {
                         "</answernumbering>\n";
                 $expout .= "    <shuffleanswers>" . $question->options->shuffleanswers .
                         "</shuffleanswers>\n";
-                if (isset($question->specific_options->allowhtml)) {
-                    $expout .= "    <allowhtml>{$question->specific_options->allowhtml}</allowhtml>\n";
+                if (isset($question->specificoptions->allowhtml)) {
+                    $expout .= "    <allowhtml>{$question->specificoptions->allowhtml}</allowhtml>\n";
                     $allowhtmlinanswer = true;
                 } else {
                     $allowhtmlinanswer = false;

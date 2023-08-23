@@ -334,6 +334,13 @@ class qtype_calculatedmulti extends qtype_calculated {
                 'incorrectfeedback', $questionid);
     }
 
+    /**
+     * Get the specific options that are defined for this type qtype_calculatemulti from the database table
+     * question_calcmulti_options.
+     * @param stdClass $question
+     * @return bool
+     * @throws dml_exception
+     */
     public function get_question_options($question) {
         global $DB;
 
@@ -344,7 +351,7 @@ class qtype_calculatedmulti extends qtype_calculated {
             $question->specificoptions = $this->create_default_specificoptions($question);
         }
 
-        parent::get_question_options($question);
+        return parent::get_question_options($question);
     }
 
     /**
