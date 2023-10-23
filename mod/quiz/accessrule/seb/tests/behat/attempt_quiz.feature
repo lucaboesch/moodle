@@ -14,8 +14,8 @@ Feature: Quiz start with Safe Exam Browser access rule
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And the following "activities" exist:
-      | activity | course | section | name   |
-      | quiz     | C1     | 1       | Quiz 1 |
+      | activity | course | section | name   | timeopen     | seb_requiresafeexambrowser |
+      | quiz     | C1     | 1       | Quiz 1 | ##tomorrow## | 1                          |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
@@ -27,10 +27,11 @@ Feature: Quiz start with Safe Exam Browser access rule
       | TF1      | 1    |         |
 
   Scenario: Start a quiz as student with Safe Exam Browser quiz access rule
-    When I am on the "Quiz 1" "quiz activity editing" page logged in as teacher1
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | seb_requiresafeexambrowser | 1 |
-    And I press "Save and return to course"
-    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
     Then the "target" attribute of "//a[text()='Download Safe Exam Browser']" "xpath_element" should contain "_blank"
+
+  Scenario: Access a quiz with "Require the use of Safe Exam Browser" that has future start date.
+    When I am on the "Test quiz name" "mod_quiz > View" page logged in as "student"
+    Then I should see "This quiz is currently not available."
+    And I should not see "Launch Safe Exam Browser"
+    And I should not see "Download configuration"
