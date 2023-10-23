@@ -512,7 +512,8 @@ class quizaccess_seb extends access_rule_base {
         $linkconfig = explode(',', get_config('quizaccess_seb', 'showseblinks'));
 
         // Display links to download config/launch SEB only if required.
-        if ($this->accessmanager->should_validate_config_key()) {
+        if ($this->accessmanager->should_validate_config_key() && $this->timenow > $this->quiz->timeopen &&
+            $this->timenow < $this->quiz->timeclose) {
             if (in_array('seb', $linkconfig)) {
                 $buttons .= $this->get_launch_seb_button();
             }
