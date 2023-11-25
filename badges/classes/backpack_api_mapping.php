@@ -380,8 +380,10 @@ class backpack_api_mapping {
         if (class_exists($exporter)) {
             $output = $PAGE->get_renderer('core', 'badges');
             if (!$this->multiple) {
-                if (count($response)) {
-                    $response = $response[0];
+                if (is_array($response) || is_countable($response)) {
+                    if (count($response)) {
+                        $response = $response[0];
+                    }
                 }
                 if (empty($response)) {
                     return null;
