@@ -69,6 +69,10 @@ if ($displaytype == RESOURCELIB_DISPLAY_OPEN) {
     $redirect = true;
 }
 
+if ($displaytype == RESOURCELIB_DISPLAY_AUTO) {
+    $PAGE->add_body_class('limitedwidth');
+}
+
 if ($redirect && !$forceview) {
     // coming from course page or url index page,
     // the redirection is needed for completion tracking and logging
