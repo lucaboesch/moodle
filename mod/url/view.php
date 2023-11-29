@@ -52,6 +52,7 @@ require_capability('mod/url:view', $context);
 url_view($url, $course, $cm, $context);
 
 $PAGE->set_url('/mod/url/view.php', array('id' => $cm->id));
+$PAGE->set_pagelayout('standard');
 
 // Make sure URL exists before generating output - some older sites may contain empty urls
 // Do not use PARAM_URL here, it is too strict and does not support general URIs!
