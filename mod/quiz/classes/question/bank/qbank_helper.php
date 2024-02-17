@@ -230,18 +230,31 @@ class qbank_helper {
      * @param stdClass $slotdata one of the array elements returned by get_question_structure.
      * @return string that can be used to display the random slot.
      */
-    public static function describe_random_question(stdClass $slotdata): string {
+    public static function describe_random_question(\stdClass $slotdata): string {
+        global $DB;
+
         $qtagids = self::get_tag_ids_for_slot($slotdata);
+        $cm = get_coursemodule_from_instance('quiz', $slotdata->quizid);
+        $fullname = $DB->get_field('question_categories', 'name',
+            ['id' => $slotdata->filtercondition['filter']['category']['values'][0]]);
+        $name = shorten_text(format_string($fullname, true,
+            ['context' => \context_module::instance($cm->id)]), 100);
 
         if ($qtagids) {
+
+            $a = new \stdClass();
             $tagnames = [];
             $tags = \core_tag_tag::get_bulk($qtagids, 'id, name');
             foreach ($tags as $tag) {
                 $tagnames[] = $tag->name;
             }
-            $description = get_string('randomqnametags', 'mod_quiz', implode(",", $tagnames));
+            $a->category = $name;
+            $a->tags = implode(",", $tagnames);
+            $description = get_string('randomqnamecattags', 'mod_quiz', $a);
         } else {
-            $description = get_string('randomqname', 'mod_quiz');
+            $a = new \stdClass();
+            $a->category = $name;
+            $description = get_string('randomqnamecat', 'mod_quiz', $a);
         }
         return shorten_text($description, 255);
     }

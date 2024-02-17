@@ -1,3 +1,5 @@
 completionminattemptsgroup,mod_quiz
 grade,mod_quiz
 timetaken,mod_quiz
+randomqname,mod_quiz
+randomqnametags,mod_quiz
