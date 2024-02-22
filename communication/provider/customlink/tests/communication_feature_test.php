@@ -81,7 +81,7 @@ final class communication_feature_test extends \advanced_testcase {
      */
     public function test_save_form_data(): void {
         $communicationprocessor = $this->get_test_communication_processor();
-        $customlinkurl = 'https://moodle.org/message/index.php';
+        $customlinkurl = 'https://matrix.to/#/#moodle-english:moodle.com';
         $formdatainstance = (object) ['customlinkurl' => $customlinkurl];
 
         // Test the custom link URL is saved and can be retrieved as expected.
