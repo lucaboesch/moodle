@@ -631,6 +631,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('https://0.255.1.1/numericip.php', clean_param('https://0.255.1.1/numericip.php', PARAM_URL));
         $this->assertSame('ftp://ftp.debian.org/debian/', clean_param('ftp://ftp.debian.org/debian/', PARAM_URL));
         $this->assertSame('/just/a/path', clean_param('/just/a/path', PARAM_URL));
+        $this->assertSame('https://matrix.to/#/#moodle-english:moodle.com',
+            clean_param('https://matrix.to/#/#moodle-english:moodle.com', PARAM_URL));
+        $this->assertSame('https://matrix.to/#/%23moodle-english:moodle.com',
+            clean_param('https://matrix.to/#/%23moodle-english:moodle.com', PARAM_URL));
         // Invalid URLs.
         $this->assertSame('', clean_param('funny:thing', PARAM_URL));
         $this->assertSame('', clean_param('http://example.ee/sdsf"f', PARAM_URL));
@@ -642,6 +646,8 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param('mailto:support@moodle.org?subject=Hello%20Moodle', PARAM_URL));
         $this->assertSame('', clean_param('mailto:support@moodle.org?subject=Hello%20Moodle&cc=feedback@moodle.org', PARAM_URL));
         $this->assertSame('', clean_param(null, PARAM_URL));
+        $this->assertSame('', clean_param('https://moodle.org/#/m##dle/', PARAM_URL));
+        $this->assertSame('', clean_param('https://moodle.org/m##dle/', PARAM_URL));
     }
 
     /**
