@@ -1015,6 +1015,15 @@ enum param: string {
         if (!empty($param) && validateUrlSyntax($param, 's?H?S?F?E-u-P-a?I?p?f?q?r?')) {
             // All is ok, param is respected.
         } else {
+            // We do exceptionally allow /#/ in URLs, to support Matrix URLs.
+            if ($param !== '' && str_contains((string)$param, "/#/")) {
+                // Retain the passed URL, strip the /#/ part and check the rest. If it passes, return the original URL.
+                $originalparam = $param;
+                $param = str_replace("/#/", "/", $param);
+                if (validateUrlSyntax($param, 's?H?S?F?E-u-P-a?I?p?f?q?r?')) {
+                    return $originalparam;
+                }
+            }
             // Not really ok.
             $param = '';
         }
