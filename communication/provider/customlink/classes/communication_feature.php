@@ -163,7 +163,7 @@ class communication_feature implements
             'maxlength="255" size="40"'
         ), 'addcommunicationoptionshere');
         $mform->addHelpButton('customlinkurl', 'customlinkurl', 'communication_customlink');
-        $mform->setType('customlinkurl', PARAM_URL);
+        $mform->setType('customlinkurl', PARAM_RAW);
         $mform->addRule('customlinkurl', get_string('required'), 'required', null, 'client');
         $mform->addRule('customlinkurl', get_string('maximumchars', '', 255), 'maxlength', 255);
         $mform->insertElementBefore($mform->createElement(
