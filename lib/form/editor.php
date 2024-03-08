@@ -254,7 +254,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
      * @return string Text content
      */
     public function get_text(): string {
-        return $this->_values['text'];
+        return $this->_values['text'] ?? '';
     }
 
     /**
