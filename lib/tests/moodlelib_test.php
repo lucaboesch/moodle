@@ -630,6 +630,10 @@ final class moodlelib_test extends \advanced_testcase {
         $this->assertSame('xx<lang lang="en">aa</lang><lang lang="yy">pp</lang>', clean_param('xx<lang lang="en">aa</lang><lang lang="yy">pp</lang>', PARAM_TEXT));
         $this->assertSame('<span lang="en" class="multilang">aa</span><span lang="xy" class="multilang">bb</span>', clean_param('<span lang="en" class="multilang">aa</span><span lang="xy" class="multilang">bb</span>', PARAM_TEXT));
         $this->assertSame('xx<lang lang="en">aa'."\n".'</lang><lang lang="yy">pp</lang>', clean_param('xx<lang lang="en">aa'."\n".'</lang><lang lang="yy">pp</lang>', PARAM_TEXT));
+        $this->assertSame('https://matrix.to/#/#moodle-english:moodle.com',
+            clean_param('https://matrix.to/#/#moodle-english:moodle.com', PARAM_URL));
+        $this->assertSame('https://matrix.to/#/%23moodle-english:moodle.com', 
+            clean_param('https://matrix.to/#/%23moodle-english:moodle.com', PARAM_URL));
         // Malformed.
         $this->assertSame('<span lang="en" class="multilang">aa</span>', clean_param('<span lang="en" class="multilang">aa</span>', PARAM_TEXT));
         $this->assertSame('aa', clean_param('<span lang="en" class="nothing" class="multilang">aa</span>', PARAM_TEXT));
@@ -644,6 +648,8 @@ final class moodlelib_test extends \advanced_testcase {
         $this->assertSame('a', clean_param('<lang lang="en">a<a</lang>', PARAM_TEXT));
         $this->assertSame('<lang lang="en">aa</lang>', clean_param('<lang lang="en">a<br>a</lang>', PARAM_TEXT));
         $this->assertSame('', clean_param(null, PARAM_TEXT));
+        $this->assertSame('', clean_param('https://moodle.org/#/m##dle/', PARAM_URL));
+        $this->assertSame('', clean_param('https://moodle.org/m##dle/', PARAM_URL));
     }
 
     /**
