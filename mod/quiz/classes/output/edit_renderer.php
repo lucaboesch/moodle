@@ -494,7 +494,13 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function section_remove_icon($section) {
-        $title = get_string('sectionheadingremove', 'quiz', format_string($section->heading));
+        if ($section->heading) {
+            $sectionheadingtext = format_string($section->heading);
+        } else {
+            // Use a sr-only default section heading, so we don't end up with an empty section heading.
+            $sectionheadingtext = get_string('sectionnoname', 'quiz');
+        }
+        $title = get_string('sectionheadingremove', 'quiz', $sectionheadingtext);
         $url = new \moodle_url('/mod/quiz/edit.php',
                 ['sesskey' => sesskey(), 'removesection' => '1', 'sectionid' => $section->id]);
         $image = $this->pix_icon('t/delete', $title);
