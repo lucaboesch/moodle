@@ -262,6 +262,7 @@ class quizaccess_seb extends access_rule_base {
                 . 'seb.regexblocked AS seb_regexblocked, '
                 . 'seb.allowedbrowserexamkeys AS seb_allowedbrowserexamkeys, '
                 . 'seb.showsebdownloadlink AS seb_showsebdownloadlink, '
+                . 'seb.showlaunchsebbutton AS seb_showlaunchsebbutton, '
                 . 'sebtemplate.id AS seb_templateid '
                 , 'LEFT JOIN {quizaccess_seb_quizsettings} seb ON seb.quizid = quiz.id '
                 . 'LEFT JOIN {quizaccess_seb_template} sebtemplate ON seb.templateid = sebtemplate.id '
@@ -511,7 +512,7 @@ class quizaccess_seb extends access_rule_base {
 
         // Display links to download config/launch SEB only if required.
         if ($this->accessmanager->should_validate_config_key()) {
-            if (in_array('seb', $linkconfig)) {
+            if (in_array('seb', $linkconfig) && $this->should_display_launch_seb_button()) {
                 $buttons .= $this->get_launch_seb_button();
             }
 
@@ -595,5 +596,14 @@ class quizaccess_seb extends access_rule_base {
      */
     private function should_display_download_seb_link(): bool {
         return !empty($this->quiz->seb_showsebdownloadlink);
+    }
+
+    /**
+     * Check if we should display a button to launch Safe Exam Browser.
+     *
+     * @return bool
+     */
+    private function should_display_launch_seb_button() : bool {
+        return !empty($this->quiz->seb_showlaunchsebbutton);
     }
 }
