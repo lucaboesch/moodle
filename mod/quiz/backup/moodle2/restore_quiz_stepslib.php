@@ -311,6 +311,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $sebsettings->regexblocked = null;
             $sebsettings->allowedbrowserexamkeys = null;
             $sebsettings->showsebdownloadlink = 1;
+            $sebsettings->showlaunchsebbutton = 1;
             $sebsettings->usermodified = $USER->id;
             $sebsettings->timecreated = time();
             $sebsettings->timemodified = time();
