@@ -136,6 +136,7 @@ final class backup_restore_test extends \advanced_testcase {
         $this->assertEquals($expected->get('templateid'), $actual->get('templateid'));
         $this->assertEquals($expected->get('requiresafeexambrowser'), $actual->get('requiresafeexambrowser'));
         $this->assertEquals($expected->get('showsebdownloadlink'), $actual->get('showsebdownloadlink'));
+        $this->assertEquals($expected->get('showlaunchsebbutton'), $actual->get('showlaunchsebbutton'));
         $this->assertEquals($expected->get('allowuserquitseb'), $actual->get('allowuserquitseb'));
         $this->assertEquals($expected->get('quitpassword'), $actual->get('quitpassword'));
         $this->assertEquals($expected->get('allowedbrowserexamkeys'), $actual->get('allowedbrowserexamkeys'));
@@ -166,6 +167,7 @@ final class backup_restore_test extends \advanced_testcase {
 
         $expected = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $expected->set('showsebdownloadlink', 0);
+        $expected->set('showlaunchsebbutton', 0);
         $expected->set('quitpassword', '123');
         $expected->save();
 
