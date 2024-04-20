@@ -166,6 +166,7 @@ trait quizaccess_seb_test_helper_trait {
             'seb_requiresafeexambrowser' => $requiresafeexambrowser,
         ]);
         $quiz->seb_showsebdownloadlink = 1;
+        $quiz->seb_showlaunchsebbutton = 1;
         $quiz->coursemodule = $quiz->cmid;
 
         // Create a question bank.
@@ -310,6 +311,7 @@ trait quizaccess_seb_test_helper_trait {
             'expressionsblocked' => '',
             'regexblocked' => '',
             'showsebdownloadlink' => '1',
+            'showlaunchsebbutton' => '1',
         ], $settings);
     }
 

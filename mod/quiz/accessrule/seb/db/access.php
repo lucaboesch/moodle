@@ -93,6 +93,14 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW
         ]
     ],
+    'quizaccess/seb:manage_seb_showlaunchsebbutton' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW
+        ]
+    ],
     'quizaccess/seb:manage_seb_allowedbrowserexamkeys' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

@@ -46,5 +46,22 @@ function xmldb_quizaccess_seb_upgrade($oldversion) {
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2024100701) {
+        // Define field showlaunchsebbutton to be added to quizaccess_seb_quizsettings.
+        $table = new xmldb_table('quizaccess_seb_quizsettings');
+        $field = new xmldb_field('showlaunchsebbutton', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0',
+            'showsebdownloadlink');
+
+        // Launch add field showlaunchsebbutton.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $DB->set_field('quizaccess_seb_quizsettings', 'showlaunchsebbutton', 1);
+
+        // Quizaccess_seb savepoint reached.
+        upgrade_mod_savepoint(true, 2024100701, 'quizaccess_seb');
+    }
+
     return true;
 }

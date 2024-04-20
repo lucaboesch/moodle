@@ -292,6 +292,25 @@ class settings_provider {
     }
 
     /**
+     * Add Show "Launch Safe Exam Browser" button.
+     *
+     * @param \mod_quiz_mod_form $quizform the quiz settings form that is being built.
+     * @param \MoodleQuickForm $mform the wrapped MoodleQuickForm.
+     */
+    protected static function add_seb_launch_seb_button(\mod_quiz_mod_form $quizform, \MoodleQuickForm $mform) {
+        if (self::can_change_seb_showlaunchsebbutton($quizform->get_context())) {
+            $element = $mform->createElement('selectyesno',
+                'seb_showlaunchsebbutton',
+                get_string('seb_showlaunchsebbutton', 'quizaccess_seb')
+            );
+            self::insert_element($quizform, $mform, $element);
+            self::set_type($quizform, $mform, 'seb_showlaunchsebbutton', PARAM_BOOL);
+            self::set_default($quizform, $mform, 'seb_showlaunchsebbutton', 1);
+            self::add_help_button($quizform, $mform, 'seb_showlaunchsebbutton');
+        }
+    }
+
+    /**
      * Add Allowed Browser Exam Keys setting.
      *
      * @param \mod_quiz_mod_form $quizform the quiz settings form that is being built.
@@ -354,6 +373,7 @@ class settings_provider {
             self::add_seb_templates($quizform, $mform);
             self::add_seb_config_file($quizform, $mform);
             self::add_seb_show_download_link($quizform, $mform);
+            self::add_seb_launch_seb_button($quizform, $mform);
             self::add_seb_config_elements($quizform, $mform);
             self::add_seb_allowedbrowserexamkeys($quizform, $mform);
             self::hide_seb_elements($quizform, $mform);
@@ -803,6 +823,16 @@ class settings_provider {
     }
 
     /**
+     * Check if the current user can change Show "Launch Safe Exam Browser" button setting.
+     *
+     * @param \context $context Context to check access in.
+     * @return bool
+     */
+    public static function can_change_seb_showlaunchsebbutton(\context $context) : bool {
+        return has_capability('quizaccess/seb:manage_seb_showlaunchsebbutton', $context);
+    }
+
+    /**
      * Check if the current user can change Allowed Browser Exam Keys setting.
      *
      * @param \context $context Context to check access in.
@@ -899,6 +929,7 @@ class settings_provider {
             ],
             self::USE_SEB_CONFIG_MANUALLY => [
                 'seb_showsebdownloadlink' => [],
+                'seb_showlaunchsebbutton' => [],
                 'seb_linkquitseb' => [],
                 'seb_userconfirmquit' => [],
                 'seb_allowuserquitseb' => [
@@ -926,6 +957,7 @@ class settings_provider {
             self::USE_SEB_TEMPLATE => [
                 'seb_templateid' => [],
                 'seb_showsebdownloadlink' => [],
+                'seb_showlaunchsebbutton' => [],
                 'seb_allowuserquitseb' => [
                     'seb_quitpassword' => [],
                 ],
@@ -933,10 +965,12 @@ class settings_provider {
             self::USE_SEB_UPLOAD_CONFIG => [
                 'filemanager_sebconfigfile' => [],
                 'seb_showsebdownloadlink' => [],
+                'seb_showlaunchsebbutton' => [],
                 'seb_allowedbrowserexamkeys' => [],
             ],
             self::USE_SEB_CLIENT_CONFIG => [
                 'seb_showsebdownloadlink' => [],
+                'seb_showlaunchsebbutton' => [],
                 'seb_allowedbrowserexamkeys' => [],
             ],
         ];
@@ -1022,6 +1056,11 @@ class settings_provider {
         // Specific case for "Show Safe Exam Browser download button". It should be available for all cases, except No Seb.
         $hideifs['seb_showsebdownloadlink'] = [
             new hideif_rule('seb_showsebdownloadlink', 'seb_requiresafeexambrowser', 'eq', self::USE_SEB_NO)
+        ];
+
+        // Specific case for "Show "Launch Safe Exam Browser" button". It should be available for all cases, except No Seb.
+        $hideifs['seb_showlaunchsebbutton'] = [
+            new hideif_rule('seb_showlaunchsebbutton', 'seb_requiresafeexambrowser', 'eq', self::USE_SEB_NO)
         ];
 
         // Specific case for "Allowed Browser Exam Keys". It should be available for Template and Browser config.
