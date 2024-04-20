@@ -177,7 +177,7 @@ final class settings_provider_test extends \advanced_testcase {
     public function test_hideifs(): void {
         $settinghideifs = settings_provider::get_quiz_hideifs();
 
-        $this->assertCount(23, $settinghideifs);
+        $this->assertCount(24, $settinghideifs);
 
         $this->assertArrayHasKey('seb_templateid', $settinghideifs);
         $this->assertCount(1, $settinghideifs['seb_templateid']);
@@ -540,6 +540,7 @@ final class settings_provider_test extends \advanced_testcase {
         $settingelements['seb_templateid'] = '';
         $settingelements['filemanager_sebconfigfile'] = '';
         $settingelements['seb_showsebdownloadlink'] = '';
+        $settingelements['seb_showlaunchsebbutton'] = '';
         $settingelements['seb_allowedbrowserexamkeys'] = '';
 
         // Get all defaults that have no matching element in settings types.
@@ -594,7 +595,7 @@ final class settings_provider_test extends \advanced_testcase {
 
         foreach (settings_provider::get_seb_settings_map()[settings_provider::USE_SEB_CONFIG_MANUALLY] as $setting => $children) {
             // Skip not SEB setting.
-            if ($setting == 'seb_showsebdownloadlink') {
+            if ($setting == 'seb_showsebdownloadlink' || $setting == 'seb_showlaunchsebbutton') {
                 continue;
             }
 
@@ -758,6 +759,7 @@ final class settings_provider_test extends \advanced_testcase {
 
         assign_capability('quizaccess/seb:manage_seb_requiresafeexambrowser', CAP_ALLOW, $this->roleid, $this->context->id);
         assign_capability('quizaccess/seb:manage_seb_showsebdownloadlink', CAP_ALLOW, $this->roleid, $this->context->id);
+        assign_capability('quizaccess/seb:manage_seb_showlaunchsebbutton', CAP_ALLOW, $this->roleid, $this->context->id);
         assign_capability('quizaccess/seb:manage_seb_allowedbrowserexamkeys', CAP_ALLOW, $this->roleid, $this->context->id);
 
         $this->set_up_form_mocks();
@@ -858,6 +860,9 @@ final class settings_provider_test extends \advanced_testcase {
 
         // Should be in the form if we grant require permissions.
         assign_capability('quizaccess/seb:manage_seb_showsebdownloadlink', CAP_ALLOW, $this->roleid, $this->context->id);
+
+        // Should be in the form if we grant require permissions.
+        assign_capability('quizaccess/seb:manage_seb_showlaunchsebbutton', CAP_ALLOW, $this->roleid, $this->context->id);
 
         settings_provider::add_seb_settings_fields($this->mockedquizform, $this->mockedform);
         $this->assertTrue($this->mockedform->elementExists('seb_showsebdownloadlink'));
@@ -1109,6 +1114,9 @@ final class settings_provider_test extends \advanced_testcase {
 
         assign_capability('quizaccess/seb:manage_seb_showsebdownloadlink', CAP_ALLOW, $this->roleid, $this->context->id);
         $this->assertTrue(settings_provider::can_change_seb_showsebdownloadlink($this->context));
+
+        assign_capability('quizaccess/seb:manage_seb_showlaunchsebbutton', CAP_ALLOW, $this->roleid, $this->context->id);
+        $this->assertTrue(settings_provider::can_change_seb_showlaunchsebbutton($this->context));
     }
 
     /**
@@ -1355,24 +1363,25 @@ final class settings_provider_test extends \advanced_testcase {
     /**
      * Test filter_plugin_settings method for using uploaded config.
      */
-    public function test_filter_plugin_settings_for_uploaded_config(): void {
-        $notnulls = ['requiresafeexambrowser', 'showsebdownloadlink', 'allowedbrowserexamkeys'];
+    public function test_filter_plugin_settings_for_uploaded_config() {
+        $notnulls = ['requiresafeexambrowser', 'showsebdownloadlink', 'showlaunchsebbutton', 'allowedbrowserexamkeys'];
         $this->assert_filter_plugin_settings(settings_provider::USE_SEB_UPLOAD_CONFIG, $notnulls);
     }
 
     /**
      * Test filter_plugin_settings method for using template.
      */
-    public function test_filter_plugin_settings_for_template(): void {
-        $notnulls = ['requiresafeexambrowser', 'showsebdownloadlink', 'allowuserquitseb', 'quitpassword', 'templateid'];
+    public function test_filter_plugin_settings_for_template() {
+        $notnulls = ['requiresafeexambrowser', 'showsebdownloadlink', 'showlaunchsebbutton', 'allowuserquitseb', 'quitpassword',
+            'templateid'];
         $this->assert_filter_plugin_settings(settings_provider::USE_SEB_TEMPLATE, $notnulls);
     }
 
     /**
      * Test filter_plugin_settings method for using client config.
      */
-    public function test_filter_plugin_settings_for_client_config(): void {
-        $notnulls = ['requiresafeexambrowser', 'showsebdownloadlink', 'allowedbrowserexamkeys'];
+    public function test_filter_plugin_settings_for_client_config() {
+        $notnulls = ['requiresafeexambrowser', 'showsebdownloadlink', 'showlaunchsebbutton', 'allowedbrowserexamkeys'];
         $this->assert_filter_plugin_settings(settings_provider::USE_SEB_CLIENT_CONFIG, $notnulls);
     }
 
@@ -1407,6 +1416,7 @@ final class settings_provider_test extends \advanced_testcase {
             ],
             settings_provider::USE_SEB_CONFIG_MANUALLY => [
                 'seb_showsebdownloadlink' => [],
+                'seb_showlaunchsebbutton' => [],
                 'seb_linkquitseb' => [],
                 'seb_userconfirmquit' => [],
                 'seb_allowuserquitseb' => [
@@ -1434,6 +1444,7 @@ final class settings_provider_test extends \advanced_testcase {
             settings_provider::USE_SEB_TEMPLATE => [
                 'seb_templateid' => [],
                 'seb_showsebdownloadlink' => [],
+                'seb_showlaunchsebbutton' => [],
                 'seb_allowuserquitseb' => [
                     'seb_quitpassword' => [],
                 ],
@@ -1441,10 +1452,12 @@ final class settings_provider_test extends \advanced_testcase {
             settings_provider::USE_SEB_UPLOAD_CONFIG => [
                 'filemanager_sebconfigfile' => [],
                 'seb_showsebdownloadlink' => [],
+                'seb_showlaunchsebbutton' => [],
                 'seb_allowedbrowserexamkeys' => [],
             ],
             settings_provider::USE_SEB_CLIENT_CONFIG => [
                 'seb_showsebdownloadlink' => [],
+                'seb_showlaunchsebbutton' => [],
                 'seb_allowedbrowserexamkeys' => [],
             ],
         ];
