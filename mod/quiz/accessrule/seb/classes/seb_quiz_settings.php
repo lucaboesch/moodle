@@ -179,6 +179,11 @@ class seb_quiz_settings extends persistent {
                 'default' => 1,
                 'null' => NULL_ALLOWED,
             ],
+            'showlaunchsebbutton' => [
+                'type' => PARAM_INT,
+                'default' => 1,
+                'null' => NULL_ALLOWED,
+            ],
             'allowedbrowserexamkeys' => [
                 'type' => PARAM_TEXT,
                 'default' => '',

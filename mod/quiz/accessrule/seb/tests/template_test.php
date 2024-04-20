@@ -139,6 +139,7 @@ final class template_test extends \advanced_testcase {
             'expressionsblocked' => '',
             'regexblocked' => '',
             'showsebdownloadlink' => '1',
+            'showlaunchsebbutton' => '1',
             'config' => '',
         ]);
 
