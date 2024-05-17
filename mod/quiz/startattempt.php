@@ -70,7 +70,7 @@ list($currentattemptid, $attemptnumber, $lastattempt, $messages, $page) =
 if (!$quizobj->is_preview_user() && $messages) {
     $output = $PAGE->get_renderer('mod_quiz');
     throw new \moodle_exception('attempterror', 'quiz', $quizobj->view_url(),
-            $output->access_messages($messages));
+            $output->oneline_access_messages($messages));
 }
 
 if ($accessmanager->is_preflight_check_required($currentattemptid)) {

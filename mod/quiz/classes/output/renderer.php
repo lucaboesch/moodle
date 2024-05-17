@@ -726,6 +726,23 @@ class renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Print each message in a string, concatenated by ", ".
+     *
+     * @param array $messages the array of message strings.
+     * @return string The concatenated string to output.
+     */
+    public function oneline_access_messages($messages) {
+        $output = '';
+        foreach ($messages as $message) {
+            if ($output !== '') {
+                $output .= ', ';
+            }
+            $output .= $message;
+        }
+        return $output;
+    }
+
     /*
      * Summary Page
      */
