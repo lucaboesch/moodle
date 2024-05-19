@@ -2195,6 +2195,7 @@ $string['success'] = 'Success';
 $string['successduration'] = 'Success ({$a} seconds)';
 $string['summary'] = 'Summary';
 $string['suspended'] = 'Suspended';
+$string['suspendedlogin'] = 'Your account has been suspended. Please contact the site administrator.';
 $string['suspendedusers'] = 'Suspended users';
 $string['switchdevicedefault'] = 'Switch to the standard theme';
 $string['switchdevicerecommended'] = 'Switch to the recommended theme for your device';
