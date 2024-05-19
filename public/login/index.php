@@ -287,6 +287,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         if (empty($errormsg)) {
             if ($errorcode == AUTH_LOGIN_UNAUTHORISED) {
                 $errormsg = get_string("unauthorisedlogin", "", $frm->username);
+            } else if ($errorcode == AUTH_LOGIN_SUSPENDED) {
+                $errormsg = get_string('suspendedlogin');
             } else if ($errorcode == AUTH_LOGIN_FAILED_RECAPTCHA) {
                 $errormsg = get_string('missingrecaptchachallengefield');
             } else {
