@@ -62,3 +62,15 @@ Feature: Change password
     And I click on "Continue" "button"
     And I am on site homepage
     And I should see "Course 1"
+
+  @javascript
+  Scenario: A user with a suspended account tries to log in
+    Given I log in as "admin"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I press "Suspend user account" action in the "Test User" report row
+    And I log out
+    When I follow "Log in"
+    And I set the field "Username" to "testuser"
+    And I set the field "Password" to "testuser"
+    And I press "Log in"
+    Then I should see "Your account has been suspended. Please contact the site administrator."
