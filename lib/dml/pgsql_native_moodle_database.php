@@ -185,16 +185,15 @@ class pgsql_native_moodle_database extends moodle_database {
             $connection .= " connect_timeout=".$this->dboptions['connecttimeout'];
         }
 
+        // ALTER USER and ALTER DATABASE are overridden by these settings.
+        $options = ['-c client_encoding=utf8', '-c standard_conforming_strings=on'];
         if (empty($this->dboptions['dbhandlesoptions'])) {
-            // ALTER USER and ALTER DATABASE are overridden by these settings.
-            $options = array('--client_encoding=utf8', '--standard_conforming_strings=on');
             // Select schema if specified, otherwise the first one wins.
             if (!empty($this->dboptions['dbschema'])) {
                 $options[] = "-c search_path=" . addcslashes($this->dboptions['dbschema'], "'\\");
             }
-
-            $connection .= " options='" . implode(' ', $options) . "'";
         }
+        $connection .= " options='" . implode(' ', $options) . "'";
 
         if (isset($this->dboptions['ssl'])) {
             $sslmode = $this->dboptions['ssl'];
@@ -245,12 +244,6 @@ class pgsql_native_moodle_database extends moodle_database {
              */
             if (!empty($this->dboptions['dbschema'])) {
                 throw new dml_connection_exception('You cannot specify a schema with dbhandlesoptions, use the database to set it.');
-            }
-            if (pg_client_encoding($this->pgsql) != 'UTF8') {
-                throw new dml_connection_exception('client_encoding = UTF8 not set, it is: ' . pg_client_encoding($this->pgsql));
-            }
-            if (pg_escape_string($this->pgsql, '\\') != '\\') {
-                throw new dml_connection_exception('standard_conforming_strings = on, must be set at the database.');
             }
         }
 
