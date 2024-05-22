@@ -1464,5 +1464,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025022100.02);
     }
 
+    if ($oldversion < 2025022700.01) {
+        // Due to a code restriction on the upgrade, invoking any core functions is not permitted.
+        // Thus we craft our own ad-hoc task that will process all existing webp files.
+        $record = new \stdClass();
+        $record->classname = '\\' . \core\task\webp_mimetype_update_task::class;
+        $record->id = null;
+        $record->component = 'core';
+        $record->nextruntime = 0;
+        $record->faildelay = 0;
+        $record->customdata = '';
+        $record->userid = null;
+        $record->timestarted = null;
+        $record->hostname = null;
+        $record->pid = null;
+        $record->attemptsavailable = 12;
+
+        $DB->insert_record('task_adhoc', $record);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025022700.01);
+    }
+
     return true;
 }
