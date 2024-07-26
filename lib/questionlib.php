@@ -1173,8 +1173,8 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1): array {
 /**
  * Get the default category for the context. Creates one if it does not exist.
  *
- * @param integer $contextid a context id.
- * @return object|bool the default question category for that context, or false if none.
+ * @param int $contextid a context id.
+ * @return stdClass|bool the default question category for that context, or false if none.
  */
 function question_get_default_category($contextid) {
     global $DB;
