@@ -45,6 +45,8 @@
  * @param object $block
  */
 function xmldb_block_section_links_upgrade($oldversion, $block) {
+    global $DB;
+
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -57,5 +59,25 @@ function xmldb_block_section_links_upgrade($oldversion, $block) {
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2024121801) {
+
+        // If a former section links block showsectionname value (any "yes"/"no") exists,
+        // showsectionnumber should be set to "yes" in the upgrade process
+        // in order that no visual change happens.
+        $instances = $DB->get_recordset('block_instances', ['blockname' => 'section_links']);
+        foreach ($instances as $instance) {
+            $config = unserialize_object(base64_decode($instance->configdata));
+            if (isset($config->showsectionname)) {
+                // If a 'showsectionname' value is found, add a 'showsectionnumber' => 1 for that config.
+                $config->showsectionnumber = 1;
+                $DB->update_record('block_instances', ['id' => $instance->id,
+                    'configdata' => base64_encode(serialize($config)), 'timemodified' => time()]);
+            }
+        }
+        $instances->close();
+
+        // Block section links savepoint reached.
+        upgrade_block_savepoint(true, 2024121801, 'section_links');
+    }
     return true;
 }

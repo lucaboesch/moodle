@@ -1,5 +1,5 @@
 @block @block_section_links
-Feature: The Section links block can be configured to display section name in addition to section number
+Feature: The Section links block can be configured to display or omit the section number in addition to section name
 
   Background:
     Given the following "course" exists:
@@ -28,7 +28,7 @@ Feature: The Section links block can be configured to display section name in ad
       | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
       | section_links | Course       | C1        | course-view-*   | side-pre      |
 
-  Scenario: Student can see section name under the Section links block
+  Scenario: Student can see section name as well as section number under the Section links block
     When I am on the "Course 1" course page logged in as student1
     Then I should see "7: Section 7" in the "Section links" "block"
     And I follow "7: Section 7"
@@ -39,9 +39,10 @@ Feature: The Section links block can be configured to display section name in ad
     And I am on "Course 1" course homepage with editing mode on
     When I configure the "Section links" block
     And I set the following fields to these values:
-      | Display section name | No |
+      | Display section name   | Yes |
+      | Display section number | No  |
     And I click on "Save changes" "button"
     Then I should not see "7: Section 7" in the "Section links" "block"
-    And I should see "7" in the "Section links" "block"
-    And I follow "7"
+    And I should see "Section 7" in the "Section links" "block"
+    And I follow "Section 7"
     And I should see "First assignment"
