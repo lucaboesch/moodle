@@ -39,9 +39,11 @@ class block_section_links_renderer extends plugin_renderer_base {
      * @param array $sections An array of section objects to render.
      * @param bool|int The section to provide a jump to link for.
      * @param bool $showsectionname Whether or not section name should be displayed.
+     * @param bool $showsectionnumber Whether or not section number should be displayed.
      * @return string The HTML to display.
      */
-    public function render_section_links(stdClass $course, array $sections, $jumptosection = false, $showsectionname = false) {
+    public function render_section_links(stdClass $course, array $sections, $jumptosection = false, $showsectionname = false,
+    $showsectionnumber = true) {
         $olparams = $showsectionname ? ['class' => 'unlist'] : ['class' => 'inline-list'];
         $html = html_writer::start_tag('ol', $olparams);
         foreach ($sections as $section) {
@@ -50,9 +52,14 @@ class block_section_links_renderer extends plugin_renderer_base {
                 $attributes['class'] = 'dimmed';
             }
             $html .= html_writer::start_tag('li');
+            $sectiontext = '';
             $sectiontext = $section->section;
             if ($showsectionname) {
-                $sectiontext .= ': ' . $section->name;
+                if ($showsectionnumber) {
+                    $sectiontext .= ': ' . $section->name;
+                } else {
+                    $sectiontext = $section->name;
+                }
             }
             if ($section->highlight) {
                 $sectiontext = html_writer::tag('strong', $sectiontext);
