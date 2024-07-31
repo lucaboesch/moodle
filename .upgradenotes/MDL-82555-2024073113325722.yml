@@ -1,0 +1,8 @@
+issueNumber: MDL-82555
+notes:
+  block_section_links:
+    - message: >-
+        New optional parameter $showsectionnumber has been added to
+        render_section_links(). Setting this to false will disable the display
+        of the section number when the section name is displayed.
+      type: improved
