@@ -36,4 +36,6 @@ $string['pluginname'] = 'Section links';
 $string['section_links:addinstance'] = 'Add a new section links block';
 $string['showsectionname'] = 'Display section name';
 $string['showsectionname_help'] = 'Display section name in addition to section number';
+$string['showsectionnumber'] = 'Display section number';
+$string['showsectionnumber_help'] = 'Display section number in addition to section name';
 $string['privacy:metadata'] = 'The Section links block only shows data stored in other locations.';
