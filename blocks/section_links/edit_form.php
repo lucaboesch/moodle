@@ -85,5 +85,9 @@ class block_section_links_edit_form extends block_edit_form {
         $mform->addElement('selectyesno', 'config_showsectionname', get_string('showsectionname', 'block_section_links'));
         $mform->setDefault('config_showsectionname', !empty($config->showsectionname) ? 1 : 0);
         $mform->addHelpButton('config_showsectionname', 'showsectionname', 'block_section_links');
+
+        $mform->addElement('selectyesno', 'config_showsectionnumber', get_string('showsectionnumber', 'block_section_links'));
+        $mform->setDefault('config_showsectionnumber', !empty($config->showsectionnumber) ? 1 : 0);
+        $mform->addHelpButton('config_showsectionnumber', 'showsectionnumber', 'block_section_links');
     }
 }
