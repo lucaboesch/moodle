@@ -53,4 +53,9 @@ if ($ADMIN->fulltree) {
         get_string('showsectionname', 'block_section_links'),
         get_string('showsectionname_help', 'block_section_links'),
         0));
+
+    $settings->add(new admin_setting_configcheckbox('block_section_links/showsectionnumber',
+        get_string('showsectionnumber', 'block_section_links'),
+        get_string('showsectionnumber_help', 'block_section_links'),
+        1));
 }
