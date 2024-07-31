@@ -110,6 +110,9 @@ class block_section_links extends block_base {
         // Whether or not section name should be displayed.
         $showsectionname = !empty($config->showsectionname) ? true : false;
 
+        // Whether or not section number should be displayed.
+        $showsectionnumber = !empty($config->showsectionnumber);
+
         // Prepare an array of sections to create links for.
         $sections = array();
         $canviewhidden = has_capability('moodle/course:update', $context);
@@ -141,7 +144,7 @@ class block_section_links extends block_base {
             // Render the sections.
             $renderer = $this->page->get_renderer('block_section_links');
             $this->content->text = $renderer->render_section_links($this->page->course, $sections,
-                $sectiontojumpto, $showsectionname);
+                $sectiontojumpto, $showsectionname, $showsectionnumber);
         }
 
         return $this->content;
