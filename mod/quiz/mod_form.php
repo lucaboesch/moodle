@@ -602,6 +602,13 @@ class mod_quiz_mod_form extends moodleform_mod {
         if (($data['preferredbehaviour'] == 'deferredcbm') OR ($data['preferredbehaviour'] == 'immediatecbm')) {
             unset($errors['gradepass']);
         }
+
+        // Check duration is not negative.
+        if ($data['timelimit'] != 0 && $data['timelimit'] != 0 &&
+            $data['timelimit'] < 0) {
+            $errors['timelimit'] = get_string('durationnotnegative', 'quiz');
+        }
+
         // Any other rule plugins.
         $errors = access_manager::validate_settings_form_fields($errors, $data, $files, $this);
 
