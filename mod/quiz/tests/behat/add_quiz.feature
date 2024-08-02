@@ -59,3 +59,12 @@ Feature: Add a quiz
     And I should see "The correct answer is 'False'."
     And I follow "Finish review"
     And I should see "Highest grade: 0.00 / 10.00."
+
+  @javascript
+  Scenario: Add a duration to the quiz
+    When I am on the "Test quiz name" "quiz activity editing" page logged in as "teacher1"
+    And I expand all fieldsets
+    And I click on "timelimit[enabled]" "checkbox"
+    And I set the field "timelimit[number]" to "-2"
+    And I press "Save and display"
+    Then I should see "The duration cannot be negative"
