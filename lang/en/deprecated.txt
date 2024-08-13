@@ -130,3 +130,4 @@ cannotsetpassword,core_error
 registerwithmoodleorginfoapp,core_hub
 registration_help,core_admin
 coursemanagementoptions,core_my
+configgeneralquestionbank,core_backup
