@@ -17,6 +17,7 @@
 namespace core_question\local\bank;
 
 use cm_info;
+use context;
 use context_course;
 use moodle_url;
 use stdClass;
@@ -307,7 +308,7 @@ class question_bank_helper {
         $banks = [];
 
         foreach ($contextids as $contextid) {
-            if (!$context = \context::instance_by_id($contextid, IGNORE_MISSING)) {
+            if (!$context = context::instance_by_id($contextid, IGNORE_MISSING)) {
                 $invalidcontexts[] = $context;
                 continue;
             }
@@ -329,6 +330,33 @@ class question_bank_helper {
         }
 
         return $banks;
+    }
+
+    /**
+     * Mark a user as having viewed a question bank in the user_preferences table with key {@see self::RECENTLY_VIEWED}
+
+     * @param context $bankcontext
+     * @return void
+     */
+    public static function add_bank_context_to_recently_viewed(context $bankcontext): void {
+
+        [, $cm] = get_module_from_cmid($bankcontext->instanceid);
+
+        if (!plugin_supports('mod', $cm->modname, FEATURE_PUBLISHES_QUESTIONS)) {
+            return;
+        }
+
+        $userprefs = get_user_preferences(self::RECENTLY_VIEWED);
+        $recentlyviewed = !empty($userprefs) ? explode(',', $userprefs) : [];
+        $recentlyviewed = array_combine($recentlyviewed, $recentlyviewed);
+        $tostore = [];
+        $tostore[] = $bankcontext->id;
+        if (!empty($recentlyviewed[$bankcontext->id])) {
+            unset($recentlyviewed[$bankcontext->id]);
+        }
+        $tostore = array_merge($tostore, array_values($recentlyviewed));
+        $tostore = array_slice($tostore, 0, 5);
+        set_user_preference(self::RECENTLY_VIEWED, implode(',', $tostore));
     }
 
     /**

@@ -22,6 +22,9 @@
  */
 
 import Modal from 'core/modal';
+import * as Fragment from 'core/fragment';
+import {getString} from 'core/str';
+import AutoComplete from 'core/form-autocomplete';
 
 export default class AddQuestionModal extends Modal {
     configure(modalConfig) {
@@ -35,6 +38,14 @@ export default class AddQuestionModal extends Modal {
         // Apply question modal configuration.
         this.setContextId(modalConfig.contextId);
         this.setAddOnPageId(modalConfig.addOnPage);
+
+        // Store the quiz module id for when we need to POST to the quiz.
+        // This is because the URL cmid param will change during filter operations as we will be in another bank context.
+        this.quizModId = modalConfig.quizModId;
+        this.bankModId = modalConfig.bankModId;
+
+        // Store the original title of the modal, so we can revert back to it once we have switched to another bank.
+        this.originalTitle = modalConfig.title;
 
         // Apply standard configuration.
         super.configure(modalConfig);
@@ -89,4 +100,105 @@ export default class AddQuestionModal extends Modal {
         return this.addOnPageId;
     }
 
+    /**
+     * @param {Number} quizModId
+     */
+    setQuizModId(quizModId) {
+        this.quizModId = quizModId;
+    }
+
+    /**
+     * @returns {Number}
+     */
+    getQuizModId() {
+        return this.quizModId;
+    }
+
+    /**
+     * @param {array} courseOpenBanks
+     */
+    setCourseOpenBanks(courseOpenBanks) {
+        this.courseOpenBanks = courseOpenBanks;
+    }
+
+    /**
+     * @return {array} allOpenBanks
+     */
+    getCourseOpenBanks() {
+        return this.courseOpenBanks;
+    }
+
+    /**
+     * @param {array} allOpenBanks
+     */
+    setAllOpenBanks(allOpenBanks) {
+        this.allOpenBanks = allOpenBanks;
+    }
+
+    /**
+     * @return {array} allOpenBanks
+     */
+    getAllOpenBanks() {
+        return this.allOpenBanks;
+    }
+
+    /**
+     * @param {array} recentlyViewedBanks
+     */
+    setRecentlyViewedBanks(recentlyViewedBanks) {
+        this.recentlyViewedBanks = recentlyViewedBanks;
+    }
+
+    /**
+     * @return {Array} recentlyViewedBanks
+     */
+    getRecentlyViewedBanks() {
+        return this.recentlyViewedBanks;
+    }
+
+    /**
+     * Update the modal with a list of banks to switch to and enhance the standard selects to Autocomplete fields.
+     *
+     * @param {String} Selector for the original select element.
+     * @return {Promise} Modal.
+     */
+    async handleSwitchBankContentReload(Selector) {
+        this.setTitle(getString('selectquestionbank', 'mod_quiz'));
+
+        // Create a 'Go back' button and set it in the footer.
+        const el = document.createElement('button');
+        el.classList.add('btn', 'btn-primary');
+        el.textContent = await getString('gobacktoquiz', 'mod_quiz');
+        el.setAttribute('data-action', 'go-back');
+        el.setAttribute('value', this.bankModId);
+        this.setFooter(el);
+
+        this.setBody(
+            Fragment.loadFragment(
+                'mod_quiz',
+                'switch_question_bank',
+                this.getContextId(),
+                {
+                    'quizcmid': this.quizModId,
+                    'bankmodid': this.bankModId,
+                })
+        );
+        const placeholder = await getString('searchbyname', 'mod_quiz');
+        await this.getBodyPromise();
+        await AutoComplete.enhance(
+            Selector,
+            false,
+            '',
+            placeholder,
+            false,
+            true,
+            '',
+            true
+        );
+
+        // Hide the selection element as we don't need it.
+        document.querySelector('.search-banks .form-autocomplete-selection')?.classList.add('d-none');
+
+        return this;
+    }
 }

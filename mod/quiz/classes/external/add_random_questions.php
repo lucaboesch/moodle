@@ -120,8 +120,13 @@ class add_random_questions extends external_api {
 
         // Create new category.
         if (!empty($newcategory)) {
+            [, $bankcontextid] = explode(',', $parentcategory);
+            $thiscontext = \context::instance_by_id($bankcontextid);
+            $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
+            $defaultcategoryobj = question_get_default_category($contexts->lowest()->id);
+            $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
             $categorymanager = new category_manager();
-            $categoryid = $categorymanager->add_category($parentcategory, $newcategory, '');
+            $categoryid = $categorymanager->add_category($defaultcategory, $newcategory, '');
             $filter = [
                 'category' => [
                     'jointype' => custom_category_condition::JOINTYPE_DEFAULT,
