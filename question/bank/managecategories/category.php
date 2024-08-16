@@ -112,10 +112,13 @@ if ($questionstomove) {
     echo $OUTPUT->box(get_string('categorymove', 'question', $vars), 'generalbox boxaligncenter');
     $moveform->display();
 } else {
+    // Get module contexts we have capabilities to manage.
+    $contextswithcaps = $contexts->having_one_edit_tab_cap('categories');
+    $modcontexts = array_filter($contextswithcaps, static fn ($context) => $context->contextlevel === CONTEXT_MODULE);
     // Display the user interface.
     $questioncategories = new question_categories(
         $thispageurl,
-        $contexts->having_one_edit_tab_cap('categories'),
+        $modcontexts,
         $cmid,
         $courseid,
         $thiscontext,
