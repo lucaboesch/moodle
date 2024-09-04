@@ -76,7 +76,7 @@ class delete_action extends question_action_base {
     }
 
     public function get_menu_position(): int {
-        return 400;
+        return 2000;
     }
 
     protected function get_url_icon_and_label(\stdClass $question): array {

@@ -72,6 +72,9 @@ abstract class question_action_base extends view_component {
         if (!$url) {
             return null;
         }
+        if ($icon === 't/delete') {
+            return new \action_menu_link_secondary($url, new \pix_icon($icon, ''), $label, ['class' => 'text-danger']);
+        }
         return new \action_menu_link_secondary($url, new \pix_icon($icon, ''), $label);
     }
 }
