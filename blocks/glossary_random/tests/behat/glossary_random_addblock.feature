@@ -21,3 +21,39 @@ Feature: Add the glossary random block when main feature is enabled
     And I am on "Course 1" course homepage with editing mode on
     When I click on "Add a block" "link"
     Then I should not see "Random glossary entry"
+
+  Scenario: View alphabetical order multilang entries in the glossary block
+    Given the following "activities" exist:
+      | activity | name    | intro              | course | idnumber  | defaultapproval |
+      | glossary | Animals | An animal glossary | C1     | glossary3 | 1               |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I log out
+    When I am on the "Animals" "glossary activity" page logged in as student1
+    And I add a glossary entry with the following data:
+      | Concept    | Aardvark                                                                                            |
+      | Definition | <span lang="en" class="multilang">Aardvark</span><span lang="de" class="multilang">Erdferkel</span> |
+    And I add a glossary entry with the following data:
+      | Concept    | Kangaroo                                                                                          |
+      | Definition | <span lang="en" class="multilang">Kangaroo</span><span lang="de" class="multilang">Känguru</span> |
+    And I add a glossary entry with the following data:
+      | Concept    | Zebra                                                                                        |
+      | Definition | <span lang="en" class="multilang">Zebra</span><span lang="de" class="multilang">Zebra</span> |
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I add the "Random glossary entry" block
+    And I configure the "block_glossary_random" block
+    And I set the following fields to these values:
+      | Title                             | ManualGlossaryblock |
+      | Take entries from this glossary   | Animals             |
+      | Days before a new entry is chosen | 0                   |
+      | How a new entry is chosen         | Alphabetical order  |
+    And I press "Save changes"
+    And I should see "Aardvark" in the "ManualGlossaryblock" "block"
+    And I should not see "AardvarkErdferkel" in the "ManualGlossaryblock" "block"
+    And I reload the page
+    And I should see "Kangaroo" in the "ManualGlossaryblock" "block"
+    And I reload the page
+    Then I should see "Zebra" in the "ManualGlossaryblock" "block"
+    And I log out

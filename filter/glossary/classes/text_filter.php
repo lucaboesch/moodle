@@ -29,8 +29,6 @@ use stdClass;
 /**
  * This filter provides automatic linking to glossary entries, aliases and categories when found inside every Moodle text.
  *
- * NOTE: multilang glossary entries are not compatible with this filter.
- *
  * @package    filter_glossary
  * @copyright  2004 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
