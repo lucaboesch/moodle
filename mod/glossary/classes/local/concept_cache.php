@@ -122,9 +122,9 @@ class concept_cache {
         $concepts = array();
         $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $concept) {
-            $currentconcept = trim(strip_tags($concept->concept));
+            $currentconcept = trim($concept->concept);
 
-            // Concept must be HTML-escaped, so do the same as format_string to turn ampersands into &amp;.
+            // Turn ampersands into &amp; but keep HTML format for filters.
             $currentconcept = replace_ampersands_not_followed_by_entity($currentconcept);
 
             if (empty($currentconcept)) {
