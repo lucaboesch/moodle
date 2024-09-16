@@ -212,6 +212,28 @@ Feature: Teacher can search and enrol users one by one into the course
     And I type "Q994"
     And I should see "No suggestions"
 
+  @javascript
+  Scenario: Teacher do not see disabled students in the enrolment pop-up without the viewsuspendedusers capability
+    Given the following "permission overrides" exist:
+      | capability                       | permission | role           | contextlevel | reference |
+      | moodle/course:viewsuspendedusers | Prohibit   | editingteacher | Course       | C001      |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I press "Suspend user account" action in the "Student 001" report row
+    And I should see "Suspended" in the "Student 001" "table_row"
+    And I log out
+    When I am on the "Course 001" "enrolment methods" page logged in as "teacher001"
+    And I click on "Enrol users" "link" in the "Manual enrolments" "table_row"
+    And I set the field "addselect_searchtext" to "student001@example.com"
+    And I wait "1" seconds
+    And I should not see "No users match 'student001@example.com'"
+    And I am on "Course 001" course homepage
+    And I navigate to course participants
+    And I press "Enrol users"
+    And I click on "Select users" "field"
+    And I type "Student 001"
+    Then I should see "No suggestions"
+
 # The following tests are commented out as a result of MDL-66339.
 #  @javascript
 #  Scenario: Enrol user from participants page
