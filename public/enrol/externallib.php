@@ -708,6 +708,10 @@ class core_enrol_external extends external_api {
             ['id', 'fullname', 'profileimageurl', 'profileimageurlsmall'],
             $identityfields
         );
+        $exclude = [];
+        if (!has_capability('moodle/course:viewsuspendedusers', $context)) {
+            $exclude = $DB->get_fieldset_select('user', 'id', 'suspended=1');
+        }
         foreach ($users['users'] as $id => $user) {
             // Note: We pass the course here to validate that the current user can at least view user details in this course.
             // The user we are looking at is not in this course yet though - but we only fetch the minimal set of
@@ -725,6 +729,9 @@ class core_enrol_external extends external_api {
                 }
                 $userdetails['initials'] = core_user::get_initials($user);
                 $results[] = $userdetails;
+                if (!in_array($id, $exclude)) {
+                    $results[] = $userdetails;
+                }
             }
         }
         return $results;
