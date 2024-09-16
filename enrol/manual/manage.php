@@ -75,8 +75,12 @@ $PAGE->navbar->add($title, $url);
 
 // Create the user selector objects.
 $options = array('enrolid' => $enrolid, 'accesscontext' => $context);
+$exclude = null;
+if (!has_capability('moodle/course:viewsuspendedusers', $context)) {
+    $exclude = $DB->get_fieldset_select('user', 'id', 'suspended=1');
+}
 
-$potentialuserselector = new enrol_manual_potential_participant('addselect', $options);
+$potentialuserselector = new enrol_manual_potential_participant('addselect', array_merge($options, ['exclude' => $exclude]));
 $currentuserselector = new enrol_manual_current_participant('removeselect', $options);
 
 // Build the list of options for the enrolment period dropdown.
