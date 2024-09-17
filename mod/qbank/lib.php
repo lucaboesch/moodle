@@ -60,10 +60,10 @@ function qbank_supports(string $feature) {
  * this function will create a new instance and return the id number of the instance.
  *
  * @param stdClass $moduleinstance An object from the form.
- * @param stdClass $mform The form. Not used in this function.
+ * @param mod_qbank_mod_form|null $mform The form. Not used in this function.
  * @return int The id of the newly inserted record.
  */
-function qbank_add_instance($moduleinstance, $mform = null) {
+function qbank_add_instance(stdClass $moduleinstance, mod_qbank_mod_form $mform = null): int {
     global $DB;
 
     $moduleinstance->timecreated = time();
@@ -77,10 +77,10 @@ function qbank_add_instance($moduleinstance, $mform = null) {
  * this function will update an existing instance with new data.
  *
  * @param stdClass $moduleinstance An object from the form in mod_form.php.
- * @param stdClass $mform The form. Not used in this function.
+ * @param mod_qbank_mod_form|null $mform The form. Not used in this function.
  * @return bool True if successful, false otherwise.
  */
-function qbank_update_instance($moduleinstance, $mform = null) {
+function qbank_update_instance(stdClass $moduleinstance, mod_qbank_mod_form $mform = null): bool {
     global $DB;
 
     $moduleinstance->timemodified = time();
@@ -97,7 +97,7 @@ function qbank_update_instance($moduleinstance, $mform = null) {
  * @param int $id id of the module instance.
  * @return bool True if successful, false on failure.
  */
-function qbank_delete_instance($id) {
+function qbank_delete_instance(int $id): bool {
     global $DB;
 
     if (!$DB->record_exists('qbank', ['id' => $id])) {
