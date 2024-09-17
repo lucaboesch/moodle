@@ -601,6 +601,14 @@ class qformat_default {
         } else {
             $context = context::instance_by_id($this->category->contextid);
         }
+
+        // If the file had categories in a deprecated context then the categories need to be applied to a default system type
+        // mod_qbank instance on the course instead.
+        if ($context->contextlevel !== CONTEXT_MODULE) {
+            $qbank = \core_question\local\bank\question_bank_helper::get_default_open_instance_system_type($this->course, true);
+            $context = context_module::instance($qbank->id);
+        }
+
         $this->importcontext = $context;
 
         // Now create any categories that need to be created.

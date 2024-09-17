@@ -30,6 +30,11 @@ use core_question\local\bank\view;
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
+// If the request has a courseid then redirect to the banks management page.
+if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
+    redirect(new moodle_url('/question/banks.php', ['courseid' => $courseid]));
+}
+
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('questions', '/question/edit.php');
 

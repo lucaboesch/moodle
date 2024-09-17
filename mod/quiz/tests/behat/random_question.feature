@@ -35,7 +35,7 @@ Feature: Moving a question to another category should not affect random question
     When I open the "last" add to quiz menu
     And I follow "a random question"
     Then I click on "Switch bank" "button"
-    And I click on "Qbank 1" "link"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
     And I apply question bank filter "Category" with value "Used category"
     And I press "Add random question"
     And I should see "Random (Used category) based on filter condition" on quiz page "1"
