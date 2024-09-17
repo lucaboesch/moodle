@@ -549,8 +549,8 @@ class core_renderer extends renderer_base {
 
         $nummods = count($mods);
 
-        // If there is only one mod then do nothing.
-        if ($nummods == 1) {
+        // If there are only one or less mods then do nothing.
+        if ($nummods <= 1) {
             return '';
         }
 

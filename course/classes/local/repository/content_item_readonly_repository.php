@@ -115,7 +115,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
      * @return content_item[] filtered items
      */
     private static function filter_out_items_not_to_be_displayed(array $contentitems): array {
-        return array_filter($contentitems, static function($module) {
+        return array_filter($contentitems, static function ($module) {
             [, $name] = core_component::normalize_component($module->get_component_name());
             return \course_modinfo::is_mod_type_visible_on_course($name);
         });

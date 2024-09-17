@@ -209,11 +209,11 @@ class question_bank_helper {
                 'qc.contextid'
             );
             $groupconcat = $DB->sql_group_concat($concat, ',');
-            $select = "SELECT cm.*, {$groupconcat} AS cats";
+            $select = "SELECT cm.id, cm.course, {$groupconcat} AS cats";
             $catsql = ' JOIN {context} c ON c.instanceid = cm.id AND c.contextlevel = ' . CONTEXT_MODULE .
                 ' JOIN {question_categories} qc ON qc.contextid = c.id AND qc.parent <> 0';
         } else {
-            $select = 'SELECT cm.*';
+            $select = 'SELECT cm.id, cm.course';
             $catsql = '';
         }
 
@@ -267,7 +267,7 @@ class question_bank_helper {
                 {$pluginssql}
                 {$catsql}
                 WHERE 1=1 {$notincoursesql} {$incoursesql}
-                GROUP BY cm.id
+                GROUP BY cm.id, cm.course
                 {$orderbysql}";
 
         $rs = $DB->get_recordset_sql($sql, $params);

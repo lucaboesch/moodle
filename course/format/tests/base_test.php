@@ -567,7 +567,7 @@ class base_test extends advanced_testcase {
         $modinfo = course_modinfo::instance($course);
         $qbankinstances = $modinfo->get_instances_of('qbank');
         $this->assertCount(1, $qbankinstances);
-        $this->assertEquals(3, $newmodcount);
+        $this->assertEquals($originalmodcount - 1, $newmodcount);
     }
 
     /**

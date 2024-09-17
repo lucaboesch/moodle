@@ -880,16 +880,15 @@ class courselib_test extends advanced_testcase {
         rebuild_course_cache($course->id, true);
 
         // Create some cms for testing.
-        $mod = $DB->get_records_select_menu('modules', 'id = :id', ['id' => 1], '', 'id, name');
-        $modid = key($mod);
-        $modname = $mod[$modid];
+        $mods = $DB->get_records('modules');
+        $mod = reset($mods);
         $cmids = array();
         for ($i=0; $i<4; $i++) {
-            $cmids[$i] = $DB->insert_record('course_modules', ['course' => $course->id, 'module' => $modid]);
+            $cmids[$i] = $DB->insert_record('course_modules', ['course' => $course->id, 'module' => $mod->id]);
         }
 
         // Add it to section that exists.
-        course_add_cm_to_section($course, $cmids[0], 1, null, $modname);
+        course_add_cm_to_section($course, $cmids[0], 1, null, $mod->name);
 
         // Check it got added to sequence.
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
@@ -897,7 +896,7 @@ class courselib_test extends advanced_testcase {
 
         // Add a second, this time using courseid variant of parameters.
         $coursecacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
-        course_add_cm_to_section($course->id, $cmids[1], 1, null, $modname);
+        course_add_cm_to_section($course->id, $cmids[1], 1, null, $mod->name);
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
         $this->assertEquals($cmids[0] . ',' . $cmids[1], $sequence);
 
@@ -907,13 +906,13 @@ class courselib_test extends advanced_testcase {
         $this->assertEmpty(cache::make('core', 'coursemodinfo')->get_versioned($course->id, $newcacherev));
 
         // Add one to section that doesn't exist (this might rebuild modinfo).
-        course_add_cm_to_section($course, $cmids[2], 2, null, $modname);
+        course_add_cm_to_section($course, $cmids[2], 2, null, $mod->name);
         $this->assertEquals(3, $DB->count_records('course_sections', array('course' => $course->id)));
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 2));
         $this->assertEquals($cmids[2], $sequence);
 
         // Add using the 'before' option.
-        course_add_cm_to_section($course, $cmids[3], 2, $cmids[2], $modname);
+        course_add_cm_to_section($course, $cmids[3], 2, $cmids[2], $mod->name);
         $this->assertEquals(3, $DB->count_records('course_sections', array('course' => $course->id)));
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 2));
         $this->assertEquals($cmids[3] . ',' . $cmids[2], $sequence);
@@ -942,20 +941,19 @@ class courselib_test extends advanced_testcase {
 
         // Create the module and assert in section 0.
         $sectionzero = $DB->get_record('course_sections', ['course' => $course->id, 'section' => 0], '*', MUST_EXIST);
-        $DB->get_record('course_sections', ['course' => $course->id, 'section' => 1], '*', MUST_EXIST);
-        $module = $generator->create_module('page', ['course' => $course, 'section' => $sectionzero->section]);
-        $cm = $DB->get_record('course_modules', ['id' => $module->cmid]);
-        $modsection = $DB->get_record('course_sections', ['id' => $cm->section]);
-        $this->assertEquals($sectionzero->section, $modsection->section);
+        $module = $generator->create_module('qbank', ['course' => $course, 'section' => $sectionzero->section]);
 
         // Try to add to section 1.
         $this->expectExceptionMessage("Modules with FEATURE_CAN_DISPLAY set to false can not be moved from section 0");
-        course_add_cm_to_section($course, $cm->id, 1, null, 'qbank');
 
-        // Assert still in section 0.
-        $cm = $DB->get_record('course_modules', ['id' => $module->cmid]);
-        $modsection = $DB->get_record('course_sections', ['id' => $cm->section]);
-        $this->assertEquals($sectionzero->section, $modsection->section);
+        try {
+            course_add_cm_to_section($course, $module->cmid, 1, null, 'qbank');
+        } finally {
+            // Assert still in section 0.
+            $cm = $DB->get_record('course_modules', ['id' => $module->cmid]);
+            $modsection = $DB->get_record('course_sections', ['id' => $cm->section]);
+            $this->assertEquals($sectionzero->section, $modsection->section);
+        }
     }
 
     public function test_reorder_sections(): void {
@@ -1380,12 +1378,17 @@ class courselib_test extends advanced_testcase {
         // Check that mods with FEATURE_CAN_DISPLAY set to false cannot be moved from section 0.
         $newsection = get_fast_modinfo($course)->get_section_info(3);
 
+        $codingerror = 'Coding error detected, it must be fixed by a programmer: Modules with FEATURE_CAN_DISPLAY set to false can not be moved from section 0';
+
         // Try to perform the move.
-        $this->expectExceptionMessage("Modules with FEATURE_CAN_DISPLAY set to false can not be moved from section 0\n");
-        moveto_module($qbankcm, $newsection);
-        $qbankcms = get_fast_modinfo($course)->get_instances_of('qbank');
-        $qbankcm = reset($qbankcms);
-        $this->assertEquals(0, $qbankcm->sectionnum);
+        $this->expectExceptionMessage($codingerror);
+        try {
+            moveto_module($qbankcm, $newsection);
+        } finally {
+            $qbankcms = get_fast_modinfo($course)->get_instances_of('qbank');
+            $qbankcm = reset($qbankcms);
+            $this->assertEquals(0, $qbankcm->sectionnum);
+        }
     }
 
     public function test_module_visibility() {

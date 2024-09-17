@@ -125,7 +125,7 @@ class get_state_test extends \externallib_advanced_testcase {
             $this->activities[$activitycm->id] = $activitycm;
         } else {
             // Add some activities to the course.
-            $this->create_activity($course->id, 'qbank', 0, true, $canedit, false);
+            $this->create_activity($course->id, 'qbank', 0, true, $canedit);
             $this->create_activity($course->id, 'page', 1, true, $canedit);
             $this->create_activity($course->id, 'forum', 1, true, $canedit);
             $this->create_activity($course->id, 'book', 1, false, $canedit);
@@ -173,10 +173,12 @@ class get_state_test extends \externallib_advanced_testcase {
                 $this->assertEquals($this->sections[$section->number], $section->cmlist);
             }
         }
-        // Check course modules information.
+        // Check course modules information,
+        // must not contain modules that cannot be displayed to the course page under any circumstances.
         foreach ($result->cm as $cm) {
             $this->assertEquals($this->activities[$cm->id]->name, $cm->name);
             $this->assertEquals((bool) $this->activities[$cm->id]->visible, $cm->visible);
+            $this->assertNotEquals('qbank', $this->activities[$cm->id]->modname);
         }
     }
 
@@ -268,17 +270,8 @@ class get_state_test extends \externallib_advanced_testcase {
      * @param int $section Section number where the activity will be added.
      * @param bool $visible Whether the activity will be visible or not.
      * @param bool $canedit Whether the activity will be accessed later by a user with editing capabilities
-     * @param bool $canrender Whether the activity should be visible on the course main page,
-     * or can be created on the course add activity menu
      */
-    private function create_activity(
-        int $courseid,
-        string $type,
-        int $section,
-        bool $visible = true,
-        bool $canedit = true,
-        bool $canrender = true
-    ): void {
+    private function create_activity(int $courseid, string $type, int $section, bool $visible = true, bool $canedit = true): void {
         $activity = $this->getDataGenerator()->create_module(
             $type,
             ['course' => $courseid],
@@ -287,7 +280,7 @@ class get_state_test extends \externallib_advanced_testcase {
 
         list(, $activitycm) = get_course_and_cm_from_instance($activity->id, $type);
 
-        if (($visible || $canedit) && $canrender) {
+        if (($visible || $canedit) && $activitycm->is_of_type_that_can_display()) {
             $this->activities[$activitycm->id] = $activitycm;
             $this->sections[$section][] = $activitycm->id;
         }
