@@ -79,7 +79,7 @@ Feature: Adding random questions to a quiz based on category and tags
     When I open the "last" add to quiz menu
     And I follow "a random question"
     Then I click on "Switch bank" "button"
-    And I click on "Qbank 1" "link"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
     And I apply question bank filter "Category" with value "Qbank questions"
     And I apply question bank filter "Tag" with value "qbanktag"
     And I click on "Apply filters" "button"
@@ -122,7 +122,7 @@ Feature: Adding random questions to a quiz based on category and tags
     Then I should see "Current bank: Quiz 1"
     And I should see "question 1 name"
     Then I click on "Switch bank" "button"
-    And I click on "Qbank 1" "link"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
     Then I should see "Current bank: Qbank 1"
     And I should see "Qbank question 1"
     But I should not see "question 1 name"

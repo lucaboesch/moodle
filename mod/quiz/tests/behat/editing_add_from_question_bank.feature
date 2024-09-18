@@ -61,7 +61,7 @@ Feature: Adding questions to a quiz from the question bank
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     Then I click on "Switch bank" "button"
-    And I click on "Qbank 1" "link"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
     Then I should see "qbanktag1" in the "question 03 name" "table_row"
     And I should see "qbanktag2" in the "question 04 name" "table_row"
     When I apply question bank filter "Tag" with value "qbanktag1"
@@ -162,7 +162,7 @@ Feature: Adding questions to a quiz from the question bank
     Then I should see "Current bank: Quiz 1"
     And I should see "question 01 name"
     Then I click on "Switch bank" "button"
-    And I click on "Qbank 1" "link"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
     Then I should see "Current bank: Qbank 1"
     And I should see "question 03 name"
     But I should not see "question 01 name"

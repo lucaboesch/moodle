@@ -195,7 +195,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I open the "last" add to quiz menu
     And I follow "a random question"
     And I click on "Switch bank" "button"
-    And I click on "Qbank 1" "link"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
     And I press "Add random question"
     And user "student" has started an attempt at quiz "Quiz 2" randomised as follows:
       | slot | actualquestion |

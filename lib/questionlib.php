@@ -1188,9 +1188,12 @@ function question_get_default_category($contextid) {
     $sql = "SELECT *
             FROM {question_categories}
             WHERE contextid = :contextid AND parent <> 0
-            ORDER BY id ASC LIMIT 1";
+            ORDER BY id ASC";
 
-    if (!$defaultcat = $DB->get_record_sql($sql, ['contextid' => $contextid])) {
+    $defaultcats = $DB->get_records_sql($sql, ['contextid' => $contextid], 0, 1);
+    $defaultcat = reset($defaultcats);
+
+    if (empty($defaultcat)) {
 
         // We need to make a top category first if it doesn't exist.
         $topcategory = question_get_top_category($context->id, true);
