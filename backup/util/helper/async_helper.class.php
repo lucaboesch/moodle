@@ -241,9 +241,13 @@ class async_helper  {
             backup::STATUS_NEED_PRECHECK
         );
 
-        $asyncrecord= $DB->get_record_select('backup_controllers', $select, $params);
+        $asyncrecords = $DB->get_record_select('backup_controllers', $select, $params);
 
-        if ((self::is_async_enabled() && $asyncrecord) || ($asyncrecord && $asyncrecord->purpose == backup::MODE_COPY)) {
+        $pendingcopies = array_filter($asyncrecords, function($asyncrecord) {
+            return intval($asyncrecord->purpose) === backup::MODE_COPY;
+        });
+
+        if ((self::is_async_enabled() && $asyncrecords) || $pendingcopies) {
             $asyncpending = true;
         }
         return $asyncpending;
