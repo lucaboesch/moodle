@@ -1847,12 +1847,17 @@ class structure {
     /**
      * Get data on the question bank being used by the question in the slot.
      * @param int $slot slot number
-     * @return stdClass
+     * @return stdClass|null
      */
-    public function get_source_bank(int $slot): stdClass {
+    public function get_source_bank(int $slot): ?stdClass {
         $questionid = $this->slotsinorder[$slot]->questionid;
 
         $this->questionsources[$this->questions[$questionid]->contextid] ?? $this->populate_question_sources();
+
+        // This shouldn't happen as all categories belong to a module context level but let's account for it.
+        if (empty($this->questionsources[$this->questions[$questionid]->contextid])) {
+            return null;
+        }
 
         $cminfo = \cm_info::create($this->questionsources[$this->questions[$questionid]->contextid]);
 
