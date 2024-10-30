@@ -52,6 +52,10 @@ final class mod_lti_edit_types_form_test extends \advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
+        // Enable multilang filter to on content and heading.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', 1);
+
         $ltiform = new test_edit_form(null);
         $ltiform->definition_after_data();
 
@@ -66,7 +70,8 @@ final class mod_lti_edit_types_form_test extends \advanced_testcase {
                             [
                                 "id" => $coursecategories['subcata']->id,
                                 "parent" => $coursecategories['topcat']->id,
-                                "name" => $coursecategories['subcata']->name,
+                                "name" => format_string($coursecategories['subcata']->name, false,
+                                    ["context" => \core\context\system::instance()]),
                                 "nodes" => [
                                     [
                                         "id" => $coursecategories['subcatca']->id,
@@ -98,6 +103,9 @@ final class mod_lti_edit_types_form_test extends \advanced_testcase {
         ];
 
         $records = $DB->get_records('course_categories', [], 'sortorder, id', 'id, parent, name');
+        foreach ($records as &$record) {
+            $record->name = format_string($record->name, false, ["context" => \core\context\system::instance()]);
+        }
         $allcategories = json_decode(json_encode($records), true);
         $coursecategoriesarray = $ltiform->lti_build_category_tree($allcategories);
 
