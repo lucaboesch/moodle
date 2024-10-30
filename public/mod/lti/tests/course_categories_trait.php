@@ -34,7 +34,8 @@ trait mod_lti_course_categories_trait {
 
         $topcatdbrecord = $DB->get_record('course_categories', ['parent' => 0]);
 
-        $subcata = $this->getDataGenerator()->create_category(['parent' => $topcatdbrecord->id, 'name' => 'cata']);
+        $subcata = $this->getDataGenerator()->create_category(['parent' => $topcatdbrecord->id,
+            'name' => '<span lang="en" class="multilang">cata</span><span lang="de" class="multilang">kata</span>']);
         $subcatadbrecord = $DB->get_record('course_categories', ['id' => $subcata->id]);
 
         $subcatca = $this->getDataGenerator()->create_category(['parent' => $subcata->id, 'name' => 'catca']);
@@ -50,7 +51,7 @@ trait mod_lti_course_categories_trait {
             'topcat' => $topcatdbrecord,
             'subcata' => $subcatadbrecord,
             'subcatca' => $subcatcadbrecord,
-            'subcatb' => $subcatb,
+            'subcatb' => $subcatbdbrecord,
             'subcatcb' => $subcatcbdbrecord
         ];
     }
