@@ -421,9 +421,11 @@ class mod_lti_edit_types_form extends moodleform {
                 if ($children) {
                     $element['nodes'] = $children;
                     $element['haschildren'] = true;
+                    $element['name'] = format_string($element['name'], false, ["context" => \core\context\system::instance()]);
                 } else {
                     $element['nodes'] = null;
                     $element['haschildren'] = false;
+                    $element['name'] = format_string($element['name'], false, ["context" => \core\context\system::instance()]);
                 }
                 $branch[] = $element;
             }
