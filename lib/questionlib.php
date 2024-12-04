@@ -1668,6 +1668,10 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
             throw new moodle_exception('exporterror', 'question', $thispageurl->out());
         }
 
+        if (!isset($qformat->questions) || empty($qformat->questions)) {
+            throw new moodle_exception('noquestions', 'question');
+        }
+
         // Export data to moodle file pool.
         if (!$content = $qformat->exportprocess()) {
             send_file_not_found();
