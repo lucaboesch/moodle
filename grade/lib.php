@@ -1780,7 +1780,7 @@ class grade_structure {
                     '',
                     $title,
                     [
-                        'class' => 'dropdown-item',
+                        'class' => 'dropdown-item text-danger',
                         'aria-label' => $title,
                         'role' => 'menuitem',
                         'data-modal' => 'confirmation',
