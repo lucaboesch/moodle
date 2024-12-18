@@ -1394,20 +1394,18 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     $a->coursename      = format_string($course->fullname, true, ['context' => $context]);
     $a->courseshortname = format_string($course->shortname, true, ['context' => $context]);
     // Quiz info.
-    $a->quizname        = $quiz->name;
+    $a->quizname        = format_string($quiz->name, true, ['context' => $context]);
     $a->quizreporturl   = $CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id;
-    $a->quizreportlink  = '<a href="' . $a->quizreporturl . '">' .
-            format_string($quiz->name, true, ['context' => $context]) . ' report</a>';
+    $a->quizreportlink  = '<a href="' . $a->quizreporturl . '">' . $a->quizname . ' report</a>';
     $a->quizurl         = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
-    $a->quizlink        = '<a href="' . $a->quizurl . '">' . format_string($quiz->name, true, ['context' => $context]) . '</a>';
+    $a->quizlink        = '<a href="' . $a->quizurl . '">' . $a->quizname . '</a>';
     $a->quizid          = $quiz->id;
     $a->quizcmid        = $cm->id;
     // Attempt info.
     $a->submissiontime  = userdate($attempt->timefinish);
     $a->timetaken       = format_time($attempt->timefinish - $attempt->timestart);
     $a->quizreviewurl   = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
-    $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' .
-            format_string($quiz->name, true, ['context' => $context]) . ' review</a>';
+    $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' . $a->quizname . ' review</a>';
     $a->attemptid       = $attempt->id;
     // Student who sat the quiz info.
     $a->studentidnumber = $submitter->idnumber;
