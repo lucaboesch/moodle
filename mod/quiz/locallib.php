@@ -1396,8 +1396,7 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     // Quiz info.
     $a->quizname        = format_string($quiz->name, true, ['context' => $context]);
     $a->quizreporturl   = $CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id;
-    $a->quizreportlink  = '<a href="' . $a->quizreporturl . '">' .
-            $a->quizname . ' report</a>';
+    $a->quizreportlink  = '<a href="' . $a->quizreporturl . '">' . $a->quizname . ' report</a>';
     $a->quizurl         = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
     $a->quizlink        = '<a href="' . $a->quizurl . '">' . $a->quizname . '</a>';
     $a->quizid          = $quiz->id;
