@@ -1406,8 +1406,7 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     $a->submissiontime  = userdate($attempt->timefinish);
     $a->timetaken       = format_time($attempt->timefinish - $attempt->timestart);
     $a->quizreviewurl   = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
-    $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' .
-            format_string($quiz->name, true, ['context' => $context]) . ' review</a>';
+    $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' . $a->quizname . ' review</a>';
     $a->attemptid       = $attempt->id;
     // Student who sat the quiz info.
     $a->studentidnumber = $submitter->idnumber;
