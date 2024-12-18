@@ -1399,7 +1399,7 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     $a->quizreportlink  = '<a href="' . $a->quizreporturl . '">' .
             $a->quizname . ' report</a>';
     $a->quizurl         = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
-    $a->quizlink        = '<a href="' . $a->quizurl . '">' . format_string($quiz->name, true, ['context' => $context]) . '</a>';
+    $a->quizlink        = '<a href="' . $a->quizurl . '">' . $a->quizname . '</a>';
     $a->quizid          = $quiz->id;
     $a->quizcmid        = $cm->id;
     // Attempt info.
