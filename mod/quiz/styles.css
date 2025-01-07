@@ -812,6 +812,7 @@ table.quizreviewsummary td.cell {
     white-space: nowrap;
     background: #e6e6e6;
     padding: 0.1em 0;
+    display: flex;
 }
 
 #page-mod-quiz-edit .mod_quiz_edit_forms {
