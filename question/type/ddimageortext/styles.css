@@ -175,11 +175,14 @@ form.mform fieldset#id_previewareaheader .group8 {
 }
 
 /* Editing form. Style repeated elements*/
+
+/* stylelint-disable declaration-no-important  */
+
 /*Top*/
 body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] {
     background: #eee;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
     padding-bottom: 5px;
     padding-top: 5px;
     border: 1px solid #bbb;
@@ -192,7 +195,7 @@ body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] .fgrouplab
 /* Middle */
 body#page-question-type-ddimageortext div[id^=fitem_id_][id*=dragitem_] {
     background: #eee;
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
@@ -210,3 +213,6 @@ body#page-question-type-ddimageortext div[id^=fitem_id_][id*=draglabel_] {
     border: 1px solid #bbb;
     border-top: 0;
 }
+
+/* stylelint-enable declaration-no-important  */
+
