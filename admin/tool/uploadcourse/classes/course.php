@@ -432,8 +432,8 @@ class tool_uploadcourse_course {
             }
 
             // Ensure we don't overflow the maximum length of the shortname field.
-            if (core_text::strlen($this->shortname) > 255) {
-                $this->error('invalidshortnametoolong', new lang_string('invalidshortnametoolong', 'tool_uploadcourse', 255));
+            if (core_text::strlen($this->shortname) > 1333) {
+                $this->error('invalidshortnametoolong', new lang_string('invalidshortnametoolong', 'tool_uploadcourse', 1333));
                 return false;
             }
         }
@@ -515,6 +515,16 @@ class tool_uploadcourse_course {
         ) {
             $this->error('invalidfullnametoolong', new lang_string('invalidfullnametoolong', 'tool_uploadcourse',
                 \core_course\constants::FULLNAME_MAXIMUM_LENGTH));
+            return false;
+        }
+
+        // Ensure we don't overflow the maximum length of the shortname field.
+        if (
+            !empty($coursedata['shortname']) &&
+            core_text::strlen($coursedata['shortname']) > \core_course\constants::SHORTNAME_MAXIMUM_LENGTH
+        ) {
+            $this->error('invalidshortnametoolong', new lang_string('invalidshortnametoolong', 'tool_uploadcourse',
+                \core_course\constants::SHORTNAME_MAXIMUM_LENGTH));
             return false;
         }
 
