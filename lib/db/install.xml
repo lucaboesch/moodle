@@ -73,7 +73,7 @@
         <FIELD NAME="category" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="fullname" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -402,7 +402,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="fullname" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="summary" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="category" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
