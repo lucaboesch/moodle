@@ -28,6 +28,6 @@ abstract class constants {
     public const FULLNAME_MAXIMUM_LENGTH = 1333;
 
     /** @var int the length of the course.shortname field. */
-    public const SHORTNAME_MAXIMUM_LENGTH = 255;
+    public const SHORTNAME_MAXIMUM_LENGTH = 1333;
 
 }
