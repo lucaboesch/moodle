@@ -1166,11 +1166,11 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2024111500.00) {
 
-        // Changing precision of field fullname on table course to (1333).
+        // Changing precision of field shortname on table course to (1333).
         $table = new xmldb_table('course');
-        $field = new xmldb_field('fullname', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'sortorder');
+        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'sortorder');
 
-        // Launch change of precision for field fullname.
+        // Launch change of precision for field shortname.
         $dbman->change_field_precision($table, $field);
 
         // Main savepoint reached.
@@ -1179,11 +1179,11 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2024111500.01) {
 
-        // Changing precision of field fullname on table course_request to (1333).
+        // Changing precision of field shortname on table course_request to (1333).
         $table = new xmldb_table('course_request');
-        $field = new xmldb_field('fullname', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'id');
+        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'id');
 
-        // Launch change of precision for field fullname.
+        // Launch change of precision for field shortname.
         $dbman->change_field_precision($table, $field);
 
         // Main savepoint reached.
@@ -1370,11 +1370,35 @@ function xmldb_main_upgrade($oldversion) {
         $apiversionfield = new xmldb_field('apiversion', XMLDB_TYPE_CHAR, '12', null, XMLDB_NOTNULL, null, null);
         $dbman->change_field_default($table, $apiversionfield);
 
+        // Changing precision of field shortname on table course to (1333).
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('fullname', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'sortorder');
+
+        // Launch change of precision for field fullname.
+        $dbman->change_field_precision($table, $field);
+
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2025012400.01);
     }
 
-    if ($oldversion < 2025013100.01) {
+    if ($oldversion < 2025012400.02) {
+        // Remove the default value for the apiversion field.
+        $table = new xmldb_table('badge_external_backpack');
+        $apiversionfield = new xmldb_field('apiversion', XMLDB_TYPE_CHAR, '12', null, XMLDB_NOTNULL, null, null);
+        $dbman->change_field_default($table, $apiversionfield);
+
+        // Changing precision of field fullname on table course_request to (1333).
+        $table = new xmldb_table('course_request');
+        $field = new xmldb_field('fullname', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'id');
+
+        // Launch change of precision for field fullname.
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025012400.02);
+    }
+
+    if ($oldversion < 2025013100.03) {
         // Remove imageauthorname, imageauthoremail and imageauthorurl fields for badges.
         $table = new xmldb_table('badge');
         $fields = [
@@ -1391,7 +1415,52 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2025013100.01);
+        upgrade_main_savepoint(true, 2025013100.03);
+    }
+
+    // Now we want to change the precision of course_request.shortname.
+    // To do this, we need to first drop the index, then re-create it.
+    if ($oldversion < 2025012400.04) {
+
+        // Define index shortname (not unique) to be dropped form course_request.
+        $table = new xmldb_table('course_request');
+        $index = new xmldb_index('shortname', XMLDB_INDEX_NOTUNIQUE, ['shortname']);
+
+        // Conditionally launch drop index shortname.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025012400.04);
+    }
+
+    if ($oldversion < 2025012400.05) {
+
+        // Changing precision of field shortname on table course_request to (255).
+        $table = new xmldb_table('course_request');
+        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'shortname');
+
+        // Launch change of precision for field shortname.
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025012400.05);
+    }
+
+    if ($oldversion < 2025020600.06) {
+
+        // Define index shortname (not unique) to be added to course_request.
+        $table = new xmldb_table('course_request');
+        $index = new xmldb_index('shortname', XMLDB_INDEX_NOTUNIQUE, ['shortname']);
+
+        // Conditionally launch add index shortname.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025020600.06);
     }
 
     if ($oldversion < 2025022100.01) {
