@@ -39,10 +39,10 @@ p.arrow_button {
 }
 
 .btn.btn-icon {
-    height: ($icon-width + 20px);
-    width: ($icon-width + 20px);
-    font-size: $icon-width;
-    line-height: $icon-width;
+    height: ($icon-height + 20px);
+    width: ($icon-width + 16px);
+    font-size: $icon-height;
+    line-height: $icon-height;
     padding: 0;
     border-radius: 50%;
     flex-shrink: 0;
