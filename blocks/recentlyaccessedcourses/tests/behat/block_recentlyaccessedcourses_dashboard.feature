@@ -8,6 +8,7 @@ Feature: The recently accessed courses block allows users to easily access their
     Given the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "categories" exist:
       | name        | category | idnumber |
       | Category A  | 0        | CATA     |
@@ -25,6 +26,11 @@ Feature: The recently accessed courses block allows users to easily access their
       | student1 | C3     | student |
       | student1 | C4     | student |
       | student1 | C5     | student |
+      | teacher1 | C1     | editingteacher |
+      | teacher1 | C2     | editingteacher |
+      | teacher1 | C3     | editingteacher |
+      | teacher1 | C4     | editingteacher |
+      | teacher1 | C5     | editingteacher |
     And the following "blocks" exist:
       | blockname               | contextlevel | reference | pagetypepattern | defaultregion |
       | recentlyaccessedcourses | System       | 1         | my-index        | content       |
@@ -86,3 +92,24 @@ Feature: The recently accessed courses block allows users to easily access their
     And I follow "Dashboard"
     And I should not see "C1" in the "Recently accessed courses" "block"
     And I should not see "C4" in the "Recently accessed courses" "block"
+
+  Scenario: User has accessed two hidden courses
+    Given I log in as "teacher1"
+    And I should not see "Course 1" in the "Recently accessed courses" "block"
+    And I should not see "Course 2" in the "Recently accessed courses" "block"
+    When I am on "Course 1" course homepage
+    And I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
+      | Course visibility | Hide |
+    And I press "Save and display"
+    And I am on "Course 2" course homepage
+    And I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
+      | Course visibility | Hide |
+    And I follow "Dashboard"
+    And I change window size to "large"
+    Then I should see "Course 1" in the "Recently accessed courses" "block"
+    And I should see "Course 2" in the "Recently accessed courses" "block"
+    And I should not see "Course 3" in the "Recently accessed courses" "block"
+    And I should not see "Course 4" in the "Recently accessed courses" "block"
+    And I should not see "Course 5" in the "Recently accessed courses" "block"
