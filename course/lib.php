@@ -4624,7 +4624,6 @@ function course_get_recent_courses(int $userid = null, int $limit = 0, int $offs
             $favsql
          LEFT JOIN {enrol} eg ON eg.courseid = c.id AND eg.status = :statusenrolg AND eg.enrol = :guestenrol
              WHERE ul.userid = :userid
-               AND c.visible = :visible
                AND (eg.id IS NOT NULL
                     OR EXISTS (SELECT e.id
                              FROM {enrol} e
