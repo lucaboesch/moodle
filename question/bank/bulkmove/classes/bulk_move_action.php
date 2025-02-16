@@ -47,6 +47,11 @@ class bulk_move_action extends \core_question\local\bank\bulk_action_base {
         ];
     }
 
+    #[\Override]
+    public function get_bulk_action_classes(): string {
+        return '';
+    }
+
     /**
      * Initialise the modal js with the current bank context id and question category id.
      * @return void
