@@ -70,6 +70,14 @@ abstract class bulk_action_base extends view_component {
     }
 
     /**
+     * Classes of the bulk action.
+     * If a bulk action needs to have some classes to be added to the entry to show in the list.
+     *
+     * @return string
+     */
+    abstract public function get_bulk_action_classes(): string;
+
+    /**
      * Override if you want to load your own javascript.
      *
      * @return void
