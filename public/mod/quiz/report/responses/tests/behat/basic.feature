@@ -60,11 +60,33 @@ Feature: Basic use of the Responses report
     And I should see "Response 1a"
     And I press "Show report"
     And "Student OneReview attempt" row "Response 1a" column of "responses" table should contain "1.0"
+    And I should see "Student One"
+    And "Student OneReview attempt" row "Response 1aSort by Response 1a Ascending" column of "responses" table should contain "1.0"
     And "Student OneReview attempt" row "Status" column of "responses" table should contain ""
     And "Finished" row "Grade/100.00" column of "responses" table should contain "33.33"
     And "Finished" row "Response 1a" column of "responses" table should contain "3.14"
     And "Student Two" row "Status" column of "responses" table should contain "-"
     And "Student Two" row "Response 1a" column of "responses" table should contain "-"
+    And "Student Two" row "Response 1aSort by Response 1a Ascending" column of "responses" table should contain "-"
+    And I follow "Review attempt"
+    And I should see "Student One" in the "generaltable" "table"
+    And "//img[@title='Student One']" "xpath_element" should not exist
+    And I am on the "Quiz 1" "quiz activity editing" page logged in as "teacher"
+    And I expand all fieldsets
+    And I set the field "Show the user's picture" to "Small image"
+    And I press "Save and return to course"
+    And I am on the "Quiz 1" "mod_quiz > Responses report" page logged in as teacher
+    And I follow "Review attempt"
+    And I should see "Student One" in the "generaltable" "table"
+    And "//img[@title='Student One']" "xpath_element" should exist
+    And I am on the "Quiz 1" "quiz activity editing" page logged in as "teacher"
+    And I expand all fieldsets
+    And I set the field "Show the user's picture" to "Large image"
+    And I press "Save and return to course"
+    And I am on the "Quiz 1" "mod_quiz > Responses report" page logged in as teacher
+    And I follow "Review attempt"
+    Then I should see "Student One" in the "generaltable" "table"
+    And "//img[@title='Student One']" "xpath_element" should exist
 
   @javascript
   Scenario: Report does not allow strange combinations of options
