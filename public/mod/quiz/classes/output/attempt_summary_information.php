@@ -200,11 +200,13 @@ class attempt_summary_information implements renderable, named_templatable {
         $summary = new static();
 
         // Prepare summary information about the whole attempt.
-        if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $USER->id) {
-            // If showuserpicture is true, the picture is shown elsewhere, so don't repeat it.
+        if ($attemptobj->get_userid() != $USER->id) {
             $student = $DB->get_record('user', ['id' => $attemptobj->get_userid()]);
-            $userpicture = new user_picture($student);
-            $userpicture->courseid = $attemptobj->get_courseid();
+            $userpicture = '';
+            if ($attemptobj->get_quiz()->showuserpicture) {
+                $userpicture = new user_picture($student);
+                $userpicture->courseid = $attemptobj->get_courseid();
+            }
             $summary->add_item('user', $userpicture,
                 new action_link(
                     new moodle_url('/user/view.php', ['id' => $student->id, 'course' => $attemptobj->get_courseid()]),
