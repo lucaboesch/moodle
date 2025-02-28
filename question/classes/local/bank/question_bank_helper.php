@@ -484,7 +484,8 @@ class question_bank_helper {
                       JOIN {modules} m ON m.id = cm.module
                       JOIN {{$defaultyactivityname}} q ON q.id = cm.instance AND cm.module = m.id
                      WHERE cm.course = :course
-                       AND q.type = :type";
+                       AND q.type = :type
+                       AND m.name = '{$defaultyactivityname}'";
 
             return $DB->get_fieldset_sql($sql, ['type' => $subtype, 'course' => $course->id]);
         }
