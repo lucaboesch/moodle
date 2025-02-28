@@ -1618,7 +1618,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025031800.04);
     }
 
-<<<<<<< HEAD
     if ($oldversion < 2025032800.01) {
         // Upgrade webp mime type for existing webp files.
         upgrade_create_async_mimetype_upgrade_task('image/webp', ['webp']);
@@ -1685,7 +1684,7 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2025041400.01) {
+    if ($oldversion < 2025051600.01) {
 
         // Changing precision of field name on table badge to (1333).
 
@@ -1703,8 +1702,16 @@ function xmldb_main_upgrade($oldversion) {
         // Launch change of precision for field issuername.
         $dbman->change_field_precision($table, $field);
 
+        // Changing precision of field name on table course_sections to (1333).
+
+        $table = new xmldb_table('course_sections');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'section');
+
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2025041400.01);
+        upgrade_main_savepoint(true, 2025051600.01);
     }
 
     return true;
