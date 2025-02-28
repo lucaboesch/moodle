@@ -1465,6 +1465,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // Uninstall auth_cas and remove dependencies.
     if ($oldversion < 2025030500.00) {
         if (!file_exists($CFG->dirroot . "/auth/cas/version.php")) {
@@ -1609,6 +1610,14 @@ function xmldb_main_upgrade($oldversion) {
         $field = new xmldb_field('issuername', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'usermodified');
 
         // Launch change of precision for field issuername.
+        $dbman->change_field_precision($table, $field);
+
+        // Changing precision of field name on table course_sections to (1333).
+
+        $table = new xmldb_table('course_sections');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'section');
+
+        // Launch change of precision for field name.
         $dbman->change_field_precision($table, $field);
 
         // Main savepoint reached.
