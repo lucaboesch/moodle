@@ -932,7 +932,8 @@ class renderer extends plugin_renderer_base {
         }
 
         if ($content) {
-            return html_writer::div(html_writer::div($content, 'row'), 'container-fluid tertiary-navigation');
+            return html_writer::div(html_writer::div(html_writer::div($content, 'nav-item'), 'row'),
+                'container-fluid tertiary-navigation');
         } else {
             return '';
         }
