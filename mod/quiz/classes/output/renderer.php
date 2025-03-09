@@ -928,11 +928,11 @@ class renderer extends plugin_renderer_base {
 
         if ($viewobj->canedit && !$viewobj->quizhasquestions) {
             $content .= html_writer::link($viewobj->editurl, get_string('addquestion', 'quiz'),
-                    ['class' => 'btn btn-secondary']);
+                ['class' => 'btn btn-secondary mb-0']);
         }
 
         if ($content) {
-            return html_writer::div(html_writer::div($content, 'row'), 'container-fluid tertiary-navigation');
+            return html_writer::div($content, 'tertiary-navigation');
         } else {
             return '';
         }
