@@ -1618,7 +1618,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025031800.04);
     }
 
-<<<<<<< HEAD
     if ($oldversion < 2025032800.01) {
         // Upgrade webp mime type for existing webp files.
         upgrade_create_async_mimetype_upgrade_task('image/webp', ['webp']);
@@ -1709,6 +1708,14 @@ function xmldb_main_upgrade($oldversion) {
         $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'section');
 
         // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Changing precision of field itemname on table grade_items to (1333).
+
+        $table = new xmldb_table('grade_items');
+        $field = new xmldb_field('itemname', XMLDB_TYPE_CHAR, '1333', null, null, null, null, 'categoryid');
+
+        // Launch change of precision for field itemname.
         $dbman->change_field_precision($table, $field);
 
         // Main savepoint reached.
