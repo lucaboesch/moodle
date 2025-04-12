@@ -755,6 +755,7 @@ table.quizreviewsummary td.cell {
     flex: 1 1 auto;
     min-height: 1.7em;
     padding-right: 2px;
+    padding-top: .7em;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer {
@@ -801,7 +802,7 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .section .activity .editing_move {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 1em;
 }
 
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .mod_quiz_random_qbank_link {
