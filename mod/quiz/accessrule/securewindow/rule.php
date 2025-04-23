@@ -62,6 +62,7 @@ class quizaccess_securewindow extends access_rule_base {
         $page->set_popup_notification_allowed(false); // Prevent message notifications.
         $page->set_title($this->quizobj->get_course()->shortname . ': ' . $page->title);
         $page->set_pagelayout('secure');
+        $page->set_heading($this->quizobj->get_quiz_name());
 
         if ($this->quizobj->is_preview_user()) {
             return;
