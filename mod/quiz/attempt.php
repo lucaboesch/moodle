@@ -139,7 +139,7 @@ $PAGE->blocks->add_fake_block($navbc, reset($regions));
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->set_title($attemptobj->attempt_page_title($page));
 $PAGE->add_body_class('limitedwidth');
-$PAGE->set_heading($attemptobj->get_course()->fullname);
+$PAGE->set_heading($attemptobj->get_course()->fullname . moodle_page::TITLE_SEPARATOR . $attemptobj->get_quiz_name());
 $PAGE->activityheader->disable();
 if ($attemptobj->is_last_page($page)) {
     $nextpage = -1;
