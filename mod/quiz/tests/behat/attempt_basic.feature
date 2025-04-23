@@ -257,3 +257,4 @@ Feature: Attempt a quiz
     And I press "Attempt quiz"
     And I switch to a second window
     Then "Student One" "link" should not exist in the "Quiz navigation" "block"
+    And I should see "Quiz 1"
