@@ -257,3 +257,12 @@ Feature: Attempt a quiz
     And I press "Attempt quiz"
     And I switch to a second window
     Then "Student One" "link" should not exist in the "Quiz navigation" "block"
+
+  Scenario: A quiz page on the secure layout shows both the course name and the quiz name
+    Given I am on the "Quiz 1" "quiz activity editing" page logged in as "admin"
+    And I expand all fieldsets
+    And I set the field "Browser security" to "Full screen pop-up with some JavaScript security"
+    And I press "Save and return to course"
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    When I press "Attempt quiz"
+    Then I should see "Course 1 | Quiz 1"
