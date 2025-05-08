@@ -47,6 +47,8 @@ function qbank_supports(string $feature) {
             return false;
         case FEATURE_MOD_PURPOSE:
             return MOD_PURPOSE_CONTENT;
+        case FEATURE_NO_VIEW_LINK:
+            return true;
         default:
             return null;
     }
