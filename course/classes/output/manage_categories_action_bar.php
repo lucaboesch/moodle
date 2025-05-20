@@ -18,6 +18,7 @@ namespace core_course\output;
 
 use moodle_page;
 use moodle_url;
+use single_button;
 
 /**
  * Class responsible for generating the action bar (tertiary nav) elements in the category management page
@@ -154,11 +155,17 @@ class manage_categories_action_bar implements \renderable {
      *              - renderedcontent Rendered content to be displayed in line with the tertiary nav
      */
     public function export_for_template(\renderer_base $output): array {
-        return [
+        $data = [
             'urlselect' => $this->get_dropdown($output),
             'categoryselect' => $this->get_category_select($output),
             'search' => $this->get_search_form(),
             'heading' => $this->heading,
         ];
+
+        if ($this->searchvalue !== '') {
+            $backbutton = new \single_button(new moodle_url('/course/management.php'), get_string('back'), 'get');
+            $data['backbutton'] = $backbutton->export_for_template($output);
+        }
+        return $data;
     }
 }
