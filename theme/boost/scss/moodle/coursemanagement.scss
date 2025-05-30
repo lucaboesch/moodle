@@ -223,9 +223,28 @@
             border: 0;
             margin: 0.4rem 0.2rem 0.45rem;
             font-size: 10.4px;
+            text-decoration: none;
+            color: #fff;
+            background-color: var(--bs-cyan);
+            border-color: var(--bs-cyan);
+            &:hover,
+            &:focus,
+            &:active {
+                background-color: #006778;
+                border-color: #006171;
+            }
 
             &.active-page {
                 @include button-variant($primary, $primary);
+                color: #fff;
+                background-color: $link-color;
+                border-color: $link-color;
+                &:hover,
+                &:focus,
+                &:active {
+                    background-color: $link-hover-color;
+                    border-color: $link-hover-color;
+                }
             }
         }
     }
