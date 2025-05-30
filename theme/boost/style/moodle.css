@@ -31520,6 +31520,14 @@ table.calendartable caption {
   border: 0;
   margin: 0.4rem 0.2rem 0.45rem;
   font-size: 10.4px;
+  text-decoration: none;
+  color: #fff;
+  background-color: var(--bs-cyan);
+  border-color: var(--bs-cyan);
+}
+#course-category-listings .listing-pagination .yui3-button:hover, #course-category-listings .listing-pagination .yui3-button:focus, #course-category-listings .listing-pagination .yui3-button:active {
+  background-color: #006778;
+  border-color: #006171;
 }
 #course-category-listings .listing-pagination .yui3-button.active-page {
   --bs-btn-color: #fff;
@@ -31536,6 +31544,13 @@ table.calendartable caption {
   --bs-btn-disabled-color: #fff;
   --bs-btn-disabled-bg: #0f6cbf;
   --bs-btn-disabled-border-color: #0f6cbf;
+  color: #fff;
+  background-color: #0f6cbf;
+  border-color: #0f6cbf;
+}
+#course-category-listings .listing-pagination .yui3-button.active-page:hover, #course-category-listings .listing-pagination .yui3-button.active-page:focus, #course-category-listings .listing-pagination .yui3-button.active-page:active {
+  background-color: #0c5699;
+  border-color: #0c5699;
 }
 #course-category-listings .listing-pagination-totals {
   text-align: center;
