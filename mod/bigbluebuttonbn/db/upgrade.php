@@ -94,6 +94,20 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
     // Automatically generated Moodle v4.5.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2024100706) {
+
+        // Changing precision of field name on table bigbluebuttonbn to (1333).
+
+        $table = new xmldb_table('bigbluebuttonbn');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'course');
+
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2024100706, 'bigbluebuttonbn');
+    }
+
     return true;
 }
 
