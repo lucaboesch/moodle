@@ -32216,6 +32216,9 @@ table.question-bank-table > tbody > tr.r1 {
 table.question-bank-table > tbody > tr.highlight {
   border: 1px solid #008196;
 }
+table.question-bank-table > tbody > tr.highlight td {
+  border-top: 1px solid #008196;
+}
 table.question-bank-table .checkbox input[type=checkbox] {
   margin-left: 0;
   float: none;
@@ -32251,6 +32254,9 @@ table.question-bank-table .header .dropdown-toggle::after {
 }
 table.question-bank-table .header.checkbox .form-check {
   padding-left: 0;
+}
+table.question-bank-table.generaltable thead th, table.question-bank-table.generaltable thead td {
+  border-bottom: 0;
 }
 
 #page-mod-quiz-edit div.questionbankwindow div.header {
