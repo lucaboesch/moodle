@@ -159,6 +159,9 @@ table.question-bank-table {
 
     & > tbody > tr.highlight {
         border: $border-width solid $info;
+        td {
+            border-top: 1px solid $info;
+        }
     }
 
     .checkbox input[type="checkbox"] {
@@ -203,6 +206,10 @@ table.question-bank-table {
         &.checkbox .form-check {
             padding-left: 0;
         }
+    }
+    &.generaltable thead th,
+    &.generaltable thead td {
+        border-bottom: 0;
     }
 }
 
