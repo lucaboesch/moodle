@@ -211,6 +211,13 @@ table.question-bank-table {
             padding-left: 0;
         }
     }
+    &.generaltable tr.highlight
+    td {
+        border-top: 1px solid $info;
+    }
+    &generaltable > :not(caption) > * > * {
+        border-bottom-width: 0;
+    }
 }
 
 #page-mod-quiz-edit {
