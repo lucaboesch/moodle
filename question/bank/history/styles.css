@@ -1,0 +1,4 @@
+a.dropdown-item.menu-action[href*='question/bank/history/history.php'] img,
+.question-version-number a[href*="question/bank/history/history.php"] img {
+    width: 1.25em;
+}
