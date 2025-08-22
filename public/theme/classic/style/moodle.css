@@ -30209,6 +30209,9 @@ table.calendartable caption {
   [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendarwrapper .next .arrow_text {
     display: none;
   }
+  [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth {
+    border-top: none;
+  }
   [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth th,
   [data-blockregion]:not([data-blockregion=content]) .block.block_calendar_month .maincalendar .calendartable.calendarmonth td {
     border: none;
@@ -30255,6 +30258,9 @@ table.calendartable caption {
   }
 }
 @media (max-width: 768px) {
+  .maincalendar .calendartable.calendarmonth {
+    border-top: none;
+  }
   .maincalendar .calendartable.calendarmonth th,
   .maincalendar .calendartable.calendarmonth td {
     border: none;

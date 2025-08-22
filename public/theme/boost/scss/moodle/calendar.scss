@@ -637,6 +637,7 @@ table.calendartable caption {
 
                     .calendartable {
                         &.calendarmonth {
+                            border-top: none;
                             th,
                             td {
                                 border: none;
@@ -691,6 +692,7 @@ table.calendartable caption {
     .maincalendar {
         .calendartable {
             &.calendarmonth {
+                border-top: none;
                 th,
                 td {
                     border: none;
