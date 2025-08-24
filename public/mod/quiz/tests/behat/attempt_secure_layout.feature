@@ -39,6 +39,10 @@ Feature: Attempt a quiz in secure layout
   Scenario: A quiz page on the secure layout shows both the course name and the quiz name
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     When I press "Attempt quiz"
-    Then I should see "Course 1"
+    And I should see "Course 1"
     And I should see "Quiz 1"
     And I should see "Quiz 1 description"
+    And I press "Attempt quiz"
+    And I switch to a second window
+    Then I should see "Quiz 1"
+    But I should not see "Quiz 1 description"
