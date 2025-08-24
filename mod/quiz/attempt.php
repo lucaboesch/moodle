@@ -140,6 +140,12 @@ $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->set_title($attemptobj->attempt_page_title($page));
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($attemptobj->get_course()->fullname);
+if ($PAGE->pagelayout == 'secure' && isset($page)) {
+    // Show the activity header (but only the name) in the secure layout on quiz pages.
+    $PAGE->activityheader->set_attrs([
+        'description' => '',
+    ]);
+}
 if ($PAGE->pagelayout !== 'secure') {
     $PAGE->activityheader->disable();
 }
