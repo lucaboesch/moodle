@@ -1357,7 +1357,7 @@ function glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mo
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
     if ($aliases || $icons || !empty($entry->rating)) {
-        echo '<table>';
+        echo '<table class="table table-borderless">';
         if ( $aliases ) {
             $id = "keyword-{$entry->id}";
             echo '<tr valign="top"><td class="aliases hstack gap-2">' .
