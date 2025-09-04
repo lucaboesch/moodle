@@ -407,7 +407,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         $options->trusted = $entry->definitiontrust;
         $options->context = $context;
 
-        $output = '<table class="glossarypost dictionary" cellspacing="0">' . "\n";
+        $output = '<table class="glossarypost dictionary table table-borderless" cellspacing="0">' . "\n";
         $output .= '<tr valign="top">' . "\n";
         $output .= '<td class="entry">' . "\n";
 
