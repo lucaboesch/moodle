@@ -33877,7 +33877,7 @@ table.question-bank-table th {
   text-align: left;
 }
 table.question-bank-table > tbody > tr.r1 {
-  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.03);
 }
 table.question-bank-table > tbody > tr.highlight {
   border: 1px solid #008196;
