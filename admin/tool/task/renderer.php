@@ -259,7 +259,11 @@ class tool_task_renderer extends plugin_renderer_base {
             get_string('actions','tool_task'),
         ];
 
+<<<<<<< HEAD
         $table->attributes['class'] = 'generaltable table table-hover';
+=======
+        $table->attributes['class'] = 'table generaltable';
+>>>>>>> d7435754990 (MDL-86842 tool_task: style tables correctly.)
         $table->colclasses = [];
 
         // For each task entry (row) show action buttons/logs link depending on the user permissions.
@@ -384,7 +388,11 @@ class tool_task_renderer extends plugin_renderer_base {
             get_string('default', 'tool_task'),
         ];
 
+<<<<<<< HEAD
         $table->attributes['class'] = 'admintable generaltable table table-hover';
+=======
+        $table->attributes['class'] = 'admintable table generaltable';
+>>>>>>> d7435754990 (MDL-86842 tool_task: style tables correctly.)
         $table->colclasses = [];
 
         if (!$showloglink) {
