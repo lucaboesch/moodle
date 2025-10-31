@@ -332,6 +332,10 @@ span.unread {
     outline: 0;
 }
 
+.path-mod-forum #mformforum .col-md-9 .d-flex.flex-wrap.align-items-center {
+    justify-content: flex-end !important; /* stylelint-disable-line declaration-no-important */
+}
+
 /* This style is copied directly from the Bootstrap reboot file which adds button outline */
 /* stylelint-disable declaration-block-no-duplicate-properties */
 .post-actions .btn:focus {
