@@ -388,7 +388,7 @@ class tool_task_renderer extends plugin_renderer_base {
             get_string('default', 'tool_task'),
         ];
 
-        $table->attributes['class'] = 'admintable table generaltable table-hover';
+        $table->attributes['class'] = 'admintable table generaltable table-striped table-hover';
         $table->colclasses = [];
 
         if (!$showloglink) {
