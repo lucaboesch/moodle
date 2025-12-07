@@ -116,6 +116,12 @@ abstract class exporter {
     final public function export(renderer_base $output) {
         $data = new stdClass();
         $properties = self::read_properties_definition();
+        if (isset($this->data->shortname)) {
+            $this->data->shortname = clean_string($this->data->shortname);
+        }
+        if (isset($this->data->fullname)) {
+            $this->data->fullname = clean_string($this->data->fullname);
+        }
         $values = (array) $this->data;
 
         $othervalues = $this->get_other_values($output);
