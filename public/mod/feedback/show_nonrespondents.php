@@ -70,8 +70,6 @@ $coursecontext = context_course::instance($course->id);
 
 require_login($course, true, $cm);
 
-$actionbar = new \mod_feedback\output\responses_action_bar($cm->id, $url);
-
 require_capability('mod/feedback:viewreports', $context);
 
 $currentgroup = groups_get_activity_group($cm, true);
@@ -154,7 +152,12 @@ echo $OUTPUT->header();
 
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');
-echo $renderer->main_action_bar($actionbar);
+$anonymous = false;
+if ($feedback->anonymous != FEEDBACK_ANONYMOUS_NO OR $feedback->course == SITEID) {
+    $anonymous = true;
+}
+$resultsnav = new \mod_feedback\output\responses_action_bar($cm, $url, $anonymous);
+echo $renderer->render($resultsnav);
 if (!manager::can_see_others_in_groups($cm)) {
     // The user is not in a group so show message and exit.
     echo $OUTPUT->notification(get_string('notingroup'));

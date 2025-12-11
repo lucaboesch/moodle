@@ -16,8 +16,12 @@
 
 namespace mod_feedback\output;
 
+use renderable;
+use renderer_base;
+use templatable;
 use moodle_url;
-use url_select;
+use core\output\select_menu;
+use tool_brickfield\local\htmlchecker\common\body_color_contrast;
 
 /**
  * Class responses_action_bar. The tertiary nav for the responses page
@@ -26,47 +30,66 @@ use url_select;
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package mod_feedback
  */
-class responses_action_bar extends base_action_bar {
-    /** @var moodle_url $currenturl The current page url */
-    private $currenturl;
+class responses_action_bar implements renderable, templatable {
+    /** @var \cm_info course module information */
+    protected $cm;
+    /** @var moodle_url The current url for this page. */
+    protected $currenturl;
+    /** @var bool Whether the feedback is anonymous */
+    protected $anonymous;
 
     /**
      * responses_action_bar constructor.
      *
-     * @param int $cmid The cmid for the module we are operating on
+     * @param \cm_info $cm course module information.
      * @param moodle_url $pageurl The current page url
+     * @param bool $anonymous whether the feedback is anonymous
      */
-    public function __construct(int $cmid, moodle_url $pageurl) {
-        parent::__construct($cmid);
+    public function __construct(\cm_info $cm, moodle_url $pageurl, bool $anonymous) {
+        $this->cm = $cm;
         $this->currenturl = $pageurl;
-        $this->urlparams['courseid'] = $this->course->id;
+        $this->anonymous = $anonymous;
     }
 
     /**
-     * Return the items to be used in the tertiary nav
-     *
+     * Export this object for template rendering.
+     * @param \renderer_base $output the output renderer
      * @return array
      */
-    public function get_items(): array {
-        $items = [];
-        if (has_capability('mod/feedback:viewreports', $this->context)) {
-            $reporturl = new moodle_url('/mod/feedback/show_entries.php', $this->urlparams);
-            $options[$reporturl->out(false)] = get_string('show_entries', 'feedback');
-            $selected = $this->currenturl->compare($reporturl, URL_MATCH_BASE) ? $reporturl : $this->currenturl;
+    public function export_for_template(renderer_base $output): array {
+        global $PAGE;
+        if (has_capability('mod/feedback:viewreports', $this->cm->context)) {
+            // Build the navigation drop-down.
+            $reporturl = new moodle_url(
+                '/mod/feedback/show_entries.php',
+                ['id' => $this->cm->id],
+            );
+            $nonrespondenturl = new moodle_url(
+                '/mod/feedback/show_nonrespondents.php',
+                ['id' => $this->cm->id],
+            );
 
-            if ($this->feedback->anonymous == FEEDBACK_ANONYMOUS_NO && $this->course->id != SITEID) {
-                $nonrespondenturl = new moodle_url('/mod/feedback/show_nonrespondents.php', $this->urlparams);
-                $options[$nonrespondenturl->out(false)] = get_string('show_nonrespondents', 'feedback');
-                $selected = $this->currenturl->compare($nonrespondenturl, URL_MATCH_BASE) ? $nonrespondenturl : $this->currenturl;;
-            }
+            if (!$this->anonymous) {
+                $menu = [
+                    $reporturl->out(false) => get_string('show_entries', 'feedback'),
+                    $nonrespondenturl->out(false) => get_string('show_nonrespondents', 'feedback'),
+                ];
+                $responsesnav = new select_menu(
+                    'resultselector',
+                    $menu,
+                    $PAGE->url->out(false),
+                );
+                $responsesnav->set_label(
+                    get_string('responses', 'feedback'),
+                    ['class' => 'visually-hidden']
+                );
 
-            // Don't show the dropdown if it's only a single item.
-            if (count($options) != 1) {
-                $items['left'][]['urlselect'] = new url_select($options,
-                    $selected->out(false),
-                    null);
+                return [
+                    'navigation' => $responsesnav->export_for_template($output),
+                    'headinglevel' => 2,
+                ];
             }
         }
-        return $items;
+    return [];
     }
 }
