@@ -89,11 +89,33 @@ $activityheader->set_attrs([
     'hidecompletion' => true,
     'title' => $activityheader->is_title_allowed() ? format_string($assign->name, true, ['context' => $context]) : ""
 ]);
+
+// Work out what else needs to be displayed.
+$addenabled = true;
+if ($canedit) {
+    if ($groupmode) {
+        if (empty($groups)) {
+            // There are no groups.
+            $addenabled = false;
+        }
+    } else {
+        $info = new \core_availability\info_module($cm);
+        $users = $info->filter_user_list($users);
+
+        if (empty($users)) {
+            // There are no students.
+            $addenabled = false;
+        }
+    }
+}
+$canedit = has_capability('mod/quiz:manageoverrides', $context);
+
+// Tertiary navigation.
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('overrides', 'mod_assign'), 2);
-$overridemenu = new \mod_assign\output\override_actionmenu($url, $cm);
 $renderer = $PAGE->get_renderer('mod_assign');
-echo $renderer->render($overridemenu);
+$tertiarynav = new \mod_assign\output\override_actionmenu($url, $cm, $mode, $canedit, $addenabled);
+echo $renderer->render($tertiarynav);
 
 // Delete orphaned group overrides.
 $sql = 'SELECT o.id
