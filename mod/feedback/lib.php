@@ -2478,7 +2478,7 @@ function feedback_send_email($cm, $feedback, $course, $user, $completed = null) 
                 }
             }
 
-            $a = array('username' => $info->username, 'feedbackname' => $feedback->name);
+            $a = ['username' => $info->username, 'feedbackname' => format_string($feedback->name, true)];
 
             $postsubject = get_string('feedbackcompleted', 'feedback', $a);
             $posttext = feedback_send_email_text($info, $course);
@@ -2572,7 +2572,7 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $info->feedback = format_string($feedback->name, true);
             $info->url = $CFG->wwwroot.'/mod/feedback/show_entries.php?id=' . $cm->id;
 
-            $a = array('username' => $info->username, 'feedbackname' => $feedback->name);
+            $a = ['username' => $info->username, 'feedbackname' => format_string($feedback->name, true)];
 
             $postsubject = get_string('feedbackcompleted', 'feedback', $a);
             $posttext = feedback_send_email_text($info, $course);
