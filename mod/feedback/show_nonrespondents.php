@@ -292,11 +292,11 @@ if (empty($students)) {
         echo $OUTPUT->container(html_writer::link($allurl, get_string('showall', '', $matchcount)), array(), 'showall');
     }
     if ($canbulkmessaging) {
-        echo '<fieldset class="clearfix">';
+        echo '<fieldset class="clearfix border-bottom-0">';
         echo '<legend class="ftoggler">'.get_string('send_message', 'feedback').'</legend>';
-        echo '<div>';
+        echo '<div class="d-flex flex-column flex-md-row flex-wrap align-items-md-center gap-2 mb-3">';
         echo '<label for="feedback_subject">'.get_string('subject', 'feedback').'&nbsp;</label>';
-        echo '<input type="text" id="feedback_subject" size="50" maxlength="255" name="subject" value="'.s($subject).'" />';
+        echo '<input type="text" id="feedback_subject" size="50" maxlength="255" name="subject" value="'.s($subject).'" class="form-control"/>';
         echo '</div>';
         echo $OUTPUT->print_textarea('message', 'edit-message', $message, 15, 25);
         print_string('formathtml');
