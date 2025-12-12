@@ -995,9 +995,11 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
                     $checkbox = new \core\output\checkbox_toggleall('lesson-attempts', false, [
                         'id' => $attemptid,
                         'name' => $attemptname,
-                        'label' => $attemptlink
+                        'label' => $attemptlink,
+                        'classes' => 'form-check-input',
+                        'labelclasses' => 'form-check-label',
                     ]);
-                    $attemptlink = $OUTPUT->render($checkbox);
+                    $attemptlink = html_writer::div($OUTPUT->render($checkbox), 'form-check');
                 }
 
                 // build up the attempts array
