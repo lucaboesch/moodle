@@ -142,8 +142,10 @@ $PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 if ($PAGE->pagelayout === 'secure') {
     // Show the activity header (but only the name) in the secure layout on quiz pages.
+    // Don't show the completion info which would include the activitydates to reduce clutter.
     $PAGE->activityheader->set_attrs([
         'description' => '',
+        'hidecompletion' => true,
     ]);
 } else {
     $PAGE->activityheader->disable();
