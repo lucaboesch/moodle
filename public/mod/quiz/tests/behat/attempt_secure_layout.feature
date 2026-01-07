@@ -15,8 +15,8 @@ Feature: Attempt a quiz in secure layout
       | user    | course | role    |
       | student | C1     | student |
     And the following "activities" exist:
-      | activity | name   | intro              | course | idnumber | grade | navmethod | browsersecurity | showuserpicture |
-      | quiz     | Quiz 1 | Quiz 1 description | C1     | quiz1    | 100   | free      | securewindow    | 2               |
+      | activity | name   | intro              | course | idnumber | grade | navmethod | browsersecurity | showuserpicture | timeopen      | timeclose    |
+      | quiz     | Quiz 1 | Quiz 1 description | C1     | quiz1    | 100   | free      | securewindow    | 2               | ##yesterday## | ##tomorrow## |
     And the following "question categories" exist:
       | contextlevel    | reference | name           |
       | Activity module | quiz1     | Test questions |
@@ -44,3 +44,5 @@ Feature: Attempt a quiz in secure layout
     Then I should see "Course 1"
     And I should see "Quiz 1"
     But I should not see "Quiz 1 description"
+    And I should not see "Opened:"
+    And I should not see "Closes:"
