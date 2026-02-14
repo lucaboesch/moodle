@@ -79,3 +79,4 @@ Feature: Attempt a quiz in secure layout
     But I should not see "Quiz 1 description"
     And I should not see "Opened:"
     And I should not see "Closes:"
+    And I should not see "Back"
