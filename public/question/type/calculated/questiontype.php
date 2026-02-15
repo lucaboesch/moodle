@@ -1511,13 +1511,22 @@ class qtype_calculated extends question_type {
                 FROM {question_dataset_definitions} a, {question_datasets} b
                WHERE a.id = b.datasetdefinition AND a.type = '1' AND b.question = ? AND " . $DB->sql_equal('a.name', '?');
             $currentdatasetdef = $DB->get_record_sql($sql, [$form->id, $name]);
-            if (!$currentdatasetdef) {
+            if ($currentdatasetdef) {
+                $currentdatasetdef->hasitems = $DB->record_exists(
+                    'question_dataset_items',
+                    ['definition' => $currentdatasetdef->id]
+                );
+            } else {
                 $currentdatasetdef = new stdClass();
+                $currentdatasetdef->hasitems = false;
                 $currentdatasetdef->type = '0';
             }
             $key = "{$type}-0-{$name}";
-            if ($currentdatasetdef->type == $type
-                    && $currentdatasetdef->category == 0) {
+            if (
+                $currentdatasetdef->type == $type
+                && $currentdatasetdef->category == 0
+                && $currentdatasetdef->hasitems
+            ) {
                 $options[$key] = get_string($prefix."keptlocal{$type}", $langfile);
             } else {
                 $options[$key] = get_string($prefix."newlocal{$type}", $langfile);
