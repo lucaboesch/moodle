@@ -754,9 +754,9 @@ class api {
                 $convcontext = \context::instance_by_id($conversation->contextid);
                 $contexttodeletemessageforall = $convcontext;
             }
-            $conv->name = format_string($conversation->conversationname, true, ['context' => $convcontext]);
+            $conv->name = clean_string(format_string($conversation->conversationname, true, ['context' => $convcontext]));
 
-            $conv->subname = $convextrafields[$conv->id]['subname'] ?? null;
+            $conv->subname = clean_string($convextrafields[$conv->id]['subname']) ?? null;
             $conv->imageurl = $convextrafields[$conv->id]['imageurl'] ?? null;
             $conv->type = $conversation->conversationtype;
             $conv->membercount = $membercounts[$conv->id]->membercount;

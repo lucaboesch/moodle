@@ -6,8 +6,8 @@ Feature: Star and unstar conversations
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category | groupmode |
-      | Course 1 | C1        | 0        | 1         |
+      | fullname           | shortname | category | groupmode |
+      | Course 1 ' & " < > | C1        | 0        | 1         |
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
@@ -17,8 +17,8 @@ Feature: Star and unstar conversations
       | student1 | C1     | student |
       | student2 | C1     | student |
     And the following "groups" exist:
-      | name    | course | idnumber | enablemessaging |
-      | Group 1 | C1     | G1       | 1               |
+      | name              | course | idnumber | enablemessaging |
+      | Group 1 ' & " < > | C1     | G1       | 1               |
     And the following "group members" exist:
       | user     | group |
       | student1 | G1 |
@@ -31,13 +31,13 @@ Feature: Star and unstar conversations
     Given I log in as "student1"
     Then I open messaging
     And I open the "Group" conversations list
-    And "Group 1" "core_message > Message" should exist
-    And I select "Group 1" conversation in messaging
+    And "Group 1 ' & \" < >" "core_message > Message" should exist
+    And I select "Group 1 ' & " conversation in messaging
     And I open contact menu
     And I click on "Star conversation" "link" in the "conversation-actions-menu" "region"
     And I go back in "view-conversation" message drawer
     And I open the "Starred" conversations list
-    And I should see "Group 1" in the "favourites" "core_message > Message list area"
+    And I should see "Group 1 ' & \" < >" in the "favourites" "core_message > Message list area"
     And I open the "Group" conversations list
     And I should not see "Group 1" in the "group-messages" "core_message > Message list area"
 
