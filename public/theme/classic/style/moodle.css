@@ -39435,7 +39435,7 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   z-index: 2;
 }
 .drawer-toggles .drawer-toggler .btn {
-  padding: 8px;
+  padding: 6px 8px 10px 8px;
   margin: auto 16px;
   background-color: #dee2e6;
 }

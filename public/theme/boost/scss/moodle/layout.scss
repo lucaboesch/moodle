@@ -88,7 +88,7 @@
         top: calc(#{$navbar-height} + 1rem);
         z-index: 2;
         .btn {
-            padding: 8px;
+            padding: 6px 8px 10px 8px;
             margin: auto 16px;
             background-color: $gray-300;
             .icon {
