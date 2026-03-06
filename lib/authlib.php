@@ -762,6 +762,7 @@ class auth_plugin_base {
             if ($idp['url'] instanceof moodle_url) {
                 $idp['url'] = $idp['url']->out(false);
             }
+            $idp['name'] = format_string($idp['name'], options: ['context' => \core\context\system::instance()]);
             $data[] = $idp;
         }
         return $data;
