@@ -55,9 +55,21 @@ if (!empty($userfieldmappingid)) {
 
 if ($action == 'edit') {
     if ($userfieldmapping) {
-        $PAGE->navbar->add(get_string('edituserfieldmapping', 'tool_oauth2', s($issuer->get('name'))));
+        $PAGE->navbar->add(
+            get_string(
+                'edituserfieldmapping',
+                'tool_oauth2',
+                format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+            )
+        );
     } else {
-        $PAGE->navbar->add(get_string('createnewuserfieldmapping', 'tool_oauth2', s($issuer->get('name'))));
+        $PAGE->navbar->add(
+            get_string(
+                'createnewuserfieldmapping',
+                'tool_oauth2',
+                format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+            )
+        );
     }
 
     $mform = new \tool_oauth2\form\user_field_mapping(null, ['persistent' => $userfieldmapping, 'issuerid' => $issuerid]);
@@ -82,9 +94,21 @@ if ($mform && $mform->is_cancelled()) {
     } else {
         echo $OUTPUT->header();
         if ($issuer) {
-            echo $OUTPUT->heading(get_string('edituserfieldmapping', 'tool_oauth2', s($issuer->get('name'))));
+            echo $OUTPUT->heading(
+                get_string(
+                    'edituserfieldmapping',
+                    'tool_oauth2',
+                    format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+                )
+            );
         } else {
-            echo $OUTPUT->heading(get_string('createnewuserfieldmapping', 'tool_oauth2', s($issuer->get('name'))));
+            echo $OUTPUT->heading(
+                get_string(
+                    'createnewuserfieldmapping',
+                    'tool_oauth2',
+                    format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+                )
+            );
         }
         $mform->display();
         echo $OUTPUT->footer();
@@ -103,7 +127,11 @@ if ($mform && $mform->is_cancelled()) {
         $continueurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', $continueparams);
         $cancelurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php');
         echo $OUTPUT->header();
-        $str = get_string('deleteuserfieldmappingconfirm', 'tool_oauth2', s($issuer->get('name')));
+        $str = get_string(
+            'deleteuserfieldmappingconfirm',
+            'tool_oauth2',
+            format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+        );
         echo $OUTPUT->confirm($str, $continueurl, $cancelurl);
         echo $OUTPUT->footer();
     } else {
@@ -114,11 +142,24 @@ if ($mform && $mform->is_cancelled()) {
 
 } else {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('userfieldmappingsforissuer', 'tool_oauth2', s($issuer->get('name'))));
+    echo $OUTPUT->heading(
+        get_string(
+            'userfieldmappingsforissuer',
+            'tool_oauth2',
+            format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+        )
+    );
     $userfieldmappings = core\oauth2\api::get_user_field_mappings($issuer);
     echo $renderer->user_field_mappings_table($userfieldmappings, $issuerid);
 
     $addurl = new moodle_url('/admin/tool/oauth2/userfieldmappings.php', ['action' => 'edit', 'issuerid' => $issuerid]);
-    echo $renderer->single_button($addurl, get_string('createnewuserfieldmapping', 'tool_oauth2', s($issuer->get('name'))));
+    echo $renderer->single_button(
+        $addurl,
+        get_string(
+            'createnewuserfieldmapping',
+            'tool_oauth2',
+            format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+        )
+    );
     echo $OUTPUT->footer();
 }

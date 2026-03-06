@@ -64,12 +64,15 @@ Feature: Test if the login form provides the correct feedback
 
   Scenario: Set OAuth providers
     Given I log in as "admin"
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     And I navigate to "Plugins > Authentication > Manage authentication" in site administration
     And I click on "Enable" "link" in the "OAuth 2" "table_row"
     And I navigate to "Server > OAuth 2 services" in site administration
     And I press "Google"
     And I set the field "Client ID" to "1234"
     And I set the field "Client secret" to "1234"
+    And I set the field "Name" to "<span class=\"multilang\" lang=\"en\">Google</span><span class=\"multilang\" lang=\"de\">elgooG</span>"
     And I press "Save changes"
     And I press "Facebook"
     And I set the field "Client ID" to "1234"
@@ -82,6 +85,7 @@ Feature: Test if the login form provides the correct feedback
     And I log out
     And I am on homepage
     Then I should see "Google"
+    But I should not see "elgooG"
     And I should see "Facebook"
     And I should see "Microsoft"
 

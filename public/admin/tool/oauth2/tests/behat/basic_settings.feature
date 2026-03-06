@@ -351,3 +351,20 @@ Feature: Basic OAuth2 functionality
     And I press "Save changes"
     And I click on "Edit" "link" in the "Custom service" "table_row"
     Then the field "Authenticate token requests via HTTP headers" matches value ""
+
+  Scenario: Editing OAuth providers
+    Given I log in as "admin"
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    When I navigate to "Plugins > Authentication > Manage authentication" in site administration
+    And I click on "Enable" "link" in the "OAuth 2" "table_row"
+    And I navigate to "Server > OAuth 2 services" in site administration
+    And I press "Google"
+    And I set the field "Client ID" to "1234"
+    And I set the field "Client secret" to "1234"
+    And I set the field "Name" to "<span class=\"multilang\" lang=\"en\">Google</span><span class=\"multilang\" lang=\"de\">elgooG</span>"
+    And I press "Save changes"
+    And I should not see "multilang"
+    And I click on "Edit" "link" in the "Google" "table_row"
+    Then I should see "Edit identity issuer: Google"
+    And I should not see "Edit identity issuer: <span class=\"multilang\""
