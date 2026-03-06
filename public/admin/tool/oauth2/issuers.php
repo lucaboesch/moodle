@@ -51,7 +51,13 @@ if ($issuerid) {
 
 if ($action == 'edit') {
     if ($issuer) {
-        $PAGE->navbar->add(get_string('editissuer', 'tool_oauth2', s($issuer->get('name'))));
+        $PAGE->navbar->add(
+            get_string(
+                'editissuer',
+                'tool_oauth2',
+                format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+            )
+        );
     } else {
         $PAGE->navbar->add(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string('custom_service', 'tool_oauth2'));
     }
@@ -77,7 +83,13 @@ if ($mform && $mform->is_cancelled()) {
     } else {
         echo $OUTPUT->header();
         if ($issuer) {
-            echo $OUTPUT->heading(get_string('editissuer', 'tool_oauth2', s($issuer->get('name'))));
+            echo $OUTPUT->heading(
+                get_string(
+                    'editissuer',
+                    'tool_oauth2',
+                    format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+                )
+            );
         } else {
             echo $OUTPUT->heading(get_string('createnewservice', 'tool_oauth2') . ' ' . get_string('custom_service', 'tool_oauth2'));
         }
@@ -140,7 +152,15 @@ if ($mform && $mform->is_cancelled()) {
         $continueurl = new moodle_url('/admin/tool/oauth2/issuers.php', $continueparams);
         $cancelurl = new moodle_url('/admin/tool/oauth2/issuers.php');
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('deleteconfirm', 'tool_oauth2', s($issuer->get('name'))), $continueurl, $cancelurl);
+        echo $OUTPUT->confirm(
+            get_string(
+                'deleteconfirm',
+                'tool_oauth2',
+                format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+            ),
+            $continueurl,
+            $cancelurl
+        );
         echo $OUTPUT->footer();
     } else {
         require_sesskey();
@@ -155,7 +175,15 @@ if ($mform && $mform->is_cancelled()) {
         $continueurl = new moodle_url('/admin/tool/oauth2/issuers.php', $continueparams);
         $cancelurl = new moodle_url('/admin/tool/oauth2/issuers.php');
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('authconfirm', 'tool_oauth2', s($issuer->get('name'))), $continueurl, $cancelurl);
+        echo $OUTPUT->confirm(
+            get_string(
+                'authconfirm',
+                'tool_oauth2',
+                format_string($issuer->get('name'), options: ['context' => \core\context\system::instance()])
+            ),
+            $continueurl,
+            $cancelurl
+        );
         echo $OUTPUT->footer();
     } else {
         require_sesskey();
