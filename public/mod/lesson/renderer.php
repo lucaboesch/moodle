@@ -94,11 +94,18 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @return <type>
      */
     public function lesson_inaccessible($message) {
-        global $CFG;
         $output  =  $this->output->box_start('generalbox boxaligncenter');
         $output .=  $this->output->box_start('center');
         $output .=  $message;
-        $output .=  $this->output->box('<a href="'.$CFG->wwwroot.'/course/view.php?id='. $this->page->course->id .'">'. get_string('returnto', 'lesson', format_string($this->page->course->fullname, true)) .'</a>', 'lessonbutton standardbutton');
+        $output .= $this->output->box(html_writer::link(
+            new moodle_url('/course/view.php', ['id' => $this->page->course->id]),
+            get_string(
+                'returnto',
+                'lesson',
+                format_string($this->page->course->fullname, options: ['context' => context_module::instance($this->page->cm->id)]),
+            ),
+            ['class' => 'btn btn-secondary'],
+        ));
         $output .=  $this->output->box_end();
         $output .=  $this->output->box_end();
         return $output;
@@ -111,21 +118,58 @@ class mod_lesson_renderer extends plugin_renderer_base {
      * @return string
      */
     public function login_prompt(lesson $lesson, $failedattempt = false) {
-        global $CFG;
         $output  = $this->output->box_start('password-form');
         $output .= $this->output->box_start('generalbox boxaligncenter');
-        $output .=  '<form id="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php" autocomplete="off">';
-        $output .=  '<fieldset class="invisiblefieldset center">';
-        $output .=  '<input type="hidden" name="id" value="'. $this->page->cm->id .'" />';
-        $output .=  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+        $output .= html_writer::start_tag('form', [
+            'id' => 'password',
+            'method' => 'post',
+            'action' => new moodle_url('/mod/lesson/view.php'),
+            'autocomplete' => 'off',
+        ]);
+        $output .= html_writer::start_tag('fieldset', ['class' => 'invisiblefieldset center']);
+        $output .= html_writer::empty_tag('input', [
+            'type' => 'hidden',
+            'name' => 'id',
+            'value' => $this->page->cm->id,
+        ]);
+        $output .= html_writer::empty_tag('input', [
+            'type' => 'hidden',
+            'name' => 'sesskey',
+            'value' => sesskey(),
+        ]);
         if ($failedattempt) {
             $output .=  $this->output->notification(get_string('loginfail', 'lesson'));
         }
-        $output .= get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)).'<br /><br />';
-        $output .= get_string('enterpassword', 'lesson')." <input type=\"password\" name=\"userpassword\" /><br /><br />";
-        $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' value='".get_string('continue', 'lesson')."' /></div>";
-        $output .= " <div class='lessonbutton standardbutton submitbutton'><input type='submit' name='backtocourse' value='".get_string('cancel', 'lesson')."' /></div>";
-        $output .=  '</fieldset></form>';
+        $output .= get_string(
+            'passwordprotectedlesson',
+            'lesson',
+            format_string($lesson->name, options: ['context' => context_module::instance($this->page->cm->id)]),
+        ) . '<br /><br />';
+        $output .= html_writer::label(
+            get_string('enterpassword', 'lesson'),
+            'login_password_protected_lesson',
+        ) . '<br />';
+        $output .= html_writer::empty_tag('input', [
+                'type' => 'password',
+                'name' => 'userpassword',
+                'id' => 'login_password_protected_lesson',
+                'class' => 'form-control',
+            ]) . '<br /><br />';
+        $output .= html_writer::start_div('d-flex gap-2 flex-wrap');
+        $output .= html_writer::empty_tag('input', [
+            'type' => 'submit',
+            'class' => 'btn btn-primary order-last',
+            'value' => get_string('continue', 'lesson'),
+        ]);
+        $output .= html_writer::empty_tag('input', [
+            'type' => 'submit',
+            'class' => 'btn btn-secondary order-first',
+            'name' => 'backtocourse',
+            'value' => get_string('cancel', 'lesson'),
+        ]);
+        $output .= html_writer::end_div();
+        $output .= html_writer::end_tag('fieldset');
+        $output .= html_writer::end_tag('form');
         $output .=  $this->output->box_end();
         $output .=  $this->output->box_end();
         return $output;
