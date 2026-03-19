@@ -10,8 +10,8 @@ Feature: Cohorts can be synchronized with learning plans
       | user1    | User      | One      | user1@example.com |
       | user2    | User      | Two      | user2@example.com |
     And the following "cohorts" exist:
-      | name     | idnumber |
-      | Cohort 1 | CH1      |
+      | name                                                                                                | idnumber |
+      | <span class="multilang" lang="en">Cohort 1</span><span class="multilang" lang="de">Kohorte 1</span> | CH1      |
     And the following "cohort members" exist:
       | user  | cohort |
       | user1 | CH1    |
@@ -32,6 +32,8 @@ Feature: Cohorts can be synchronized with learning plans
   @javascript
   Scenario: Cohorts can be synchronised with learning plans
     Given I log in as "admin"
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     # Navigate to the list of learning plan templates in order to add cohorts.
     And I navigate to "Competencies > Learning plan templates" in site administration
     When I click on "Add cohorts to sync" of edit menu in the "LPT1" row
@@ -46,6 +48,7 @@ Feature: Cohorts can be synchronized with learning plans
     And the following should exist in the "generaltable" table:
       | Name     | Cohort ID |
       | Cohort 1 | CH1       |
+    And I should not see "Kohorte"
     # Navigate back to the list of learning plan templates to view updated list.
     And I navigate to "Competencies > Learning plan templates" in site administration
     # Confirm that the added cohort and learning plans are now reflected on the list of Learning plan templates.
