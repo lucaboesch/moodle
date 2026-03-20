@@ -477,7 +477,7 @@ class tool_task_renderer extends plugin_renderer_base {
                 $classes[] = 'disabled';
             }
             if (get_class($task) == $lastchanged) {
-                $classes[] = 'table-primary';
+                $classes[] = 'table-primary text-scheduledtaskstableprimary';
             }
             $row->attributes['class'] = implode(' ', $classes);
             $data[] = $row;
