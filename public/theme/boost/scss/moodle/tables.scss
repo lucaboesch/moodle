@@ -77,3 +77,8 @@ table {
         }
     }
 }
+
+#page-admin-roles-override #overriderolestable .text-overriderolestablewarning {
+    background-color: #e9ddcc !important; /* stylelint-disable-line declaration-no-important */
+}
+
