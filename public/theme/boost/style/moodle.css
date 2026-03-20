@@ -43047,6 +43047,10 @@ table .sticky-column {
   display: block;
 }
 
+#page-admin-roles-override #overriderolestable .text-overriderolestablewarning {
+  background-color: #e9ddcc !important; /* stylelint-disable-line declaration-no-important */
+}
+
 /**
  * Inline code in table cells.
  *
