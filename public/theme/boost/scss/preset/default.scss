@@ -56,6 +56,9 @@ $theme-colors: map-merge((
 ), $theme-colors);
 // stylelint-enable
 
+// Fonts
+$headings-font-weight: 700 !default;
+
 // Links
 $link-decoration: none !default;
 $link-hover-decoration: underline !default;
