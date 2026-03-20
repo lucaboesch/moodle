@@ -37345,6 +37345,10 @@ table .sticky-column {
   background-color: #e9ddcc !important; /* stylelint-disable-line declaration-no-important */
 }
 
+#page-admin-tool-task-scheduledtasks .table .text-scheduledtaskstableprimary {
+  background-color: #bfd1e0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
 /**
  * File buttons.scss.
  * Contains styles for buttons.
