@@ -34275,6 +34275,10 @@ img.icon {
   color: var(--mds-text-feedback-info, #00475a);
 }
 
+#page-admin-roles-override tr.overriddenpermission {
+  background-color: var(--bs-table-bg);
+}
+
 /**
  Blocks
  */
