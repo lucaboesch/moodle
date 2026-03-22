@@ -374,14 +374,6 @@ class core_renderer extends renderer_base {
         di::get(hook_manager::class)->dispatch($hook);
         $output = $hook->get_output();
 
-        if ($this->page->devicetypeinuse == 'legacy') {
-            // The legacy theme is in use print the notification
-            $output .= html_writer::tag('div', get_string('legacythemeinuse'), ['class' => 'legacythemeinuse']);
-        }
-
-        // Get links to switch device types (only shown for users not on a default device)
-        $output .= $this->theme_switch_links();
-
         return $output;
     }
 
@@ -3649,39 +3641,6 @@ EOD;
             $content .= html_writer::end_tag('li');
         }
         // Return the sub menu
-        return $content;
-    }
-
-    /**
-     * Renders theme links for switching between default and other themes.
-     *
-     * @return string
-     */
-    protected function theme_switch_links() {
-
-        $actualdevice = core_useragent::get_device_type();
-        $currentdevice = $this->page->devicetypeinuse;
-        $switched = ($actualdevice != $currentdevice);
-
-        if (!$switched && $currentdevice == 'default' && $actualdevice == 'default') {
-            // The user is using the a default device and hasn't switched so don't shown the switch
-            // device links.
-            return '';
-        }
-
-        if ($switched) {
-            $linktext = get_string('switchdevicerecommended');
-            $devicetype = $actualdevice;
-        } else {
-            $linktext = get_string('switchdevicedefault');
-            $devicetype = 'default';
-        }
-        $linkurl = new moodle_url('/theme/switchdevice.php', ['url' => $this->page->url, 'device' => $devicetype, 'sesskey' => sesskey()]);
-
-        $content  = html_writer::start_tag('div', ['id' => 'theme_switch_link']);
-        $content .= html_writer::link($linkurl, $linktext, ['rel' => 'nofollow']);
-        $content .= html_writer::end_tag('div');
-
         return $content;
     }
 
