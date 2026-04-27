@@ -122,9 +122,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $output .=  $this->output->notification(get_string('loginfail', 'lesson'));
         }
         $output .= get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)).'<br /><br />';
-        $output .= get_string('enterpassword', 'lesson')." <input type=\"password\" name=\"userpassword\" /><br /><br />";
-        $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' value='".get_string('continue', 'lesson')."' /></div>";
-        $output .= " <div class='lessonbutton standardbutton submitbutton'><input type='submit' name='backtocourse' value='".get_string('cancel', 'lesson')."' /></div>";
+        $output .= get_string('enterpassword', 'lesson') . " <input type=\"password\" name=\"userpassword\" " .
+            "class=\"form-control\"/><br /><br />";
+        $output .= "<div class=\"d-flex gap-2\"><div class='lessonbutton standardbutton submitbutton'><input type='submit' " .
+            "class='btn btn-secondary' name='backtocourse' value='" . get_string('cancel', 'lesson') .
+            "' /></div>";
+        $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' class='btn btn-primary' value='" .
+            get_string('continue', 'lesson') . "' /></div></div>";
         $output .=  '</fieldset></form>';
         $output .=  $this->output->box_end();
         $output .=  $this->output->box_end();
