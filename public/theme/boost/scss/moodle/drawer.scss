@@ -211,6 +211,9 @@ $right-drawer-width: 320px;
         &.show {
             right: 0;
             visibility: visible;
+            .drawertoggle {
+                margin-right: calc(#{map-get($spacers, 2)} + #{$drawer-right-width});
+            }
         }
 
         .drawertoggle {
