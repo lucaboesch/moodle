@@ -32243,6 +32243,9 @@ body.drawer-ease {
   right: 0;
   visibility: visible;
 }
+.drawer.drawer-right.show .drawertoggle {
+  margin-right: calc(0.5rem + 315px);
+}
 .drawer.drawer-right .drawertoggle {
   margin-left: auto;
   margin-right: 0.5rem;
@@ -32356,6 +32359,9 @@ body.drawer-ease {
     right: 0;
     visibility: visible;
   }
+  .drawer-md.drawer-right.show .drawertoggle {
+    margin-right: calc(0.5rem + 315px);
+  }
 }
 @media (max-width: 991.98px) {
   .drawer-md.drawer-right .drawertoggle {
@@ -32441,6 +32447,9 @@ body.drawer-ease {
   .drawer-sm.drawer-right.show {
     right: 0;
     visibility: visible;
+  }
+  .drawer-sm.drawer-right.show .drawertoggle {
+    margin-right: calc(0.5rem + 315px);
   }
 }
 @media (max-width: 767.98px) {
