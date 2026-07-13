@@ -70,12 +70,13 @@ echo '<form method="post" action="formats.php" id="form">';
 echo '<table width="90%" align="center" class="generalbox table-reboot">';
 ?>
 <tr>
-    <td colspan="3" align="center"><strong>
-    <?php echo get_string('displayformat'.$displayformat->name,'glossary'); ?>
+    <td colspan="3" class="text-center pb-3"><strong>
+    <?php echo get_string('displayformat' . $displayformat->name, 'glossary'); ?>
     </strong></td>
 </tr>
-<tr valign="top">
-    <td align="right" width="20%"><?php echo html_writer::label(get_string('popupformat','glossary'), 'menupopupformatname'); ?></td>
+<tr class="align-middle">
+    <td class="text-end pe-3" width="20%">
+        <?php echo html_writer::label(get_string('popupformat', 'glossary'), 'menupopupformatname'); ?></td>
     <td>
  <?php
     // Get available formats.
@@ -93,14 +94,14 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     echo html_writer::select($formats, 'popupformatname', $displayformat->popupformatname, false);
  ?>
     </td>
-    <td width="60%">
-    <?php print_string("cnfrelatedview", "glossary") ?><br /><br />
+    <td width="60%" class="ps-3">
+    <?php print_string("cnfrelatedview", "glossary") ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="defaultmode"><?php print_string('defaultmode','glossary'); ?></label></td>
+<tr class="align-middle">
+    <td class="text-end pe-3" width="20%"><label for="defaultmode"><?php print_string('defaultmode', 'glossary'); ?></label></td>
     <td>
-    <select size="1" id="defaultmode" name="defaultmode">
+    <select size="1" id="defaultmode" name="defaultmode" class="select form-select">
 <?php
     $sletter = '';
     $scat = '';
@@ -130,14 +131,14 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     <option value="author" <?php p($sauthor)?>><?php print_string("author", "glossary"); ?></option>
     </select>
     </td>
-    <td width="60%">
-    <?php print_string("cnfdefaultmode", "glossary") ?><br /><br />
+    <td width="60%" class="ps-3">
+    <?php print_string("cnfdefaultmode", "glossary") ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="defaulthook"><?php print_string('defaulthook','glossary'); ?></label></td>
+<tr class="align-middle">
+    <td class="text-end pe-3" width="20%"><label for="defaulthook"><?php print_string('defaulthook', 'glossary'); ?></label></td>
     <td>
-    <select size="1" id="defaulthook" name="defaulthook">
+    <select size="1" id="defaulthook" name="defaulthook" class="select form-select">
 <?php
     $sall = '';
     $sspecial = '';
@@ -167,14 +168,14 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     <option value="-1" <?php p($snocategorised)?>><?php p(get_string("notcategorised","glossary"))?></option>
     </select>
     </td>
-    <td width="60%">
-    <?php print_string("cnfdefaulthook", "glossary") ?><br /><br />
+    <td width="60%" class="ps-3">
+    <?php print_string("cnfdefaulthook", "glossary") ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="sortkey"><?php print_string('defaultsortkey','glossary'); ?></label></td>
+<tr class="align-middle">
+    <td class="text-end pe-3" width="20%"><label for="sortkey"><?php print_string('defaultsortkey', 'glossary'); ?></label></td>
     <td>
-    <select size="1" id="sortkey" name="sortkey">
+    <select size="1" id="sortkey" name="sortkey" class="select form-select">
 <?php
     $sfname = '';
     $slname = '';
@@ -204,14 +205,14 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     <option value="LASTNAME" <?php p($slname)?>><?php p(get_string("lastname"))?></option>
     </select>
     </td>
-    <td width="60%">
-    <?php print_string("cnfsortkey", "glossary") ?><br /><br />
+    <td width="60%" class="ps-3">
+    <?php print_string("cnfsortkey", "glossary") ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="sortorder"><?php print_string('defaultsortorder','glossary'); ?></label></td>
+<tr class="align-middle">
+    <td class="text-end pe-3" width="20%"><label for="sortorder"><?php print_string('defaultsortorder', 'glossary'); ?></label></td>
     <td>
-    <select size="1" id="sortorder" name="sortorder">
+    <select size="1" id="sortorder" name="sortorder" class="select form-select">
 <?php
     $sasc = '';
     $sdesc = '';
@@ -229,14 +230,15 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     <option value="desc" <?php p($sdesc)?>><?php p(get_string("descending","glossary"))?></option>
     </select>
     </td>
-    <td width="60%">
-    <?php print_string("cnfsortorder", "glossary") ?><br /><br />
+    <td width="60%" class="ps-3">
+    <?php print_string("cnfsortorder", "glossary") ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="showgroup"><?php print_string("includegroupbreaks", "glossary"); ?>:</label></td>
+<tr class="align-middle">
+    <td class="text-end pe-3" width="20%"><label for="showgroup">
+            <?php print_string("includegroupbreaks", "glossary"); ?>:</label></td>
     <td>
-    <select size="1" id="showgroup" name="showgroup">
+    <select size="1" id="showgroup" name="showgroup" class="select form-select">
 <?php
     $yselected = "";
     $nselected = "";
@@ -250,12 +252,12 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
     </select>
     </td>
-    <td width="60%">
-    <?php print_string("cnfshowgroup", "glossary") ?><br /><br />
+    <td width="60%" class="ps-3">
+    <?php print_string("cnfshowgroup", "glossary") ?>
     </td>
 </tr>
-<tr>
-    <td align="right" width="20%"><label for="visibletabs"><?php print_string("visibletabs", "glossary"); ?></label></td>
+<tr class="align-middle">
+    <td class="text-end pe-3" width="20%"><label for="visibletabs"><?php print_string("visibletabs", "glossary"); ?></label></td>
     <td>
         <?php
         // Get all glossary tabs.
@@ -264,7 +266,7 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
         $visibletabs = glossary_get_visible_tabs($displayformat);
         $size = min(10, count($glossarytabs));
         ?>
-    <select id="visibletabs" name="visibletabs[]" size="<?php echo $size ?>" multiple="multiple">
+    <select id="visibletabs" name="visibletabs[]" size="<?php echo $size ?>" multiple="multiple" class="select form-select">
 <?php
     $selected = "";
 foreach ($glossarytabs as $tabkey => $tabvalue) {
@@ -281,13 +283,13 @@ foreach ($glossarytabs as $tabkey => $tabvalue) {
     ?>
     </select>
     </td>
-    <td width="60%">
-        <?php print_string("cnftabs", "glossary") ?><br/><br/>
+    <td width="60%" class="ps-3">
+        <?php print_string("cnftabs", "glossary") ?>
     </td>
 </tr>
 <tr>
     <td colspan="3" align="center">
-    <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+    <input type="submit" class="btn btn-primary" value="<?php print_string("savechanges") ?>" /></td>
 </tr>
 <input type="hidden" name="id"    value="<?php p($id) ?>" />
 <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
