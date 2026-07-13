@@ -69,45 +69,46 @@ $no  = get_string("no");
 
 echo '<form method="post" action="formats.php" id="form">';
 echo '<table width="90%" align="center" class="generalbox table-reboot">';
-?>
-<tr>
-    <td colspan="3" align="center"><strong>
-    <?php echo get_string('displayformat'.$displayformat->name,'glossary'); ?>
-    </strong></td>
-</tr>
-<tr valign="top">
-    <td align="right" width="20%"><?php echo html_writer::label(get_string('popupformat','glossary'), 'menupopupformatname'); ?></td>
-    <td>
- <?php
-    // Get available formats.
-    $recformats = $DB->get_records("glossary_formats");
 
-    $formats = array();
+echo "<tr>";
+echo "<td colspan=\"3\" class=\"text-center pb-3\"><strong>";
+echo get_string('displayformat' . $displayformat->name, 'glossary');
+echo "</strong></td>";
+echo "</tr>";
+echo "<tr class=\"align-middle\">";
+echo "<td class=\"text-end pe-3\" width=\"20%\">";
+echo html_writer::label(get_string('popupformat', 'glossary'), 'menupopupformatname');
+echo "</td>";
+echo "<td>";
+// Get available formats.
+$recformats = $DB->get_records("glossary_formats");
 
-    //Take names
-    foreach ($recformats as $format) {
-       $formats[$format->name] = get_string("displayformat$format->name", "glossary");
-    }
-    //Sort it
-    asort($formats);
+$formats = [];
 
-    echo html_writer::select($formats, 'popupformatname', $displayformat->popupformatname, false);
- ?>
-    </td>
-    <td width="60%">
-    <?php print_string("cnfrelatedview", "glossary") ?><br /><br />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="defaultmode"><?php print_string('defaultmode','glossary'); ?></label></td>
-    <td>
-    <select size="1" id="defaultmode" name="defaultmode">
-<?php
-    $sletter = '';
-    $scat = '';
-    $sauthor = '';
-    $sdate = '';
-    switch ( strtolower($displayformat->defaultmode) ) {
+// Take names.
+foreach ($recformats as $format) {
+    $formats[$format->name] = get_string("displayformat$format->name", "glossary");
+}
+// Sort it.
+asort($formats);
+
+echo html_writer::select($formats, 'popupformatname', $displayformat->popupformatname, false);
+echo "</td>";
+echo "<td width=\"60%\" class=\"ps-3\">";
+print_string("cnfrelatedview", "glossary");
+echo "</td>";
+echo "</tr>";
+echo "<tr class=\"align-middle\">";
+echo "<td class=\"text-end pe-3\" width=\"20%\"><label for=\"defaultmode\">";
+print_string('defaultmode', 'glossary');
+echo "</label></td>";
+echo "<td>";
+echo "<select size=\"1\" id=\"defaultmode\" name=\"defaultmode\" class=\"select form-select\">";
+$sletter = '';
+$scat = '';
+$sauthor = '';
+$sdate = '';
+switch (strtolower($displayformat->defaultmode)) {
     case 'letter':
         $sletter = ' selected="selected" ';
     break;
@@ -123,28 +124,37 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     case 'author':
         $sauthor = ' selected="selected" ';
     break;
-    }
-?>
-    <option value="letter" <?php p($sletter)?>><?php print_string("letter", "glossary"); ?></option>
-    <option value="cat" <?php p($scat)?>><?php print_string("cat", "glossary"); ?></option>
-    <option value="date" <?php p($sdate)?>><?php print_string("date", "glossary"); ?></option>
-    <option value="author" <?php p($sauthor)?>><?php print_string("author", "glossary"); ?></option>
-    </select>
-    </td>
-    <td width="60%">
-    <?php print_string("cnfdefaultmode", "glossary") ?><br /><br />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="defaulthook"><?php print_string('defaulthook','glossary'); ?></label></td>
-    <td>
-    <select size="1" id="defaulthook" name="defaulthook">
-<?php
-    $sall = '';
-    $sspecial = '';
-    $sallcategories = '';
-    $snocategorised = '';
-    switch ( strtolower($displayformat->defaulthook) ) {
+}
+
+echo "<option value=\"letter" . p($sletter) . "\">";
+print_string("letter", "glossary");
+echo "</option>";
+echo "<option value=\"cat" . p($scat) . "\">";
+print_string("cat", "glossary");
+echo "</option>";
+echo "<option value=\"date" . p($sdate) . "\">";
+print_string("date", "glossary");
+echo "</option>";
+echo "<option value=\"author" . p($sauthor) . "\">";
+print_string("author", "glossary");
+echo "</option>";
+echo "</select>";
+echo "</td>";
+echo "<td width=\"60%\" class=\"ps-3\">";
+print_string("cnfdefaultmode", "glossary");
+echo "</td>";
+echo "</tr>";
+echo "<tr class=\"align-middle\">";
+echo "<td class=\"text-end pe-3\" width=\"20%\"><label for=\"defaulthook\">";
+print_string('defaulthook', 'glossary');
+echo "</label></td>";
+echo "<td>";
+echo "<select size=\"1\" id=\"defaulthook\" name=\"defaulthook\" class=\"select form-select\">";
+$sall = '';
+$sspecial = '';
+$sallcategories = '';
+$snocategorised = '';
+switch (strtolower($displayformat->defaulthook)) {
     case 'all':
         $sall = ' selected="selected" ';
     break;
@@ -160,28 +170,44 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     case '-1':
         $snocategorised = ' selected="selected" ';
     break;
-    }
-?>
-    <option value="ALL" <?php p($sall)?>><?php p(get_string("allentries","glossary"))?></option>
-    <option value="SPECIAL" <?php p($sspecial)?>><?php p(get_string("special","glossary"))?></option>
-    <option value="0" <?php p($sallcategories)?>><?php p(get_string("allcategories","glossary"))?></option>
-    <option value="-1" <?php p($snocategorised)?>><?php p(get_string("notcategorised","glossary"))?></option>
-    </select>
-    </td>
-    <td width="60%">
-    <?php print_string("cnfdefaulthook", "glossary") ?><br /><br />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="sortkey"><?php print_string('defaultsortkey','glossary'); ?></label></td>
-    <td>
-    <select size="1" id="sortkey" name="sortkey">
-<?php
-    $sfname = '';
-    $slname = '';
-    $supdate = '';
-    $screation = '';
-    switch ( strtolower($displayformat->sortkey) ) {
+}
+echo "<option value=\"ALL\"";
+p($sall);
+echo ">";
+p(get_string("allentries", "glossary"));
+echo "</option>";
+echo "<option value=\"SPECIAL\"";
+p($sspecial);
+echo ">";
+p(get_string("special", "glossary"));
+echo "</option>";
+echo "<option value=\"0\"";
+p($sallcategories);
+echo ">";
+p(get_string("allcategories", "glossary"));
+echo "</option>";
+echo "<option value=\"-1\"";
+p($snocategorised);
+echo ">";
+p(get_string("notcategorised", "glossary"));
+echo "</option>";
+echo "</select>";
+echo "</td>";
+echo "<td width=\"60%\" class=\"ps-3\">";
+print_string("cnfdefaulthook", "glossary");
+echo "</td>";
+echo "</tr>";
+echo "<tr class=\"align-middle\">";
+echo "<td class=\"text-end pe-3\" width=\"20%\"><label for=\"sortkey\">";
+print_string('defaultsortkey', 'glossary');
+echo "</label></td>";
+echo "<td>";
+echo "<select size=\"1\" id=\"sortkey\" name=\"sortkey\" class=\"select form-select\">";
+$sfname = '';
+$slname = '';
+$supdate = '';
+$screation = '';
+switch (strtolower($displayformat->sortkey)) {
     case 'firstname':
         $sfname = ' selected="selected" ';
     break;
@@ -197,26 +223,43 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     case 'update':
         $supdate = ' selected="selected" ';
     break;
-    }
-?>
-    <option value="CREATION" <?php p($screation)?>><?php p(get_string("sortbycreation","glossary"))?></option>
-    <option value="UPDATE" <?php p($supdate)?>><?php p(get_string("sortbylastupdate","glossary"))?></option>
-    <option value="FIRSTNAME" <?php p($sfname)?>><?php p(get_string("firstname"))?></option>
-    <option value="LASTNAME" <?php p($slname)?>><?php p(get_string("lastname"))?></option>
-    </select>
-    </td>
-    <td width="60%">
-    <?php print_string("cnfsortkey", "glossary") ?><br /><br />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="sortorder"><?php print_string('defaultsortorder','glossary'); ?></label></td>
-    <td>
-    <select size="1" id="sortorder" name="sortorder">
-<?php
-    $sasc = '';
-    $sdesc = '';
-    switch ( strtolower($displayformat->sortorder) ) {
+}
+echo "<option value=\"CREATION\"";
+p($screation);
+echo ">";
+p(get_string("sortbycreation", "glossary"));
+echo "</option>";
+echo "<option value=\"UPDATE\"";
+p($supdate);
+echo ">";
+p(get_string("sortbylastupdate", "glossary"));
+echo "</option>";
+echo "<option value=\"FIRSTNAME\"";
+p($sfname);
+echo ">";
+p(get_string("firstname"));
+echo "</option>";
+echo "<option value=\"LASTNAME\"";
+p($slname);
+echo ">";
+p(get_string("lastname"));
+echo "</option>";
+echo "</select>";
+echo "</td>";
+echo "<td width=\"60%\" class=\"ps-3\">";
+print_string("cnfsortkey", "glossary");
+echo "</td>";
+echo "</tr>";
+
+echo "<tr class=\"align-middle\">";
+echo "<td class=\"text-end pe-3\" width=\"20%\"><label for=\"sortorder\">";
+print_string('defaultsortorder', 'glossary');
+echo "</label></td>";
+echo "<td>";
+echo "<select size=\"1\" id=\"sortorder\" name=\"sortorder\" class=\"select form-select\">";
+$sasc = '';
+$sdesc = '';
+switch (strtolower($displayformat->sortorder)) {
     case 'asc':
         $sasc = ' selected="selected" ';
     break;
@@ -224,78 +267,82 @@ echo '<table width="90%" align="center" class="generalbox table-reboot">';
     case 'desc':
         $sdesc = ' selected="selected" ';
     break;
-    }
-?>
-    <option value="asc" <?php p($sasc)?>><?php p(get_string("ascending","glossary"))?></option>
-    <option value="desc" <?php p($sdesc)?>><?php p(get_string("descending","glossary"))?></option>
-    </select>
-    </td>
-    <td width="60%">
-    <?php print_string("cnfsortorder", "glossary") ?><br /><br />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right" width="20%"><label for="showgroup"><?php print_string("includegroupbreaks", "glossary"); ?>:</label></td>
-    <td>
-    <select size="1" id="showgroup" name="showgroup">
-<?php
-    $yselected = "";
-    $nselected = "";
-    if ($displayformat->showgroup) {
-        $yselected = " selected=\"selected\" ";
-    } else {
-        $nselected = " selected=\"selected\" ";
-    }
-?>
-    <option value="1" <?php echo $yselected ?>><?php p($yes)?></option>
-    <option value="0" <?php echo $nselected ?>><?php p($no)?></option>
-    </select>
-    </td>
-    <td width="60%">
-    <?php print_string("cnfshowgroup", "glossary") ?><br /><br />
-    </td>
-</tr>
-<tr>
-    <td align="right" width="20%"><label for="visibletabs"><?php print_string("visibletabs", "glossary"); ?></label></td>
-    <td>
-        <?php
+}
+echo "<option value=\"asc\"";
+p($sasc);
+echo ">";
+p(get_string("ascending", "glossary"));
+echo "</option>";
+echo "<option value=\"desc\"";
+p($sdesc);
+echo ">";
+p(get_string("descending", "glossary"));
+echo "</option>";
+echo "</select>";
+echo "</td>";
+echo "<td width=\"60%\" class=\"ps-3\">";
+print_string("cnfsortorder", "glossary");
+echo "</td>";
+echo "</tr>";
+echo "<tr class=\"align-middle\">";
+echo "<td class=\"text-end pe-3\" width=\"20%\"><label for=\"showgroup\">";
+print_string("includegroupbreaks", "glossary");
+echo ":</label></td>";
+echo "<td>";
+echo "<select size=\"1\" id=\"showgroup\" name=\"showgroup\" class=\"select form-select\">";
+$yselected = "";
+$nselected = "";
+if ($displayformat->showgroup) {
+    $yselected = " selected=\"selected\" ";
+} else {
+    $nselected = " selected=\"selected\" ";
+}
+
+echo "<option value=\"1\"" . $yselected . ">";
+p($yes);
+echo "</option>";
+echo "<option value=\"0\"" . $nselected . ">";
+p($no);
+echo "</option>";
+echo "</select>";
+echo "</td>";
+echo "<td width=\"60%\" class=\"ps-3\">";
+print_string("cnfshowgroup", "glossary");
+echo "</td>";
+echo "</tr>";
+
+echo "<tr class=\"align-middle\">";
+echo "<td class=\"text-end pe-3\" width=\"20%\"><label for=\"visibletabs\">";
+print_string("visibletabs", "glossary");
+echo "</label></td>";
+echo "<td>";
         // Get all glossary tabs.
         $glossarytabs = glossary_get_all_tabs();
         // Extract showtabs value in an array.
         $visibletabs = glossary_get_visible_tabs($displayformat);
         $size = min(10, count($glossarytabs));
-        ?>
-    <select id="visibletabs" name="visibletabs[]" size="<?php echo $size ?>" multiple="multiple">
-<?php
-    $selected = "";
-foreach ($glossarytabs as $tabkey => $tabvalue) {
-    if (in_array($tabkey, $visibletabs)) {
-?>
-    <option value="<?php echo $tabkey ?>" selected="selected"><?php echo $tabvalue ?></option>
-    <?php
-    } else {
-    ?>
-    <option value="<?php echo $tabkey ?>"><?php echo $tabvalue ?></option>
-    <?php
-    }
-}
-    ?>
-    </select>
-    </td>
-    <td width="60%">
-        <?php print_string("cnftabs", "glossary") ?><br/><br/>
-    </td>
-</tr>
-<tr>
-    <td colspan="3" align="center">
-    <input type="submit" value="<?php print_string("savechanges") ?>" /></td>
-</tr>
-<input type="hidden" name="id"    value="<?php p($id) ?>" />
-<input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
-<input type="hidden" name="mode"    value="edit" />
-<?php
+echo html_writer::select($glossarytabs, 'visibletabs[]', $visibletabs, false, [
+    'id' => 'visibletabs',
+    'multiple' => 'multiple',
+    'size' => $size,
+]);
+echo "</td>";
+echo "<td width=\"60%\" class=\"ps-3\">";
+print_string("cnftabs", "glossary");
+echo "</td>";
+echo "</tr>";
+echo "<tr>";
+echo "<td colspan=\"3\" align=\"center\">";
+echo "<input type=\"submit\" class=\"btn btn-primary\" value=\"";
+print_string("savechanges");
+echo "\"/></td>";
+echo "</tr>";
+echo "<input type=\"hidden\" name=\"id\" value=\"";
+p($id);
+echo "\" />";
+echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />";
+echo "<input type=\"hidden\" name=\"mode\" value=\"edit\" />";
 
 echo '</table></form>';
 
 echo $OUTPUT->footer();
-?>
