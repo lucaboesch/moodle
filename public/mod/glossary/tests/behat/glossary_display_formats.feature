@@ -107,3 +107,21 @@ Feature: Glossary can be set to various display formats
       | dictionary     | not see    |
       | continuous     | not see    |
       | fullwithauthor | see        |
+
+  @javascript @accessibility
+  Scenario: Glossary display format admin edit page keeps all tab options after a partial save
+    Given I log in as "admin"
+    And I navigate to "Plugins > Activity modules > Glossary" in site administration
+    When I click on "Edit" "link" in the "Entry list" "table_row"
+    Then the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
+    And I set the following fields to these values:
+      | Visible tabs | Browse by category, Browse by date |
+    And I press "Save changes"
+    And I click on "Edit" "link" in the "Entry list" "table_row"
+    # All tab options must still be present after saving a subset - a previous
+    # regression corrupted the option markup and made "Browse by Author"
+    # disappear entirely whenever it was left unselected.
+    Then "Browse by Author" "option" should exist
+    And "Browse by category" "option" should exist
+    And "Browse by date" "option" should exist
+    And the field "Visible tabs" matches value "Browse by category, Browse by date"
