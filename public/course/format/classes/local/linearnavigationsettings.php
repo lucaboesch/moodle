@@ -66,6 +66,10 @@ class linearnavigationsettings {
             // If the page should not show the navigation footer, do not add the sticky footer.
             return false;
         }
+        if ($page->pagelayout === 'secure') {
+            // Secure pages, such as quizzes requiring Safe Exam Browser, must not offer links away from the page.
+            return false;
+        }
 
         if (!self::is_linear_navigation_enabled($page->course)) {
             // Only add the navigation footer when linear navigation is enabled.
