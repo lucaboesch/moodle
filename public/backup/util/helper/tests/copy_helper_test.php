@@ -173,7 +173,8 @@ final class copy_helper_test extends \advanced_testcase {
             'startdate' => 87539319,
             'enddate' => 6963472309248,
             'idnumber' => 1730,
-            'userdata' => 1
+            'userdata' => 1,
+            'keepenrolmentmethods' => 1,
         ];
 
         $roles = [
@@ -216,6 +217,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $copies = [];
         for ($i = 0; $i < 5; $i++) {
@@ -309,6 +311,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $copydata = \copy_helper::process_formdata($formdata);
         $result = \copy_helper::create_copy($copydata);
@@ -363,6 +366,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $formdata2 = clone($formdata);
         $formdata2->shortname = 'tree';
@@ -437,6 +441,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         $formdata2 = clone ($formdata);
         $formdata2->shortname = 'tree';
@@ -496,6 +501,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create some copies.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -528,6 +534,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create some copies.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -564,6 +571,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create the course copy records and associated ad-hoc task.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -641,6 +649,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 0;
         $formdata->role_3 = 0;
         $formdata->role_5 = 0;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create the course copy records and associated ad-hoc task.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -710,6 +719,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 0;
         $formdata->role_3 = 0;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create the course copy records and associated ad-hoc task.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -779,6 +789,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->role_1 = 1;
         $formdata->role_3 = 3;
         $formdata->role_5 = 5;
+        $formdata->keepenrolmentmethods = 1;
 
         // Create the course copy records and associated ad-hoc task.
         $copydata = \copy_helper::process_formdata($formdata);
@@ -837,6 +848,7 @@ final class copy_helper_test extends \advanced_testcase {
         $formdata->fullname = 'copy course';
         $formdata->shortname = 'copy course short';
         $formdata->category = 1;
+        $formdata->keepenrolmentmethods = 1;
 
         // Expect and exception as form data is incomplete.
         $this->expectException(\moodle_exception::class);
@@ -874,6 +886,7 @@ final class copy_helper_test extends \advanced_testcase {
             'idnumber' => 'dnum',
             'userdata' => false,
             'extra' => 13,
+            'keepenrolmentmethods' => 1,
         ];
 
         $processed = copy_helper::process_formdata($formdata);
@@ -881,5 +894,139 @@ final class copy_helper_test extends \advanced_testcase {
         // Check that the extra fields are present.
         $this->assertTrue(isset($processed->extra));
         $this->assertEquals(13, $processed->extra);
+    }
+
+    /**
+     * Test course copy, not including the enrolment method(s).
+     *
+     * @covers \copy_helper::process_formdata
+     * @covers \copy_helper::create_copy
+     */
+    public function test_course_copy_excluding_enrolment(): void {
+        global $DB;
+
+        // Mock up the form data.
+        $formdata = new \stdClass();
+        $formdata->courseid = $this->course->id;
+        $formdata->fullname = 'copy course';
+        $formdata->shortname = 'copy course short';
+        $formdata->category = 1;
+        $formdata->visible = 0;
+        $formdata->startdate = 1582376400;
+        $formdata->enddate = 1582386400;
+        $formdata->idnumber = 123;
+        $formdata->userdata = 0;
+        $formdata->keepenrolmentmethods = 0;
+
+        // Create the course copy records and associated ad-hoc task.
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
+
+        $courseid = $this->course->id;
+
+        // Enable instance of self-enrolment plugin (it should already be present) and enrol a student with it.
+        $user = $this->getDataGenerator()->create_user();
+        $selfplugin = enrol_get_plugin('self');
+        $selfinstance = $DB->get_record('enrol', ['courseid' => $this->course->id, 'enrol' => 'self']);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $selfplugin->update_status($selfinstance, ENROL_INSTANCE_ENABLED);
+        $selfplugin->enrol_user($selfinstance, $user->id, $studentrole->id);
+
+        // We are expecting trace output during this test.
+        $this->expectOutputRegex("/$courseid/");
+
+        // Execute adhoc task.
+        $now = time();
+        $task = \core\task\manager::get_next_adhoc_task($now);
+        $this->assertInstanceOf('\\core\\task\\asynchronous_copy_task', $task);
+        $task->execute();
+        \core\task\manager::adhoc_task_complete($task);
+
+        $postrestorerec = $DB->get_record('backup_controllers', ['backupid' => $copyids['restoreid']]);
+
+        // Check the restored course itself.
+        $coursecontext = \context_course::instance($postrestorerec->itemid);
+
+        get_fast_modinfo($postrestorerec->itemid, 0, true);
+        $modinfo = get_fast_modinfo($postrestorerec->itemid);
+        $course = $modinfo->get_course();
+
+        $this->assertEquals($formdata->startdate, $course->startdate);
+        $this->assertEquals($formdata->enddate, $course->enddate);
+        $this->assertEquals('copy course', $course->fullname);
+        $this->assertEquals('copy course short', $course->shortname);
+        $this->assertEquals(0, $course->visible);
+        $this->assertEquals(123, $course->idnumber);
+
+        // There shouldn't be the 'self' enrolment method in this course.
+        $instances = enrol_get_instances($course->id, true);
+        $this->assertNotContains('self', array_column($instances, 'enrol'));
+    }
+
+    /**
+     * Test course copy, including the enrolment method(s).
+     *
+     * @covers \copy_helper::process_formdata
+     * @covers \copy_helper::create_copy
+     */
+    public function test_course_copy_including_enrolment(): void {
+        global $DB;
+
+        // Mock up the form data.
+        $formdata = new \stdClass();
+        $formdata->courseid = $this->course->id;
+        $formdata->fullname = 'copy course';
+        $formdata->shortname = 'copy course short';
+        $formdata->category = 1;
+        $formdata->visible = 0;
+        $formdata->startdate = 1582376400;
+        $formdata->enddate = 1582386400;
+        $formdata->idnumber = 123;
+        $formdata->userdata = 0;
+        $formdata->keepenrolmentmethods = 1;
+
+        // Create the course copy records and associated ad-hoc task.
+        $copydata = \copy_helper::process_formdata($formdata);
+        $copyids = \copy_helper::create_copy($copydata);
+
+        $courseid = $this->course->id;
+
+        // Enable instance of self-enrolment plugin (it should already be present) and enrol a student with it.
+        $user = $this->getDataGenerator()->create_user();
+        $selfplugin = enrol_get_plugin('self');
+        $selfinstance = $DB->get_record('enrol', ['courseid' => $this->course->id, 'enrol' => 'self']);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $selfplugin->update_status($selfinstance, ENROL_INSTANCE_ENABLED);
+        $selfplugin->enrol_user($selfinstance, $user->id, $studentrole->id);
+
+        // We are expecting trace output during this test.
+        $this->expectOutputRegex("/$courseid/");
+
+        // Execute adhoc task.
+        $now = time();
+        $task = \core\task\manager::get_next_adhoc_task($now);
+        $this->assertInstanceOf('\\core\\task\\asynchronous_copy_task', $task);
+        $task->execute();
+        \core\task\manager::adhoc_task_complete($task);
+
+        $postrestorerec = $DB->get_record('backup_controllers', ['backupid' => $copyids['restoreid']]);
+
+        // Check the restored course itself.
+        $coursecontext = \context_course::instance($postrestorerec->itemid);
+
+        get_fast_modinfo($postrestorerec->itemid, 0, true);
+        $modinfo = get_fast_modinfo($postrestorerec->itemid);
+        $course = $modinfo->get_course();
+
+        $this->assertEquals($formdata->startdate, $course->startdate);
+        $this->assertEquals($formdata->enddate, $course->enddate);
+        $this->assertEquals('copy course', $course->fullname);
+        $this->assertEquals('copy course short', $course->shortname);
+        $this->assertEquals(0, $course->visible);
+        $this->assertEquals(123, $course->idnumber);
+
+        // There should be the 'self' enrolment method in this course.
+        $instances = enrol_get_instances($course->id, true);
+        $this->assertContains('self', array_column($instances, 'enrol'));
     }
 }

@@ -77,7 +77,10 @@ class asynchronous_copy_task extends adhoc_task {
         $keepuserdata = (bool)$copyinfo->userdata;
         $keptroles = $copyinfo->keptroles;
 
+        $keepenrolmentmethods = $copyinfo->keepenrolmentmethods;
+
         $bc->set_kept_roles($keptroles);
+        $bc->set_keepenrolmentmethods($keepenrolmentmethods);
 
         // If we are not keeping user data don't include users or data in the backup.
         // In this case we'll add the user enrolments at the end.
@@ -127,6 +130,11 @@ class asynchronous_copy_task extends adhoc_task {
         $fullname->set_value($copyinfo->fullname);
         $shortname = $plan->get_setting('course_shortname');
         $shortname->set_value($copyinfo->shortname);
+
+        // Keep the enrolment methods (e.g. self enrolment) in the destination course if requested.
+        if ($keepenrolmentmethods) {
+            $plan->get_setting('enrolments')->set_value(\backup::ENROL_ALWAYS);
+        }
 
         // Create and dispatch a hook to allow interaction with the task immediately prior to execution.
         $hook = new before_copy_course_execute($plan, $copyinfo);

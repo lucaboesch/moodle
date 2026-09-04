@@ -1,0 +1,10 @@
+issueNumber: MDL-72532
+notes:
+  core_backup:
+    - message: >-
+        Added a new option in the Course reuse: Course copy UI to preserve the
+        existing enrolment methods in the target course. The default setting of
+        this select field is derived by the General restore defaults: Include
+        enrolment methods value, i.e. if there is the "Yes, but only if users
+        are included" or "Yes, always", then "Yes" is prechosen.
+      type: improved

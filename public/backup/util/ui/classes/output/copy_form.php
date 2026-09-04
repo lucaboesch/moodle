@@ -205,6 +205,16 @@ class copy_form extends \moodleform {
         $hook = new after_copy_form_definition($mform);
         di::get(manager::class)->dispatch($hook);
 
+        $mform->addElement(
+            'select',
+            'keepenrolmentmethods',
+            get_string('rootsettingenrolments', 'backup'),
+            [0 => get_string('no'), 1 => get_string('yes')],
+        );
+        $keepenrolmentmethodsdefault = get_config('restore', 'restore_general_enrolments') > 0;
+        $mform->setDefault('keepenrolmentmethods', $keepenrolmentmethodsdefault);
+        $mform->addHelpButton('keepenrolmentmethods', 'rootsettingenrolments', 'backup');
+
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'submitreturn', get_string('copyreturn', 'backup'));
         $buttonarray[] = $mform->createElement('submit', 'submitdisplay', get_string('copyview', 'backup'));

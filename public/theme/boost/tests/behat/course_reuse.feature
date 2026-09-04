@@ -44,3 +44,19 @@ Feature: Course reuse navigation
     And I navigate to "Course reuse" in current page administration
     And I follow "Copy course"
     Then I should see "Create a copy of this course in any course category"
+
+  Scenario Outline: There is the correct default for "Include enrolment methods" in the course copy page form
+    Given I log in as "admin"
+    And the following config values are set as admin:
+      | config                     | value     | plugin  |
+      | restore_general_enrolments | <setting> | restore |
+    When I am on "Course 1" course homepage
+    And I navigate to "Course reuse" in current page administration
+    And I follow "Copy course"
+    Then the field "Include enrolment methods" matches value "<formvalue>"
+
+    Examples:
+      | setting | formvalue |
+      | 0       | No        |
+      | 1       | Yes       |
+      | 2       | Yes       |

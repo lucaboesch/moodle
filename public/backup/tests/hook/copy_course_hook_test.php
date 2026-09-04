@@ -77,6 +77,7 @@ final class copy_course_hook_test extends advanced_testcase {
             'enddate' => '123456789',
             'idnumber' => 'dnum',
             'userdata' => false,
+            'keepenrolmentmethods' => 1,
         ];
 
         $processed = copy_helper::process_formdata($copydata);
