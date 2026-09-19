@@ -51,6 +51,10 @@ class mod_forum_potential_subscriber_selector extends mod_forum_subscriber_selec
      */
     public function __construct($name, $options) {
         parent::__construct($name, $options);
+        if (defined('AJAX_SCRIPT') && AJAX_SCRIPT) {
+            $existingselector = new mod_forum_existing_subscriber_selector('existingsubscribers', $options);
+            $this->set_existing_subscribers($existingselector->find_users(''));
+        }
         if (isset($options['forcesubscribed'])) {
             $this->forcesubscribed=true;
         }

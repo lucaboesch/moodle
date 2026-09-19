@@ -55,3 +55,15 @@ Feature: A teacher or admin can view subscriptions tab
     And I navigate to "Reports" in current page administration
     And I should see "Forum summary report"
     And I should see "Nothing to display" in the "//div[contains(@class, 'alert-info')]" "xpath_element"
+
+  Scenario: A teacher changes students from potential subscribers to existing subscribers and then searches
+    When I am on the "Test forum name" "forum activity" page logged in as teacher
+    And I navigate to "Subscriptions" in current page administration
+    And I select "Manage subscribers" from the "jump" singleselect
+    And I should see "Teacher Tom" in the "#potentialsubscribers" "css_element"
+    And I set the field "potentialsubscribers" to "Teacher Tom (teacher@example.com)"
+    And I click on "subscribe" "button"
+    And I should see "Teacher Tom" in the "#existingsubscribers" "css_element"
+    But I should not see "Teacher Tom" in the "#potentialsubscribers" "css_element"
+    When I set the field "potentialsubscribers_searchtext" to "Teacher Tom"
+    Then "//select[@id='potentialsubscribers']/optgroup[contains(@label, 'No users match') and contains(@label, 'Teacher Tom')]" "xpath_element" should exist
