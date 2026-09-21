@@ -29473,6 +29473,10 @@ img.icon {
   opacity: 0.65;
 }
 
+#page-admin-roles-override tr.overriddenpermission {
+  background-color: var(--bs-table-bg);
+}
+
 /**
  Blocks
  */
