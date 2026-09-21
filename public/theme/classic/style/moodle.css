@@ -28965,6 +28965,10 @@ img.icon {
   text-align: left;
 }
 
+#page-admin-roles-override tr.overriddenpermission {
+  background-color: var(--bs-table-bg);
+}
+
 #page-admin-index .upgradekeyreq {
   min-width: 220px;
 }
