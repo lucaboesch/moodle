@@ -29448,6 +29448,10 @@ img.icon {
   background-color: #d7e4d6;
 }
 
+#page-admin-roles-override tr.overriddenpermission {
+  background-color: var(--bs-table-bg);
+}
+
 /**
  Blocks
  */
