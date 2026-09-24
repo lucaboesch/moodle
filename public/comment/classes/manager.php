@@ -530,7 +530,7 @@ class manager {
                 if (!$this->fullwidth) {
                     $textareaattrs['cols'] = '20';
                 } else {
-                    $textareaattrs['class'] = 'fullwidth';
+                    $textareaattrs['class'] = 'form-control fullwidth';
                 }
 
                 $html .= html_writer::start_tag('div', ['class' => 'comment-area']);
@@ -546,7 +546,11 @@ class manager {
                 // SC 2.5.8: add spacing above the action links so the "Save comment" link
                 // meets the target size minimum relative to the textarea above it.
                 $html .= html_writer::start_tag('div', ['class' => 'fd mt-1', 'id' => 'comment-action-' . $this->cid]);
-                $html .= html_writer::link('#', get_string('savecomment'), ['id' => 'comment-action-post-' . $this->cid]);
+                $html .= html_writer::link(
+                    '#',
+                    get_string('savecomment'),
+                    ['id' => 'comment-action-post-' . $this->cid, 'class' => 'btn btn-sm btn-secondary'],
+                );
 
                 if ($this->displaycancel) {
                     $html .= html_writer::tag('span', ' | ');
