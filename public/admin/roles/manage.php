@@ -160,7 +160,7 @@ $table->colclasses = [
     'leftalign',
 ];
 $table->id = 'roles';
-$table->attributes['class'] = 'admintable table generaltable table-hover';
+$table->attributes['class'] = 'admintable table generaltable table-striped table-hover mb-3';
 $table->head = [
     get_string('risks', 'role'),
     get_string('role') . ' ' . $OUTPUT->help_icon('roles', 'core_role'),
