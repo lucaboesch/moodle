@@ -323,7 +323,7 @@ if ($roleid) {
     $table->id = 'assignrole';
     $table->head = array(get_string('role'), get_string('description'), get_string('userswiththisrole', 'core_role'));
     $table->colclasses = array('leftalign role', 'leftalign', 'centeralign userrole');
-    $table->attributes['class'] = 'admintable table generaltable table-hover';
+    $table->attributes['class'] = 'admintable table generaltable table-striped table-hover';
     if ($showroleholders) {
         $table->headspan = array(1, 1, 2);
         $table->colclasses[] = 'leftalign roleholder';
