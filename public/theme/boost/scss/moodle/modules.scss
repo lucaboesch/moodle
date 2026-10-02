@@ -1470,6 +1470,13 @@ img.userpicture {
     }
 }
 
+/* Quiz form "Review options" titles. */
+@media (min-width: 768px) {
+    #page-mod-quiz-mod .mform fieldset .fcontainer.collapseable .col-form-label {
+        padding-left: calc(var(--bs-gutter-x) * .5);
+    }
+}
+
 // Assign.
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     top: auto;
