@@ -70,7 +70,7 @@ Feature: A teacher checks the grade history report in a course
     And I should see "Student 1, Student 2"
     # Test filtering by student.
     And I press "Select users"
-    And I set the field with xpath "//form/input[@class='usp-search-field']" to "Student 2"
+    And I set the field with xpath "//form/input[@class='usp-search-field form-control me-1']" to "Student 2"
     And I click on "Search" "button" in the "Select users" "dialogue"
     And I should see "Student 2" in the "Select users" "dialogue"
     And I should not see "Student 1" in the "Select users" "dialogue"

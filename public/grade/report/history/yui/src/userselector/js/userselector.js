@@ -64,8 +64,8 @@ var CSS = {
     PICTURE: 'usp-picture',
     RESULTSCOUNT: 'usp-results-count',
     SEARCH: 'usp-search',
-    SEARCHBTN: 'usp-search-btn',
-    SEARCHFIELD: 'usp-search-field',
+    SEARCHBTN: 'usp-search-btn btn btn-secondary',
+    SEARCHFIELD: 'usp-search-field form-control me-1',
     SEARCHRESULTS: 'usp-search-results',
     SELECTED: 'selected',
     USER: 'usp-user',
@@ -83,8 +83,8 @@ var SELECTORS = {
     PICTURE: '.' + CSS.USER + ' .userpicture',
     RESULTSCOUNT: '.' + CSS.RESULTSCOUNT,
     RESULTSUSERS: '.' + CSS.SEARCHRESULTS + ' .' + CSS.USERS,
-    SEARCHBTN: '.' + CSS.SEARCHBTN,
-    SEARCHFIELD: '.' + CSS.SEARCHFIELD,
+    SEARCHBTN: '.usp-search-btn.btn.btn-secondary',
+    SEARCHFIELD: '.usp-search-field.form-control.me-1',
     SELECTEDNAMES: '.felement .selectednames',
     TRIGGER: '.gradereport_history_plugin input.selectortrigger',
     USER: '.' + CSS.USER,
@@ -152,7 +152,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             '<div class="{{CSS.WRAP}}">' +
                 '<div class="{{CSS.HEADER}}">' +
                     '<div class="{{CSS.SEARCH}}" role="search">' +
-                        '<form>' +
+                        '<form class="d-flex justify-content-center">' +
                             '<input type="text" class="{{CSS.SEARCHFIELD}}" ' +
                                 'aria-label="{{get_string "search" "moodle"}}" value="" />' +
                             '<input type="submit" class="{{CSS.SEARCHBTN}}"' +
@@ -169,7 +169,8 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                                 'src="{{{loadingIcon}}}">' +
                         '</div>' +
                         '<div class="{{CSS.CLOSEBTN}}">' +
-                            '<input type="submit" value="{{get_string "finishselectingusers" COMPONENT}}">' +
+                            '<input type="submit" class="btn btn-secondary"' +
+                            'value="{{get_string "finishselectingusers" COMPONENT}}">' +
                         '</div>' +
                     '</form>' +
                 '</div>' +
@@ -184,7 +185,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         );
 
         // Set the title and content.
-        this.getStdModNode(Y.WidgetStdMod.HEADER).prepend(Y.Node.create('<h1>' + this.get('title') + '</h1>'));
+        this.getStdModNode(Y.WidgetStdMod.HEADER).prepend(Y.Node.create('<h4>' + this.get('title') + '</h4>'));
         this.setStdModContent(Y.WidgetStdMod.BODY, content, Y.WidgetStdMod.REPLACE);
 
         // Use standard dialogue class name. This removes the default styling of the footer.
