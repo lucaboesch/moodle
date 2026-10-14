@@ -443,6 +443,11 @@ button.section-collapsemenu {
                 position: relative;
                 z-index: 2;
                 margin-left: map-get($spacers, 2);
+                .quickeditvalue {
+                    @include dark-mode {
+                        text-decoration: underline;
+                    }
+                }
             }
         }
         .activitybadge {
