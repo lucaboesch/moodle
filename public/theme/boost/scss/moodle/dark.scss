@@ -148,7 +148,7 @@
     #region-main,
     #page-footer,
     .block_html .card-text {
-        a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link) {
+        a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link):not(.quickeditlink) {
             text-decoration: underline;
         }
     }

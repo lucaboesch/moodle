@@ -31930,6 +31930,10 @@ dd:after {
   color: inherit;
   text-decoration: inherit;
 }
+[data-bs-theme=dark] .inplaceeditable .quickeditlink .quickeditvalue {
+  text-decoration: underline;
+}
+
 .inplaceeditable:hover .quickeditlink .quickediticon img,
 .inplaceeditable .quickeditlink:focus .quickediticon img {
   opacity: 1;
@@ -53895,10 +53899,10 @@ input[type=button].btn-block {
 [data-bs-theme=dark] .text-danger {
   --bs-danger-rgb: 226, 142, 132;
 }
-[data-bs-theme=dark] #page-header a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link),
-[data-bs-theme=dark] #region-main a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link),
-[data-bs-theme=dark] #page-footer a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link),
-[data-bs-theme=dark] .block_html .card-text a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link) {
+[data-bs-theme=dark] #page-header a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link):not(.quickeditlink),
+[data-bs-theme=dark] #region-main a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link):not(.quickeditlink),
+[data-bs-theme=dark] #page-footer a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link):not(.quickeditlink),
+[data-bs-theme=dark] .block_html .card-text a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link):not(.quickeditlink) {
   text-decoration: underline;
 }
 [data-bs-theme=dark] .bg-white {
