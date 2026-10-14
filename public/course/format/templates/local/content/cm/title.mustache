@@ -31,18 +31,9 @@
         "modname": "resource"
     }
 }}
-{{#editable}}
-    <span class="instancename">{{{instancename}}} {{{altname}}}</span>
-{{/editable}}
-{{^editable}}
-    {{#uservisible}}
-        <a href="{{url}}" class="{{linkclasses}} aalink stretched-link" onclick="{{{onclick}}}">
-            <span class="instancename">{{{instancename}}} {{{altname}}}</span>
-        </a>
-    {{/uservisible}}
-    {{^uservisible}}
-        <span class="instancename">
-            {{{instancename}}} {{{altname}}}
-        </span>
-    {{/uservisible}}
-{{/editable}}
+{{#uservisible}}
+    <a href="{{url}}" class="{{linkclasses}} aalink stretched-link" onclick="{{{onclick}}}"><span class="instancename">{{{instancename}}}{{#altname}}{{{altname}}}{{/altname}}</span></a>
+{{/uservisible}}
+{{^uservisible}}
+    <span class="instancename">{{{instancename}}}{{#altname}} {{{altname}}}{{/altname}}</span>
+{{/uservisible}}
