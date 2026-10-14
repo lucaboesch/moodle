@@ -1891,6 +1891,12 @@ dd:after {
         text-decoration: inherit;
     }
 
+    .quickeditlink .quickeditvalue {
+        @include dark-mode {
+            text-decoration: underline;
+        }
+    }
+
     &:hover .quickeditlink .quickediticon img,
     .quickeditlink:focus .quickediticon img {
         opacity: 1;
