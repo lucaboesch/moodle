@@ -137,12 +137,13 @@ $dialogue-exception-call-color:         var(--mds-text-default) !default;
 $dialogue-exception-call-border-color:  var(--mds-border-default) !default;
 
 $dialogue-lightbox-bg: var(--mds-bg-surface-default) !default;
-
-$chooserdialogue-bg:                    #f2f2f2 !default;
+// Chooser background usable in darkmode.
+$chooserdialogue-bg:                    var(--#{$prefix}primary-bg) !default;
 $chooserdialogue-options-border-color:  #bbb !default;
 
 $choosercontainer-label-border-color:       $white !default;
-$choosercontainer-instruction-bg:           $white !default;
+// Chooser background usable in darkmode.
+$choosercontainer-instruction-bg:           var(--#{$prefix}white) !default;
 $choosercontainer-chooseform-selected-bg:   $white !default;
 
 $formlisting-bg:            var(--#{$prefix}white) !default;

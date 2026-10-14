@@ -31398,7 +31398,7 @@ audio.mediaplugin_html5audio {
 
 .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
   padding: 0;
-  background: #f2f2f2;
+  background: var(--bs-primary-bg);
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
 }
@@ -31508,7 +31508,7 @@ audio.mediaplugin_html5audio {
   left: 240px;
   margin: 0;
   padding: 1.6em;
-  background-color: #ffffff;
+  background-color: var(--bs-white);
   overflow-x: hidden;
   overflow-y: auto;
   line-height: 2em;
