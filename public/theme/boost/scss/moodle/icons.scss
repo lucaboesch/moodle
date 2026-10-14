@@ -272,7 +272,8 @@ img.icon {
         &[src*="/a/"],
         &[src*="/i/groupn"],
         &[src*="/i/groups"],
-        &[src*="/i/groupv"] {
+        &[src*="/i/groupv"],
+        &[src*="qtype_"] {
             filter: invert(1);
         }
     }
