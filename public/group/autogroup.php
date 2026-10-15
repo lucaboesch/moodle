@@ -60,7 +60,9 @@ $preview = '';
 $error = '';
 
 /// Get applicable roles - used in menus etc later on
+// Only include roles that the current user is allowed to view in this context.
 $rolenames = role_fix_names(get_profile_roles($context), $context, ROLENAME_BOTH, true);
+$rolenames = array_intersect_key($rolenames, get_viewable_roles($context));
 
 /// Create the form
 $editform = new autogroup_form(null, array('roles' => $rolenames));
@@ -71,6 +73,11 @@ if ($editform->is_cancelled()) {
     redirect($returnurl);
 
 } elseif ($data = $editform->get_data()) {
+
+    // Make sure the selected role is one the current user is allowed to view.
+    if (!groups_is_member_role_viewable($context, (int) $data->roleid)) {
+        throw new \moodle_exception('invalidroleid', 'error');
+    }
 
     /// Allocate members from the selected role to groups
     switch ($data->allocateby) {

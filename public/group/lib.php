@@ -840,6 +840,27 @@ function groups_get_possible_roles($context) {
     return array_keys($roles);
 }
 
+/**
+ * Checks whether a role may be used to select group members when auto-creating groups.
+ *
+ * To be usable a role must be a possible group member role (i.e. appear on user profiles in the
+ * context) and must also be viewable by the current user in the context. This mirrors the roles
+ * offered by the auto-group form and must be enforced on the backend so that a crafted request
+ * cannot distribute users by a role the current user is not allowed to view.
+ *
+ * @param context $context Context of the course.
+ * @param int $roleid The role ID to check. 0 means "all roles".
+ * @return bool True if the role may be used to view the other role, false otherwise.
+ */
+function groups_is_member_role_viewable(context $context, int $roleid): bool {
+    if (empty($roleid)) {
+        // 0 means "all roles", which is always permitted.
+        return true;
+    }
+    return in_array($roleid, groups_get_possible_roles($context))
+        && array_key_exists($roleid, get_viewable_roles($context));
+}
+
 
 /**
  * Gets potential group members for grouping

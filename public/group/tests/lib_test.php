@@ -936,6 +936,51 @@ final class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Test that only roles viewable by the current user are accepted as group member sources.
+     */
+    public function test_groups_is_member_role_viewable(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $context = \context_course::instance($course->id);
+
+        // Create two custom roles and assign each to an enrolled user so they are possible
+        // group member roles (i.e. roles appearing on profiles in the context).
+        $visiblerole = $generator->create_role(['shortname' => 'visiblerole']);
+        $hiddenrole = $generator->create_role(['shortname' => 'hiddenrole']);
+        $visibleuser = $generator->create_user();
+        $hiddenuser = $generator->create_user();
+        $generator->enrol_user($visibleuser->id, $course->id, $visiblerole);
+        $generator->enrol_user($hiddenuser->id, $course->id, $hiddenrole);
+
+        // Make sure both roles are considered profile roles regardless of the viewing user's
+        // capability to assign roles.
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher'], '*', MUST_EXIST);
+        set_config('profileroles', "$visiblerole,$hiddenrole,{$teacherrole->id}");
+
+        // The current user is a teacher who is only allowed to view one of the two roles.
+        $teacher = $generator->create_user();
+        $generator->enrol_user($teacher->id, $course->id, $teacherrole->id);
+        core_role_set_view_allowed($teacherrole->id, $visiblerole);
+        $this->setUser($teacher);
+
+        // The special "all roles" value is always permitted.
+        $this->assertTrue(groups_is_member_role_viewable($context, 0));
+
+        // A role that is both a possible member role and viewable is permitted.
+        $this->assertTrue(groups_is_member_role_viewable($context, $visiblerole));
+
+        // A role that exists and has members but is not viewable by the user is rejected.
+        $this->assertFalse(groups_is_member_role_viewable($context, $hiddenrole));
+
+        // An admin may view any role.
+        $this->setAdminUser();
+        $this->assertTrue(groups_is_member_role_viewable($context, $hiddenrole));
+    }
+
+    /**
      * Checks the given list of groups to verify their messaging settings.
      *
      * @param array $groupids array of group ids
