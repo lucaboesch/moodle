@@ -1255,7 +1255,7 @@ class view {
             $classes[] = 'dimmed_text';
         }
         if ($question->id == $this->lastchangedid) {
-            $classes[] = 'highlight text-dark';
+            $classes[] = 'highlight bg-light text-dark';
         }
         $classes[] = 'r' . ($rowcount % 2);
         return $classes;
