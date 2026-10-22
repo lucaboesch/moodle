@@ -36302,6 +36302,17 @@ body.editing#page-course-learningoutcomes .activity-item:hover:not(:has(.activit
   outline: none;
 }
 
+/* Competencies badge in Competencies section */
+#fitem_id_competencies .competency-heading {
+  display: inline;
+  margin: 0;
+  white-space: nowrap;
+}
+#fitem_id_competencies .competency-heading h4, #fitem_id_competencies .competency-heading .h4 {
+  display: inline;
+  font-size: inherit;
+}
+
 /*
  * Course management page styles.
  */
