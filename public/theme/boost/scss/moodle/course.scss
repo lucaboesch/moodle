@@ -1157,3 +1157,14 @@ body.editing#page-course-learningoutcomes .activity-item {
         outline: none;
     }
 }
+
+/* Competencies badge in Competencies section */
+#fitem_id_competencies .competency-heading {
+    display: inline;
+    margin: 0;
+    white-space: nowrap;
+    h4 {
+        display: inline;
+        font-size: inherit;
+    }
+}
