@@ -221,8 +221,9 @@ table.question-bank-table {
             display: inline-block;
         }
 
+        // The action menu trigger uses an icon, so suppress the Bootstrap dropdown caret.
         .dropdown-toggle::after {
-            margin-left: 0;
+            display: none;
         }
         &.checkbox .form-check {
             padding-left: 0;
