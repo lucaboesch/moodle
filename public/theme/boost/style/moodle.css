@@ -39556,7 +39556,7 @@ table.question-bank-table .header .header-text > div {
   display: inline-block;
 }
 table.question-bank-table .header .dropdown-toggle::after {
-  margin-left: 0;
+  display: none;
 }
 table.question-bank-table .header.checkbox .form-check {
   padding-left: 0;
