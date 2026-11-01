@@ -60,15 +60,20 @@
     <div class="header-container">
         <div class="header-text">
         {{#title}}
-            <div class="title me-1">{{title}}</div>
+            <div class="title">{{title}}</div>
         {{/title}}
         {{^sortable}}
             {{^sorttip}}
-                <span class="me-1">{{tiptitle}}</span>
+                <span>{{tiptitle}}</span>
             {{/sorttip}}
             {{#sorttip}}
-                <span class="me-1" title="{{tip}}">{{{tiptitle}}}</span>
+                <span title="{{tip}}">{{{tiptitle}}}</span>
             {{/sorttip}}
+        {{/sortable}}
+        {{#sortable}}
+            {{^title}}
+                <div class="sorters">{{{sortlinks}}}</div>
+            {{/title}}
         {{/sortable}}
         {{#help}}
             {{>core/help_icon}}
@@ -77,8 +82,10 @@
         </div>
     </div>
     {{#sortable}}
-        <div class="sorters">
-            {{{sortlinks}}}
-        </div>
+        {{#title}}
+            <div class="sorters">
+                {{{sortlinks}}}
+            </div>
+        {{/title}}
     {{/sortable}}
 </th>
