@@ -34815,7 +34815,7 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
 .maincalendar .calendarmonth td.today .day-number-circle {
   border-radius: 50%;
   color: #ffffff;
-  background-color: #0f6cbf;
+  background-color: var(--bs-link-color);
 }
 .maincalendar .calendarmonth .clickable:hover {
   background-color: #ededed;
