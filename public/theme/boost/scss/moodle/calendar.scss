@@ -28,7 +28,7 @@ $calendarEventOtherBorder: 2px solid $calendarEventOtherBorderColor !default; //
 $calendarEventColor: #0d5ca1 !default;
 
 $calendarCurrentDateColor: $white;
-$calendarCurrentDateBackground: $primary;
+$calendarCurrentDateBackground: var(--bs-link-color);
 
 // Calendar event background colours defined.
 .calendar_event_category {
