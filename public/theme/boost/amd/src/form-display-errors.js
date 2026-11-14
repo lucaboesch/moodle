@@ -40,6 +40,14 @@ define(['jquery', 'core_form/events'], function($, FormEvent) {
             }
 
             element.addEventListener(FormEvent.eventTypes.formFieldValidationFailed, e => {
+                // Only react when this is the field that actually failed validation.
+                // The event bubbles, so an ancestor container (e.g. a group wrapper, whose id is
+                // placed on its .fitem) would otherwise also handle a descendant's failure and, via
+                // the broad closest('.fitem').find('.form-control-feedback') lookup below, paint the
+                // same message into every child element's feedback container.
+                if (e.target !== element) {
+                    return;
+                }
                 const msg = e.detail.message;
                 e.preventDefault();
 
