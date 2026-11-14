@@ -80,3 +80,49 @@ Feature: In an assignment, students can add and edit text online
     When I press "Add submission"
     # Confirm draft was restored.
     Then the field "Online text" matches value "text submission"
+
+  @javascript
+  Scenario: When creating an assignment and giving an invalid value to the Word limit field, only one error is shown
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    When I am on the "Course 1" course page logged in as teacher1
+    And I add an assign activity to course "Course 1" section "1"
+    And I set the following fields to these values:
+      | name                                          | Test assignment |
+      | assignsubmission_onlinetext_enabled           | 1               |
+      | assignsubmission_onlinetext_wordlimit_enabled | 1               |
+      | assignsubmission_onlinetext_wordlimit         | f               |
+    And I press "Save and display"
+    Then I should see "You must enter a number here." in the "#id_error_assignsubmission_onlinetext_wordlimit" "css_element"
+    But I should not see "You must enter a number here." in the "#id_error_assignsubmission_onlinetext_wordlimit_enabled" "css_element"
+    And  I should not see "You must enter a number here." in the "#fgroup_id_error_assignsubmission_onlinetext_wordlimit_group" "css_element"
+
+  @javascript
+  Scenario: When creating an assignment and giving an invalid value to the Word limit field, only one error is shown
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    When I am on the "Course 1" course page logged in as teacher1
+    And I add an assign activity to course "Course 1" section "1"
+    And I set the following fields to these values:
+      | name                                          | Test assignment |
+      | assignsubmission_onlinetext_enabled           | 1               |
+      | assignsubmission_onlinetext_wordlimit_enabled | 1               |
+      | assignsubmission_onlinetext_wordlimit         | f               |
+    And I press "Save and display"
+    Then I should see "You must enter a number here." in the "#id_error_assignsubmission_onlinetext_wordlimit" "css_element"
+    But I should not see "You must enter a number here." in the "#id_error_assignsubmission_onlinetext_wordlimit_enabled" "css_element"
+    And I should not see "You must enter a number here." in the "#fgroup_id_error_assignsubmission_onlinetext_wordlimit_group" "css_element"
