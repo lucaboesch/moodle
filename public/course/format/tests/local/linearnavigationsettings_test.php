@@ -50,6 +50,7 @@ final class linearnavigationsettings_test extends \advanced_testcase {
      * @param bool $expected The expected result.
      * @param array $cmoptions Options to pass to the module generator.
      * @param string $user The user role to use for the test. Default: student. Use 'admin' to use the admin user.
+     * @param string $pagelayout The page layout to use.
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('show_navigation_footer_provider')]
     public function test_show_navigation_footer(
@@ -61,6 +62,7 @@ final class linearnavigationsettings_test extends \advanced_testcase {
         bool $expected,
         array $cmoptions = [],
         string $user = 'student',
+        string $pagelayout = 'incourse',
     ): void {
         $this->resetAfterTest();
         if (array_key_exists('visibleoncoursepage', $cmoptions)) {
@@ -83,6 +85,7 @@ final class linearnavigationsettings_test extends \advanced_testcase {
 
         $moodlepage = new \moodle_page();
         $moodlepage->set_course($course);
+        $moodlepage->set_pagelayout($pagelayout);
         if ($sectionhidden) {
             $sectioninfo = get_fast_modinfo($course->id)->get_section_info(0);
             \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
@@ -190,6 +193,15 @@ final class linearnavigationsettings_test extends \advanced_testcase {
                 'expected' => true,
                 'cmoptions' => ['visible' => true, 'sectionhidden' => true],
                 'user' => 'admin',
+            ],
+            'Secure page layout' => [
+                'format' => 'topics',
+                'enablelinearnav' => 1,
+                'hasstickyfooter' => false,
+                'shownavigationfooter' => true,
+                'hascm' => true,
+                'expected' => false,
+                'pagelayout' => 'secure',
             ],
         ];
     }
