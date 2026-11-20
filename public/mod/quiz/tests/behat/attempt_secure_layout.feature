@@ -8,12 +8,14 @@ Feature: Attempt a quiz in secure layout
     Given the following "users" exist:
       | username | firstname | lastname | email               |
       | student  | Student   | One      | student@example.com |
+      | teacher  | Teacher   | One      | teacher@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user    | course | role    |
-      | student | C1     | student |
+      | user    | course | role           |
+      | student | C1     | student        |
+      | teacher | C1     | editingteacher |
     And the following "activities" exist:
       | activity | name   | intro              | course | idnumber | grade | navmethod | browsersecurity | showuserpicture | timeopen      | timeclose    |
       | quiz     | Quiz 1 | Quiz 1 description | C1     | quiz1    | 100   | free      | securewindow    | 2               | ##yesterday## | ##tomorrow## |
@@ -80,3 +82,14 @@ Feature: Attempt a quiz in secure layout
     And I should not see "Opened:"
     And I should not see "Closes:"
     And I should not see "Back"
+
+  @javascript
+  Scenario: A quiz page on the secure layout with linear navigation enabled should not display previous and next
+    Given I log in as "teacher"
+    And I am on "Course 1" course homepage with editing mode on
+    And I move "Quiz 1" activity to section "2"
+    And I log out
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    Then I should see "Quiz 1"
+    And I should not see "Previous"
+    And I should not see "Next"
