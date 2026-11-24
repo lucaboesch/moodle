@@ -1485,8 +1485,9 @@ class block_manager {
                 new pix_icon('t/delete', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str,
                 [
-                    'class' => 'editing_delete',
+                    'class' => 'editing_delete text-danger',
                     'data-modal' => 'confirmation',
+                    'data-modal-type' => 'delete',
                     'data-modal-title-str' => json_encode(['deletecheck_modal', 'block']),
                     'data-modal-content-str' => $deleteblockmessage,
                     'data-modal-yes-button-str' => json_encode(['delete', 'core']),
