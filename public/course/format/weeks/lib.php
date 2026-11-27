@@ -194,10 +194,12 @@ class format_weeks extends core_courseformat\base {
         }
         parent::extend_course_navigation($navigation, $node);
 
-        // We want to remove the general section if it is empty.
+        // We want to remove the general section if it is empty, unless it is the section currently being displayed
+        // (e.g. on its own section page), as in that case it needs to stay in the navigation to be marked as the
+        // active node and provide an accurate breadcrumb.
         $modinfo = get_fast_modinfo($this->get_course());
         $sections = $modinfo->get_sections();
-        if (!isset($sections[0])) {
+        if (!isset($sections[0]) && $this->get_sectionnum() !== 0) {
             // The general section is empty to find the navigation node for it we need to get its ID.
             $section = $modinfo->get_section_info(0);
             $generalsection = $node->get($section->id, navigation_node::TYPE_SECTION);
